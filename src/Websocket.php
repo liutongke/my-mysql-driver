@@ -27,8 +27,6 @@
 
 namespace swoole\src;
 
-use swoole\src\Jwt;
-
 class Websocket
 {
     //服务对象
@@ -58,19 +56,13 @@ class Websocket
     //连接事件
     public function open($ws, $request)
     {
-        //查询用户有没有登陆，如果没登陆不让其发言
-//        $res = $this->redis()->hGet('user', $request->fd);
-//        if (!$res) {
-//        $arr = $this->msg('true', '0', '0', '系统提示信息：新用户请注册后发言');
 
-//        $jwt = new Jwt();
         $arr = [
-            'qwertyu',
-            '000000000000',
-            '1234567890-'
+            'fd' => $request->fd,
+            'status' => (int)1,
+            'msg' => '你好啊！'
         ];
-        var_dump($arr);
-//        $arr = $this->msg('flase', $frame->fd, $name, $msg);
+        $this->redis()->hSet('user', $request->fd, time());
         $ws->push($request->fd, Jwt::response($arr));
     }
 
@@ -78,9 +70,18 @@ class Websocket
     public function message($ws, $frame)
     {
         //发送过来的信息
-        $sms = $frame->data;
-        $sms = json_decode($sms, TRUE);
-        $ws->push($frame->fd, $sms);
+        $arr = [
+            'status' => (int)1,
+            'msg' => $frame->data
+        ];
+
+        $user_all_fd = $this->redis()->hGetAll('user');
+        foreach ($user_all_fd as $key => $value) {
+            if ($key != $frame->fd) {
+                $ws->push($key, Jwt::response($arr));
+            }
+        }
+
 
     }
 
@@ -88,30 +89,21 @@ class Websocket
     public function close($ws, $fd)
     {
         //连接数据库
-        $rows = $this->redis()->hGetAll('user');
-        $name = $this->redis()->hGet('user', $fd);
-        $msg = '用户' . $name . '退出了聊天室！';
-        $arr = $this->msg('true', '0', '0', $msg);
-        foreach ($rows as $key => $value) {
-            $ws->push($key, $arr);
+        $arr = [
+            'status' => (int)1,
+            'msg' => '用户' . $fd . '退出了聊天室！'
+        ];
+
+        $user_all_fd = $this->redis()->hGetAll('user');
+        
+        foreach ($user_all_fd as $key => $value) {
+            if ($key != $fd) {
+                $ws->push($key, Jwt::response($arr));
+            }
         }
         //用户推出则删除用户的hash结构
         $this->redis()->hDel('user', $fd);
         echo "client-{$fd} is closed\n";
-    }
-
-
-    //对发送的方法进行封装
-    public function msg($state, $id = 0, $username = 0, $msg)
-    {
-        $arr = [
-            'state' => $state,
-            'id' => $id,
-            'username' => $username,
-            'msg' => $msg
-        ];
-        $arr = json_encode($arr);
-        return $arr;
     }
 
     //对redis连接的封装
@@ -119,7 +111,7 @@ class Websocket
     {
         //连接数据库
         $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379);
+        $redis->connect('121.196.192.76', 6379);
 //        $redis->auth('your_password');
         return $redis;
     }

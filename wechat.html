@@ -134,13 +134,50 @@
             <div id="user_face_icon">  
                 <img src="http://www.xttblog.com/icons/favicon.ico" alt="">  
             </div>  
+
             <input id="text" type="text" placeholder="说点什么吧...">  
-            <span id="btn">发送</span>  
+            <span id="btn" onclick="sendMessage()">发送</span>  
         </div>  
     </div>  
 </body> 
     <script>  
-        window.onload = function(){   
+        window.onload = function(){
+        var wsServer = 'ws://103.40.102.141:9502';
+        var websocket = new WebSocket(wsServer);
+        websocket.onopen = function (evt) {
+            var obj = eval("("+evt.data+")"); 
+                    console.log(obj);
+                    console.log(evt);
+            // content.innerHTML += '<li><input type="hidden" name="fd" value="'+obj.fd+'"></li>'; 
+            // console.log("Connected to WebSocket server."+obj.fd);
+        };
+
+        websocket.onclose = function (evt) {
+            console.log("Disconnected");
+        };
+
+        websocket.onmessage = function (evt) {
+            // console.log('Retrieved data from server: ' + evt.data);
+                    var obj = eval("("+evt.data+")"); 
+                    // console.log(obj); 
+                    content.innerHTML += '<li><img src="'+arrIcon[obj.status]+'"><span>'+obj.msg+'</span></li>';
+                    content.innerHTML += '<li><input type="hidden" name="fd" value="'+obj.fd+'"></li>';   
+                    iNow++;   
+                    if(num==obj.status){   
+                        img[iNow].className += 'imgright';   
+                        span[iNow].className += 'spanright';   
+                    }else {   
+                        img[iNow].className += 'imgleft';   
+                        span[iNow].className += 'spanleft';   
+                    }    
+                     // 内容过多时,将滚动条放置到最底端   
+                     content.scrollTop=content.scrollHeight; 
+        };
+
+        websocket.onerror = function (evt, e) {
+            // console.log('Error occured: ' + evt.data);
+        };
+
             var arrIcon = ['http://www.xttblog.com/icons/favicon.ico','http://www.xttblog.com/wp-content/uploads/2016/03/123.png'];   
             var num = 0;     //控制头像改变   
             var iNow = -1;    //用来累加改变左右浮动   
@@ -160,10 +197,11 @@
                     num = 0;   
                 }                   
             }   
-            btn.onclick = function(){   
+            btn.onclick = function(){
                 if(text.value ==''){   
                     alert('不能发送空消息');   
-                }else {   
+                }else { 
+                    websocket.send(text.value);   
                     content.innerHTML += '<li><img src="'+arrIcon[num]+'"><span>'+text.value+'</span></li>';   
                     iNow++;   
                     if(num==0){   
@@ -173,9 +211,10 @@
                         img[iNow].className += 'imgleft';   
                         span[iNow].className += 'spanleft';   
                     }   
-                    text.value = '';   
+                    // text.value = '';   
      // 内容过多时,将滚动条放置到最底端   
-     contentcontent.scrollTop=content.scrollHeight;     
+     content.scrollTop=content.scrollHeight; 
+                    // alert(text.value);   
                 }   
             }   
         }   
