@@ -95,7 +95,7 @@ class Websocket
         ];
 
         $user_all_fd = $this->redis()->hGetAll('user');
-        
+
         foreach ($user_all_fd as $key => $value) {
             if ($key != $fd) {
                 $ws->push($key, Jwt::response($arr));
