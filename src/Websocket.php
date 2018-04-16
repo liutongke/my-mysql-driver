@@ -111,8 +111,7 @@ class Websocket
     {
         //连接数据库
         $redis = new \Redis();
-        $redis->connect('121.196.192.76', 6379);
-//        $redis->auth('your_password');
+        $redis->connect('***', 6379);
         return $redis;
     }
 }

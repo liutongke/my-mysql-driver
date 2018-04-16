@@ -187,7 +187,7 @@
             var content = document.getElementsByTagName('ul')[0];   
             var img = content.getElementsByTagName('img');   
             var span = content.getElementsByTagName('span');   
-  
+
             icon[0].onclick = function(){   
                 if(num==0){   
                     this.src = arrIcon[1];   
@@ -196,7 +196,8 @@
                     this.src = arrIcon[0];   
                     num = 0;   
                 }                   
-            }   
+            };
+              
             btn.onclick = function(){
                 if(text.value ==''){   
                     alert('不能发送空消息');   
