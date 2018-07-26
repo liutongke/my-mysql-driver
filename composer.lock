@@ -1,0 +1,60 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "e25334628219ad99058c1fda41648a40",
+    "packages": [
+        {
+            "name": "ninvfeng/mysql",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ninvfeng/mysql.git",
+                "reference": "82f9878184401c391bbf4342d7e861dbe1567c84"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ninvfeng/mysql/zipball/82f9878184401c391bbf4342d7e861dbe1567c84",
+                "reference": "82f9878184401c391bbf4342d7e861dbe1567c84",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ninvfeng\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "ninvfeng",
+                    "email": "ninvfeng@qq.com"
+                }
+            ],
+            "description": "一个简单PDO mysql数据库操作类",
+            "keywords": [
+                "mysql",
+                "php"
+            ],
+            "time": "2018-07-16T07:53:52+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "ninvfeng/mysql": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}

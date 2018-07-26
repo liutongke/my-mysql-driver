@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2018/4/10
- * Time: 13:49
+ * Date: 2018/7/26
+ * Time: 15:03
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,7 +25,7 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace swoole\src;
+namespace swoole;
 
 class Websocket
 {
@@ -56,54 +56,32 @@ class Websocket
     //连接事件
     public function open($ws, $request)
     {
-
-        $arr = [
-            'fd' => $request->fd,
-            'status' => (int)1,
-            'msg' => '你好啊！'
-        ];
-        $this->redis()->hSet('user', $request->fd, time());
-        $ws->push($request->fd, Jwt::response($arr));
+        //查询用户有没有登陆，如果没登陆不让其发言
+        //生成依赖
+        $msgMethod = new Open();
+        //注入依赖
+        $pb = new SendMsg($msgMethod);
+        $pb->send($ws, $request);
     }
 
     //消息事件
     public function message($ws, $frame)
     {
-        //发送过来的信息
-        $arr = [
-            'status' => (int)1,
-            'msg' => $frame->data
-        ];
-
-        $user_all_fd = $this->redis()->hGetAll('user');
-        foreach ($user_all_fd as $key => $value) {
-            if ($key != $frame->fd) {
-                $ws->push($key, Jwt::response($arr));
-            }
-        }
-
-
+        //生成依赖
+        $msgMethod = new Message();
+        //注入依赖
+        $pb = new SendMsg($msgMethod);
+        $pb->send($ws, $frame);
     }
 
     //断开事件
     public function close($ws, $fd)
     {
-        //连接数据库
-        $arr = [
-            'status' => (int)1,
-            'msg' => '用户' . $fd . '退出了聊天室！'
-        ];
-
-        $user_all_fd = $this->redis()->hGetAll('user');
-
-        foreach ($user_all_fd as $key => $value) {
-            if ($key != $fd) {
-                $ws->push($key, Jwt::response($arr));
-            }
-        }
-        //用户推出则删除用户的hash结构
-        $this->redis()->hDel('user', $fd);
-        echo "client-{$fd} is closed\n";
+        //生成依赖
+        $msgMethod = new Close();
+        //注入依赖
+        $pb = new SendMsg($msgMethod);
+        $pb->send($ws, $fd);
     }
 
     //对redis连接的封装
@@ -111,7 +89,20 @@ class Websocket
     {
         //连接数据库
         $redis = new \Redis();
-        $redis->connect('***', 6379);
+        $redis->connect('127.0.0.1', 6379);
         return $redis;
+    }
+
+    //对发送的方法进行封装
+    public function msg($state, $id = 0, $username = 0, $msg)
+    {
+        $arr = [
+            'state' => $state,
+            'id' => $id,
+            'username' => $username,
+            'msg' => $msg
+        ];
+        $arr = json_encode($arr);
+        return $arr;
     }
 }

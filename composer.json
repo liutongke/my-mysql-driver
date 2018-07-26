@@ -1,18 +1,20 @@
 {
   "name": "swoole/chat",
-  "description": "this swoole chat",
-  "license": "MIT",
+  "description": "this is swoole chat demo",
+  "type": "MIT",
   "authors": [
     {
-      "name": "keke",
+      "name": "PHP科科",
       "email": "liutongke@live.com"
     }
   ],
   "minimum-stability": "dev",
-  "require": {},
+  "require": {
+    "ninvfeng/mysql": "dev-master"
+  },
   "autoload": {
     "psr-4": {
-      "swoole\\src\\": "src/"
+      "swoole\\": "src/"
     }
   }
 }
