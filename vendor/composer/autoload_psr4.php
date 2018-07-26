@@ -6,6 +6,6 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'swoole\\' => array($baseDir . '/src'),
     'ninvfeng\\' => array($vendorDir . '/ninvfeng/mysql/src'),
+    'chat\\sw\\' => array($baseDir . '/app'),
 );

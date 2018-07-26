@@ -1,9 +1,8 @@
 <?php
-
 /*
  * User: keke
  * Date: 2018/7/26
- * Time: 14:42
+ * Time: 16:09
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,21 +24,43 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
-
-namespace swoole;
-
-class SendMsg
+//mysql数据库
+function DB($table = 'null')
 {
+    static $config;
+    if (!$config)
+        $config = $GLOBALS['config'];
 
-    private $sw;
+    static $_db;
+    if (!$_db)
+        $_db = new \ninvfeng\mysql($config['mysql']);
+    return $_db->table($table);
+}
 
-    public function __construct(Chat $payMethod)
-    {
-        $this->sw = $payMethod;
-    }
+//Redis数据库
+function Redis()
+{
+    static $config;
+    if (!$config)
+        $config = $GLOBALS['config'];
 
-    public function send($ws, $request)
-    {
-        $this->sw->Handle($ws, $request);
-    }
+    static $redis;
+    if (!$redis)
+        $redis = new swoole\Redis($config['redis']);
+    return $redis;
+}
+
+function dd($data)
+{
+    echo '<pre />';
+    var_dump($data);
+    echo '<pre />';
+    die;
+}
+
+function dump($data)
+{
+    echo '<pre />';
+    var_dump($data);
+    echo '<pre />';
 }

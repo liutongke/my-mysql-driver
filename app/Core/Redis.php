@@ -1,8 +1,9 @@
 <?php
+
 /*
  * User: keke
  * Date: 2018/7/26
- * Time: 16:09
+ * Time: 17:02
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -24,18 +25,25 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
-//推荐使用函数进行实例化,后续操作更加方便
-//推荐使用函数进行实例化,后续操作更加方便
-function DB($table = 'null')
+
+namespace chat\sw\Core;
+
+class Redis
 {
-    static $config;
-    if (!$config) {
-        $config = require 'config.php';
+    //对redis连接的封装
+    public function __construct($config)
+    {
+        //连接数据库
+        $this->redis = new \Redis();
+        $this->redis->connect($config['host'], $config['port']);
+        //授权
+//        $this->redis->auth($config['pass'] == '' ? '' : $config['pass']);
+        $config['pass'] == '' ?: $this->redis->auth($config['pass']);
     }
 
-    static $_db;
-    if (!$_db) {
-        $_db = new \ninvfeng\mysql($config);
-    }
-    return $_db->table($table);
+    //获取值
+//    public function get($key)
+//    {
+//        return $this->redis->get($key);
+//    }
 }

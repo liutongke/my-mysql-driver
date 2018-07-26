@@ -25,9 +25,9 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace swoole;
+namespace chat\sw\Server;
 
-class Websocket
+class Ws
 {
     //服务对象
     private $ws;
@@ -36,6 +36,15 @@ class Websocket
     public function __construct()
     {
         $this->init();
+        self::initConfig();
+    }
+
+    /*
+     * 加载配置文件
+     */
+    private static function initConfig()
+    {
+        $GLOBALS['config'] = require CONFIG_PATH . 'config.php';
     }
 
     //初始程序
@@ -82,27 +91,5 @@ class Websocket
         //注入依赖
         $pb = new SendMsg($msgMethod);
         $pb->send($ws, $fd);
-    }
-
-    //对redis连接的封装
-    public function redis()
-    {
-        //连接数据库
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379);
-        return $redis;
-    }
-
-    //对发送的方法进行封装
-    public function msg($state, $id = 0, $username = 0, $msg)
-    {
-        $arr = [
-            'state' => $state,
-            'id' => $id,
-            'username' => $username,
-            'msg' => $msg
-        ];
-        $arr = json_encode($arr);
-        return $arr;
     }
 }

@@ -1,8 +1,9 @@
 <?php
+
 /*
  * User: keke
  * Date: 2018/7/26
- * Time: 16:19
+ * Time: 14:42
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -24,11 +25,21 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
-//配置
-return [
-    'host' => '121.196.192.76',
-    'port' => 3306,
-    'name' => 'test',
-    'user' => 'root',
-    'pass' => 'your_password',
-];
+
+namespace chat\sw\Server;
+
+class SendMsg
+{
+
+    private $sw;
+
+    public function __construct(Chat $wsMethod)
+    {
+        $this->sw = $wsMethod;
+    }
+
+    public function send($ws, $request)
+    {
+        $this->sw->Handle($ws, $request);
+    }
+}

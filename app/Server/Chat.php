@@ -1,8 +1,9 @@
 <?php
+
 /*
  * User: keke
  * Date: 2018/7/26
- * Time: 14:34
+ * Time: 14:36
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,22 +26,9 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace swoole;
+namespace chat\sw\Server;
 
-class Open implements Chat
+interface Chat
 {
-    public function __construct()
-    {
-    }
-
-    public function Handle($ws, $request)
-    {
-        DB('chat_fd')
-            ->insert([
-                'user_id' => 1,
-                'fd' => $request->fd
-            ]);
-
-        $ws->push($request->fd, "hello, welcome to keke\n");
-    }
+    public function Handle($ws, $request);
 }

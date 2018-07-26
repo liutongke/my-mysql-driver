@@ -24,12 +24,40 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
-require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/function.php';
-use \swoole\Websocket;
+define('DS', DIRECTORY_SEPARATOR);           //目录分隔符
+define('ROOT_PATH', getcwd() . DS);               //入口文件所在的目录
+//define('APP_PATH',ROOT_PATH.'Application'.DS);
+//define('FRAMEWORK_PATH', ROOT_PATH.'Framework'.DS);
+define('CONFIG_PATH', ROOT_PATH.'config'.DS);
+//define('CONTROLLER_PATH', APP_PATH.'Controller'.DS);
+//define('MODEL_PATH', APP_PATH.'Model'.DS);
+//define('VIEW_PATH', APP_PATH.'View'.DS);
+//define('CORE_PATH', FRAMEWORK_PATH.'Core'.DS);
+//define('LIB_PATH', FRAMEWORK_PATH.'Lib'.DS);
 
-$webSocket = new Websocket();
+require_once ROOT_PATH . '/vendor/autoload.php';
+//use \app\Jwt;
+use \chat\sw\Server\Ws;
+
+$webSocket = new Ws();
 $webSocket->run();
+
+//生成依赖
+//$msgMethod = new \app\server\Open();
+//注入依赖
+//$pb = new \app\server\SendMsg($msgMethod);
+//dd($pd);
+//
+//$res = DB('chat_fd')
+//    ->insert([
+//        'user_id' => 1,
+//        'fd' => 33
+//    ]);
+//dd($res);
+//$token = new \chat\sw\Core\Jwt('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9seXRlc3QucmlsaWFuYXBwLmNvbVwvYXBpXC9nZXRcL2xvZ2luXC9wYXNzd29yZCIsImlhdCI6MTUzMjYwODE3NSwiZXhwIjoxNTM1MjAwMTc1LCJuYmYiOjE1MzI2MDgxNzUsImp0aSI6Imxwd2Zacnh0ek4yVWN5SGsiLCJzdWIiOjExLCJwcnYiOiI4N2UwYWYxZWY5ZmQxNTgxMmZkZWM5NzE1M2ExNGUwYjA0NzU0NmFhIn0.oSPRdQPsQ3VZGO-YFafjPls7KxemEMkwRq9loQ1PZRw');
+//$res = $token->decode();
+//dd($res);
+//die;
 
 ////创建websocket服务器对象，监听0.0.0.0:9502端口
 //$ws = new swoole_websocket_server("0.0.0.0", 9502);

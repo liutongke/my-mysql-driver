@@ -14,7 +14,10 @@
   },
   "autoload": {
     "psr-4": {
-      "swoole\\": "src/"
-    }
+      "chat\\sw\\": "app/"
+    },
+    "files": [
+      "app/Common/function.php"
+    ]
   }
 }
