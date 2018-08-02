@@ -2,7 +2,7 @@
 /*
  * User: keke
  * Date: 2018/7/26
- * Time: 14:34
+ * Time: 20:17
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,24 +25,32 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Server;
+namespace chat\sw\Core\Jwt;
 
-class Message implements Chat
+class Jwt
 {
-    public function __construct()
+    private $token;
+
+    public function __construct($token)
     {
+        return $this->token = $token;
     }
 
-    public function Handle($ws, $frame)
+    //将token切割成数组
+    public function exToken()
     {
-        //查询出所有的用户
-        $send_msg = json_decode($frame->data, true)['msg'];
-        $all_user = DB()
-            ->select('chat_fd','*');
-        dump($all_user);
-        foreach ($all_user as $key => $value) {
-            $msg = Send::msg($value['token'], '用户', 2, $send_msg, $value['fd']);
-            $ws->push($frame->fd, $msg);
-        }
+        return self::base();
+    }
+
+    //base64解码
+    public function base()
+    {
+        return;
+    }
+
+    //解密第二部分
+    public function decode()
+    {
+        return json_decode(base64_decode(explode('.', $this->token)['1']), true);
     }
 }

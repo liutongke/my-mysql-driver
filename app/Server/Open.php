@@ -27,6 +27,8 @@
 
 namespace chat\sw\Server;
 
+use chat\sw\Core\Handle;
+
 class Open implements Chat
 {
     public function __construct()
@@ -35,6 +37,6 @@ class Open implements Chat
 
     public function Handle($ws, $request)
     {
-        $ws->push($request->fd, "hello, welcome to keke\n");
+        $ws->push($request->fd, Handle::Open($request));
     }
 }

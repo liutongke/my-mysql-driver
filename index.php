@@ -24,24 +24,20 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
-define('DS', DIRECTORY_SEPARATOR);           //目录分隔符
-define('ROOT_PATH', getcwd() . DS);               //入口文件所在的目录
-//define('APP_PATH',ROOT_PATH.'Application'.DS);
-//define('FRAMEWORK_PATH', ROOT_PATH.'Framework'.DS);
-define('CONFIG_PATH', ROOT_PATH.'config'.DS);
-//define('CONTROLLER_PATH', APP_PATH.'Controller'.DS);
-//define('MODEL_PATH', APP_PATH.'Model'.DS);
-//define('VIEW_PATH', APP_PATH.'View'.DS);
-//define('CORE_PATH', FRAMEWORK_PATH.'Core'.DS);
-//define('LIB_PATH', FRAMEWORK_PATH.'Lib'.DS);
-
-require_once ROOT_PATH . '/vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 //use \app\Jwt;
 use \chat\sw\Server\Ws;
 
 $webSocket = new Ws();
 $webSocket->run();
-
+$res = DB()->insert('chat_fd', ['user_id' => 1,
+    'fd' => 2,
+    'token' => 'token']);
+//$res = DB('chat_fd')
+//    ->insert([
+//        'user_id' => 1,
+//        'fd' => 33
+//    ]);
 //生成依赖
 //$msgMethod = new \app\server\Open();
 //注入依赖

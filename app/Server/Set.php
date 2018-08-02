@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2018/7/26
- * Time: 14:34
+ * Date: 2018/7/27
+ * Time: 12:01
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -27,22 +27,16 @@
 
 namespace chat\sw\Server;
 
-class Message implements Chat
+class Set implements Chat
 {
     public function __construct()
     {
     }
 
-    public function Handle($ws, $frame)
+    public function Handle($ws, $request)
     {
-        //查询出所有的用户
-        $send_msg = json_decode($frame->data, true)['msg'];
-        $all_user = DB()
-            ->select('chat_fd','*');
-        dump($all_user);
-        foreach ($all_user as $key => $value) {
-            $msg = Send::msg($value['token'], '用户', 2, $send_msg, $value['fd']);
-            $ws->push($frame->fd, $msg);
-        }
+        $ws->set(array(
+            'log_file' => ROOT_PATH . 'storage/logs/swoole.log',
+        ));
     }
 }

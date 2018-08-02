@@ -10,7 +10,7 @@
   ],
   "minimum-stability": "dev",
   "require": {
-    "ninvfeng/mysql": "dev-master"
+    "catfan/Medoo": "dev-master"
   },
   "autoload": {
     "psr-4": {

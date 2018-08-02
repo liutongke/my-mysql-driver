@@ -30,9 +30,10 @@ return [
     'mysql' => [
         'host' => '',
         'port' => 3306,
-        'name' => '',
-        'user' => '',
-        'pass' => '',
+        'database_name' => '',
+        'username' => '',
+        'password' => '',
+        'prefix' => '',
     ],
 
     //redis配置
@@ -40,5 +41,11 @@ return [
         'host' => '',
         'port' => 3306,
         'pass' => '',
+    ],
+
+    //swoole配置
+    'swoole' => [
+        //错误日志位置
+        'logs' => 'storage/logs/swoole.log'
     ],
 ];

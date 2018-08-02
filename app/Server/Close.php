@@ -27,6 +27,8 @@
 
 namespace chat\sw\Server;
 
+use chat\sw\Core\Handle;
+
 class Close implements Chat
 {
     public function __construct()
@@ -35,6 +37,7 @@ class Close implements Chat
 
     public function Handle($ws, $fd)
     {
+        Handle::Close($fd);
         echo 'clole';
     }
 }

@@ -11,24 +11,24 @@ class ComposerStaticInitdbb3310c8429129709aff5e5745c217c
     );
 
     public static $prefixLengthsPsr4 = array (
-        'n' => 
-        array (
-            'ninvfeng\\' => 9,
-        ),
         'c' => 
         array (
             'chat\\sw\\' => 8,
         ),
+        'M' => 
+        array (
+            'Medoo\\' => 6,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'ninvfeng\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/ninvfeng/mysql/src',
-        ),
         'chat\\sw\\' => 
         array (
             0 => __DIR__ . '/../..' . '/app',
+        ),
+        'Medoo\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/catfan/medoo/src',
         ),
     );
 

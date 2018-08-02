@@ -25,16 +25,51 @@
  *——————————————————代码永无BUG —————————————————
  */
 //mysql数据库
-function DB($table = 'null')
-{
-    static $config;
-    if (!$config)
-        $config = $GLOBALS['config'];
+//function DB($table = 'null')
+//{
+//    static $config;
+//    if (!$config)
+//        $config = $GLOBALS['config'];
+//
+//    static $_db;
+//    if (!$_db)
+//        $_db = new \ninvfeng\mysql($config['mysql']);
+//    return $_db->table($table);
+//}
 
-    static $_db;
-    if (!$_db)
-        $_db = new \ninvfeng\mysql($config['mysql']);
-    return $_db->table($table);
+function DB()
+{
+    return $database = new \Medoo\Medoo([
+        // required
+        'database_type' => 'mysql',
+        'database_name' => $GLOBALS['config']['mysql']['database_name'],
+        'server' => $GLOBALS['config']['mysql']['host'],
+        'username' => $GLOBALS['config']['mysql']['username'],
+        'password' => $GLOBALS['config']['mysql']['password'],
+
+        // [optional]
+        'charset' => 'utf8',
+        'port' => $GLOBALS['config']['mysql']['port'],
+
+        // [optional] Table prefix
+        'prefix' => $GLOBALS['config']['mysql']['prefix'],
+
+        // [optional] Enable logging (Logging is disabled by default for better performance)
+        'logging' => true,
+
+        // [optional] MySQL socket (shouldn't be used with server and port)
+//        'socket' => '/tmp/mysql.sock',
+
+        // [optional] driver_option for connection, read more from http://www.php.net/manual/en/pdo.setattribute.php
+        'option' => [
+            PDO::ATTR_CASE => PDO::CASE_NATURAL
+        ],
+
+        // [optional] Medoo will execute those commands after connected to the database for initialization
+        'command' => [
+            'SET SQL_MODE=ANSI_QUOTES'
+        ]
+    ]);
 }
 
 //Redis数据库

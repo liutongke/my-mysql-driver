@@ -30,11 +30,12 @@ namespace chat\sw\Core;
 class Send
 {
     //对发送的方法进行封装
-    public function msg($state, $id = 0, $username = 0, $msg)
+    public static function msg($token, $username = 0, $state, $msg, $id = 0)
     {
         return json_encode([
+            'token' => $token,
             'username' => $username,
-            'state' => $state,
+            'state' => $state,//1单聊2群聊
             'msg' => $msg,
             'id' => $id
         ]);
