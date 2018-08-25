@@ -2,7 +2,7 @@
 /*
  * User: keke
  * Date: 2018/7/26
- * Time: 14:34
+ * Time: 14:35
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,18 +25,19 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Server;
+namespace chat\sw\Websocket;
 
 use chat\sw\Core\Handle;
 
-class Open implements Chat
+class Close implements Chat
 {
     public function __construct()
     {
     }
 
-    public function Handle($ws, $request)
+    public function Handle($ws, $fd)
     {
-        $ws->push($request->fd, Handle::Open($request));
+        Handle::Close($fd);
+        echo 'clole';
     }
 }

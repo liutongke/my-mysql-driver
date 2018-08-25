@@ -25,9 +25,7 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Server;
-
-use chat\sw\Core\Ioc;
+namespace chat\sw\Websocket;
 
 class Ws
 {

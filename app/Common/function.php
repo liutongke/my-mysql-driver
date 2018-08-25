@@ -24,19 +24,6 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
-//mysql数据库
-//function DB($table = 'null')
-//{
-//    static $config;
-//    if (!$config)
-//        $config = $GLOBALS['config'];
-//
-//    static $_db;
-//    if (!$_db)
-//        $_db = new \ninvfeng\mysql($config['mysql']);
-//    return $_db->table($table);
-//}
-
 function DB()
 {
     return $database = new \Medoo\Medoo([
@@ -85,6 +72,7 @@ function Redis()
     return $redis;
 }
 
+//中断格式化打印
 function dd($data)
 {
     echo '<pre />';
@@ -93,6 +81,7 @@ function dd($data)
     die;
 }
 
+//不中断格式化打印
 function dump($data)
 {
     echo '<pre />';

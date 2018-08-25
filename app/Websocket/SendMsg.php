@@ -26,7 +26,7 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Server;
+namespace chat\sw\Websocket;
 
 class SendMsg
 {

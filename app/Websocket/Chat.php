@@ -1,8 +1,9 @@
 <?php
+
 /*
  * User: keke
- * Date: 2018/7/27
- * Time: 12:01
+ * Date: 2018/7/26
+ * Time: 14:36
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,18 +26,9 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Server;
+namespace chat\sw\Websocket;
 
-class Set implements Chat
+interface Chat
 {
-    public function __construct()
-    {
-    }
-
-    public function Handle($ws, $request)
-    {
-        $ws->set(array(
-            'log_file' => ROOT_PATH . 'storage/logs/swoole.log',
-        ));
-    }
+    public function Handle($ws, $request);
 }

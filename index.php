@@ -26,7 +26,7 @@
  */
 require_once __DIR__ . '/vendor/autoload.php';
 //use \app\Jwt;
-use \chat\sw\Server\Ws;
+use \chat\sw\Websocket\Ws;
 
 $webSocket = new Ws();
 $webSocket->run();

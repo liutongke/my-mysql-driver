@@ -1,9 +1,8 @@
 <?php
-
 /*
  * User: keke
  * Date: 2018/7/26
- * Time: 14:36
+ * Time: 14:34
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -26,9 +25,19 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Server;
+namespace chat\sw\Websocket;
 
-interface Chat
+use chat\sw\Core\Handle;
+
+class Open implements Chat
 {
-    public function Handle($ws, $request);
+    public function __construct()
+    {
+    }
+
+    public function Handle($ws, $request)
+    {
+        dump($request);
+        $ws->push($request->fd, Handle::Open($request));
+    }
 }

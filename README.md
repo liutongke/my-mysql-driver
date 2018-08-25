@@ -1,3 +1,10 @@
+### 启动swoole  
+- 项目根目录运行  
+```shell
+chmod -R 777 kill.sh
+```  
+赋予运行权限  
+- ./kill.sh启动swoole
 > chrome按f12在console调试代码：  
 ```js  
 //普通方式
@@ -20,7 +27,7 @@ websocket.onerror = function (evt, e) {
 };
 
 //wss加密连接方式
-var wsServer = 'wss://域名/wss';
+var wsServer = 'wss://域名';
 var websocket = new WebSocket(wsServer);
 websocket.onopen = function (evt) {
     console.log("Connected to WebSocket server.");

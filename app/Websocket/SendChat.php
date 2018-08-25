@@ -1,8 +1,9 @@
 <?php
+
 /*
  * User: keke
  * Date: 2018/7/26
- * Time: 14:35
+ * Time: 14:42
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,19 +26,20 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Server;
+namespace chat\sw\Websocket;
 
-use chat\sw\Core\Handle;
-
-class Close implements Chat
+class SendChat
 {
-    public function __construct()
+
+    private $sw;
+
+    public function __construct(Chat $wsMethod)
     {
+        $this->sw = $wsMethod;
     }
 
-    public function Handle($ws, $fd)
+    public function send($ws, $request)
     {
-        Handle::Close($fd);
-        echo 'clole';
+        $this->sw->Handle($ws, $request);
     }
 }
