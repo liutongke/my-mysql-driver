@@ -64,6 +64,7 @@ class test
 
     //服务对象
     private $ws;
+    private static $worker = ["WorkerStart", "open", "message", "close"];
 
     public function __construct()
     {
@@ -75,10 +76,13 @@ class test
             }
         });
         $this->ws = new Swoole\WebSocket\Server("0.0.0.0", 9500);
-        $this->ws->on('WorkerStart', [$this, 'WorkerStart']);
-        $this->ws->on('open', [$this, 'open']);
-        $this->ws->on('message', [$this, 'message']);
-        $this->ws->on('close', [$this, 'close']);
+        foreach (self::$worker as $workerInfo) {
+            $this->ws->on($workerInfo, [$this, $workerInfo]);
+        }
+//        $this->ws->on('WorkerStart', [$this, 'WorkerStart']);
+//        $this->ws->on('open', [$this, 'open']);
+//        $this->ws->on('message', [$this, 'message']);
+//        $this->ws->on('close', [$this, 'close']);
     }
 
     public function SendData($workId)
