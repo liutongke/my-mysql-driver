@@ -25,14 +25,23 @@
  *——————————————————代码永无BUG —————————————————
  */
 require_once __DIR__ . '/vendor/autoload.php';
-//use \app\Jwt;
-use \chat\sw\Websocket\Ws;
 
-$webSocket = new Ws();
-$webSocket->run();
-$res = DB()->insert('chat_fd', ['user_id' => 1,
-    'fd' => 2,
-    'token' => 'token']);
+use \chat\sw\Co\Ws;
+use \chat\sw\Co\CoWs;
+use \chat\sw\Co\Router;
+
+$router = new Router();
+$router->Register("index/test", \chat\sw\Co\App\Index);
+(new CoWs())->start();
+//(new Ws())->run();//异步风格
+//use \app\Jwt;
+//use \chat\sw\Websocket\Ws;
+//
+//$webSocket = new Ws();
+//$webSocket->run();
+//$res = DB()->insert('chat_fd', ['user_id' => 1,
+//    'fd' => 2,
+//    'token' => 'token']);
 //$res = DB('chat_fd')
 //    ->insert([
 //        'user_id' => 1,
