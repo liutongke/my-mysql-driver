@@ -1,8 +1,9 @@
 <?php
+
 /*
  * User: keke
- * Date: 2018/7/26
- * Time: 16:19
+ * Date: 2021/7/13
+ * Time: 10:36
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -24,28 +25,49 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
-//配置
-return [
-    //mysql配置
-    'mysql' => [
-        'host' => '',
-        'port' => 3306,
-        'database_name' => '',
-        'username' => '',
-        'password' => '',
-        'prefix' => '',
-    ],
 
-    //redis配置
-    'redis' => [
-        'host' => '',
-        'port' => 3306,
-        'pass' => '',
-    ],
+function get_subjects($obj_name)
+{
+    if (!is_object($obj_name)) {
+        return (false);
+    }
+    return ($obj_name->subjects);
+}
 
-    //swoole配置
-    'swoole' => [
-        //错误日志位置
-        'logs' => 'storage/logs/swoole.log'
-    ],
-];
+$obj_name = new stdClass;
+$obj_name->subjects = array('Google', 'Runoob', 'Facebook');
+var_dump(get_subjects(NULL));
+var_dump(get_subjects($obj_name));
+
+class foo
+{
+
+    function __call($name, $arguments)
+    {
+        var_dump($name, $arguments);
+    }
+
+    public function __set($name, $value)
+    {
+        var_dump('__set', $name, $value);
+    }
+
+    public function __get($name)
+    {
+        return $this->get('__get', $name, NULL);
+    }
+
+    public static function __callStatic($name, $arguments)
+    {
+        // TODO: Implement __callStatic() method.
+        var_dump($name, $arguments);
+    }
+}
+
+foo::Get("path/", "test@index");
+$x = new foo();
+
+$x->doStuff("123");
+$x->test1 = "test";
+$x->test1;
+//$x->fancy_stuff();

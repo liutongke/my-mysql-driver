@@ -30,8 +30,19 @@ namespace chat\sw\Co;
 
 class App
 {
-    public function Index($ws, array $msg)
+    public function Index(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
-        return "this is router test!";
+        $response->end("this is router test!");
+    }
+
+    public function Index1(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
+    {
+        $rand = rand(1111, 9999);
+        $response->end("<h1>------>Index1</h1>{$rand}");
+    }
+
+    public function stop(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
+    {
+        $response->end("<h1>------>stop</h1>");
     }
 }
