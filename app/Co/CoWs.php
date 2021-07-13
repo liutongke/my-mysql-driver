@@ -57,16 +57,32 @@ class CoWs
 
     public function WorkerStart($pool, $workerId)
     {
-        $this->startServ();
+        var_dump($pool);
+//        $http = new \Swoole\Http\Server('0.0.0.0', 9501);
+//
+//        $http->on('Request', function ($request, $response) {
+//            $response->header('Content-Type', 'text/html; charset=utf-8');
+//            $response->end('<h1>Hello Swoole. #' . rand(1000, 9999) . '</h1>');
+//        });
+
+//        $http->start();
+        $this->startServ($pool, $workerId);
     }
 
-    private function http($server)
+    private function startServ($pool, $workerId)
+    {
+        $server = new Server($this->_config['host'], $this->_config['port'], $this->_config['ssl'], $this->_config['reuse_port']);
+        $this->http($server, $pool, $workerId);
+        $server->start();
+    }
+
+    private function http($server, $pool, $workerId)
     {
         $list = HttpRouter::GetHandlers();
         foreach ($list as $url => $objInfo) {//$server->handle('/Index', [new App(), 'Index']);
 //            $server->handle($key, $value);
-            $server->handle($url, function ($request, $response) use ($server, $objInfo) {
-                call_user_func_array($objInfo, [$request, $response, $server]);
+            $server->handle($url, function ($request, $response) use ($server, $objInfo, $pool, $workerId) {
+                call_user_func_array($objInfo, [$request, $response, $workerId]);
             });
         }
         $server->handle('/Index', [new App(), 'Index']);
@@ -79,13 +95,6 @@ class CoWs
 //            $response->end("<h1>Stop3</h1>");
 //            $server->shutdown();
         });
-    }
-
-    private function startServ()
-    {
-        $server = new Server($this->_config['host'], $this->_config['port'], $this->_config['ssl'], $this->_config['reuse_port']);
-        $this->http($server);
-        $server->start();
     }
 
     public function start()
