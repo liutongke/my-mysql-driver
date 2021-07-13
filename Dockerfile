@@ -6,11 +6,10 @@
 #CMD ["nginx"]
 #docker  run --name some-nginx2 -d -p 13337:80 256f90fc81f5
 #------
-FROM php:7.4-cli
-RUN pecl install redis-5.1.1 \
-    && pecl install xdebug-2.8.1 \
+FROM php:8.0-cli
+RUN pecl install redis-5.3.4 \
     && pecl install swoole \
-    && docker-php-ext-enable redis xdebug swoole \
+    && docker-php-ext-enable redis swoole \
     && php -r "copy('https://install.phpcomposer.com/installer', 'composer-setup.php');" \
     && php composer-setup.php \
     && php -r "unlink('composer-setup.php');" \

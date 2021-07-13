@@ -61,7 +61,7 @@ class WsRouter implements Router
     {
 //        call_user_func_array($objInfo, [$request, $response, $server]);
         $res = json_decode($frame->data, true);
-        $path = $res['path'];
+//        $path = $res['path'];
         if (empty($res) || !is_array($res)) {
             return json_encode(['id' => -1, 'err' => 400, 'path' => '', 'data' => date("Y-m-d H:i:s")]);
         }
