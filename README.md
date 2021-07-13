@@ -1,4 +1,5 @@
-### 启动swoole  
+### 启动swoole
+bash: ./a.sh: /bin/bash^M: bad interpreter: No such file or directory的解决方法:sed -i "s/\r//" start.sh
 - 项目根目录运行  
 ```shell
 chmod -R 777 kill.sh

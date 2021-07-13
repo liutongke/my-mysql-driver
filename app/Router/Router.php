@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2018/7/26
- * Time: 16:19
+ * Date: 2021/7/13
+ * Time: 14:37
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -24,28 +24,13 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
-//配置
-return [
-    //mysql配置
-    'mysql' => [
-        'host' => '',
-        'port' => 3306,
-        'database_name' => '',
-        'username' => '',
-        'password' => '',
-        'prefix' => '',
-    ],
 
-    //redis配置
-    'redis' => [
-        'host' => '',
-        'port' => 3306,
-        'pass' => '',
-    ],
+namespace chat\sw\Router;
 
-    //swoole配置
-    'swoole' => [
-        //错误日志位置
-        'logs' => 'storage/logs/swoole.log'
-    ],
-];
+
+interface Router
+{
+    public function SetHandlers($name, $value);
+
+    public static function GetHandlers();
+}

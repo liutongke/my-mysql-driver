@@ -27,6 +27,7 @@
 
 namespace chat\sw\Co;
 
+use chat\sw\Router\HttpRouter;
 use Swoole\Process;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Server\Connection;
@@ -39,11 +40,12 @@ use function Swoole\Coroutine\run;
 class CoWs
 {
     private $pool;//进程池
-
+    private $_config;
     private static $worker = ["WorkerStart"];
 
     public function __construct()
     {
+        $this->_config = DI()->config->get('conf.ws');
         //多进程管理模块
         $this->pool = new Process\Pool(2);
         //让每个OnWorkerStart回调都自动创建一个协程
@@ -55,50 +57,34 @@ class CoWs
 
     public function WorkerStart($pool, $workerId)
     {
-        $this->ws();//websocket
+        $this->startServ();
     }
 
     private function http($server)
     {
+        $list = HttpRouter::GetHandlers();
+        foreach ($list as $url => $objInfo) {//$server->handle('/Index', [new App(), 'Index']);
+//            $server->handle($key, $value);
+            $server->handle($url, function ($request, $response) use ($server, $objInfo) {
+                call_user_func_array($objInfo, [$request, $response, $server]);
+            });
+        }
+        $server->handle('/Index', [new App(), 'Index']);
         $server->handle('/test', function ($request, $response) {
             $rand = rand(1111, 9999);
             $response->end("<h1>Index1</h1>{$rand}");
         });
         $server->handle('/stop', function ($request, $response) use ($server) {
-            $response->end("<h1>Stop3</h1>");
-            $server->shutdown();
+            (new App())->stop($request, $response, $server);
+//            $response->end("<h1>Stop3</h1>");
+//            $server->shutdown();
         });
     }
 
-    private function ws()
+    private function startServ()
     {
-        $server = new Server('0.0.0.0', 9501, false, true);
+        $server = new Server($this->_config['host'], $this->_config['port'], $this->_config['ssl'], $this->_config['reuse_port']);
         $this->http($server);
-        $server->handle('/ws', function (Request $request, Response $ws) {
-            $ws->upgrade();
-            global $wsObjects;
-            $objectId = spl_object_id($ws);
-            $wsObjects[$objectId] = $ws;
-            while (true) {
-                $frame = $ws->recv();
-                if ($frame === '') {
-                    unset($wsObjects[$objectId]);
-                    $ws->close();
-                    break;
-                } else if ($frame === false) {
-                    echo 'errorCode: ' . swoole_last_error() . "\n";
-                    $ws->close();
-                    break;
-                } else {
-                    if ($frame->data == 'close' || get_class($frame) === CloseFrame::class) {
-                        unset($wsObjects[$objectId]);
-                        $ws->close();
-                        break;
-                    }
-                    $ws->push(Router::MsgHandle($ws, $frame));
-                }
-            }
-        });
         $server->start();
     }
 

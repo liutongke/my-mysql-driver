@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2018/7/26
- * Time: 16:19
+ * Date: 2021/7/13
+ * Time: 11:06
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -24,28 +24,11 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
-//配置
 return [
-    //mysql配置
-    'mysql' => [
-        'host' => '',
-        'port' => 3306,
-        'database_name' => '',
-        'username' => '',
-        'password' => '',
-        'prefix' => '',
-    ],
-
-    //redis配置
-    'redis' => [
-        'host' => '',
-        'port' => 3306,
-        'pass' => '',
-    ],
-
-    //swoole配置
-    'swoole' => [
-        //错误日志位置
-        'logs' => 'storage/logs/swoole.log'
+    'ws' => [
+        'host' => '0.0.0.0',
+        'port' => 9501,
+        'ssl' => false,
+        'reuse_port' => true,//端口复用
     ],
 ];

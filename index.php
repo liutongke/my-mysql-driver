@@ -26,18 +26,31 @@
  */
 require_once __DIR__ . '/vendor/autoload.php';
 
-use \chat\sw\Co\Ws;
+use \chat\sw\Co\Websocket;
 use \chat\sw\Co\CoWs;
-use \chat\sw\Co\Router;
+use \chat\sw\Router\HttpRouter;
+use \chat\sw\Co\Config;
 
-$router = new Router();
-$router->Register("index/test", \chat\sw\Co\App\Index);
-(new CoWs())->start();
-//(new Ws())->run();//异步风格
+$di = DI();
+$di->config = new Config("./app/Config");
+//var_dump($di->config->get('conf.mysql', 123));
+//die;
+//HttpRouter::Register("index/test", function ($b) {
+//    echo "test!!!";
+//});
+HttpRouter::Register("/app/test", "\chat\sw\Co\App@Index1");
+HttpRouter::Register("/ws", "\chat\sw\Co\Websocket@ws");
+//(new \chat\sw\Co\App())->Index1();
+//$router = new HttpRouter();
+//$router->GetHandlers("index/test", [1, 2]);
+//$router->GetHandlers("app/test", [1, 2]);
+//$router->Register("index/test", \chat\sw\Co\App\Index);
+(new CoWs())->start();//协程风格
+//(new Websocket())->run();//异步风格
 //use \app\Jwt;
-//use \chat\sw\Websocket\Ws;
+//use \chat\sw\Websocket\Websocket;
 //
-//$webSocket = new Ws();
+//$webSocket = new Websocket();
 //$webSocket->run();
 //$res = DB()->insert('chat_fd', ['user_id' => 1,
 //    'fd' => 2,

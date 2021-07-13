@@ -24,6 +24,11 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
+function DI()
+{
+    return \chat\sw\Co\Di::one();
+}
+
 function DB()
 {
     return $database = new \Medoo\Medoo([
