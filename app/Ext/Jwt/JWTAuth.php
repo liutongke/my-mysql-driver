@@ -2,7 +2,7 @@
 /*
  * User: keke
  * Date: 2018/7/26
- * Time: 16:19
+ * Time: 20:17
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -24,28 +24,33 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
-//配置
-return [
-    //mysql配置
-    'mysql' => [
-        'host' => '',
-        'port' => 3306,
-        'database_name' => '',
-        'username' => '',
-        'password' => '',
-        'prefix' => '',
-    ],
 
-    //redis配置
-    'redis' => [
-        'host' => '',
-        'port' => 3306,
-        'pass' => '',
-    ],
+namespace chat\sw\Ext\Jwt;
 
-    //swoole配置
-    'swoole' => [
-        //错误日志位置
-        'logs' => 'storage/logs/swoole.log'
-    ],
-];
+class Jwt
+{
+    private $token;
+
+    public function __construct($token)
+    {
+        return $this->token = $token;
+    }
+
+    //将token切割成数组
+    public function exToken()
+    {
+        return self::base();
+    }
+
+    //base64解码
+    public function base()
+    {
+        return;
+    }
+
+    //解密第二部分
+    public function decode()
+    {
+        return json_decode(base64_decode(explode('.', $this->token)['1']), true);
+    }
+}

@@ -85,16 +85,16 @@ class CoWs
                 call_user_func_array($objInfo, [$request, $response, $workerId]);
             });
         }
-        $server->handle('/Index', [new App(), 'Index']);
-        $server->handle('/test', function ($request, $response) {
-            $rand = rand(1111, 9999);
-            $response->end("<h1>Index1</h1>{$rand}");
-        });
-        $server->handle('/stop', function ($request, $response) use ($server) {
-            (new App())->stop($request, $response, $server);
+//        $server->handle('/Index', [new App(), 'Index']);
+//        $server->handle('/test', function ($request, $response) {
+//            $rand = rand(1111, 9999);
+//            $response->end("<h1>Index1</h1>{$rand}");
+//        });
+//        $server->handle('/stop', function ($request, $response) use ($server) {
+//            (new App())->stop($request, $response, $server);
 //            $response->end("<h1>Stop3</h1>");
 //            $server->shutdown();
-        });
+//        });
     }
 
     public function start()

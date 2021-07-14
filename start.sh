@@ -8,4 +8,4 @@ kill -9 $id
 echo "killed $id"
 done
 echo "---------------"
-#nohup php index.php &
+nohup php index.php &

@@ -25,7 +25,7 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Core;
+namespace chat\sw\Ext;
 //反射
 class Ioc
 {

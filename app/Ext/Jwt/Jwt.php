@@ -25,7 +25,7 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Core\Jwt;
+namespace chat\sw\Ext\Jwt;
 
 abstract class Jwt
 {

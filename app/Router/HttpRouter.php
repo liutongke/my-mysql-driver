@@ -39,21 +39,36 @@ class HttpRouter implements Router
 
     public function SetHandlers($name, $value)
     {
-        self::$router[$value['0']] = $value['1'];
+        if (is_callable($value['1'])) {//函数
+            self::$router[$value['0']] = $value['1'];
+        } else {
+            $arr = explode('@', $value['1']);
+            $obj = new $arr['0']();
+            self::$router[$value['0']] = [$obj, $arr['1']];
+        }
     }
 
     public static function GetHandlers()
     {
-        $list = [];
-        foreach (self::$router as $path => $call) {
-            if (is_callable($call)) {//函数
-                $list[$path] = $call;
-            } else {
-                $arr = explode('@', $call);
-                $obj = new $arr['0']();
-                $list[$path] = [$obj, $arr['1']];
-            }
-        }
-        return $list;
+        return self::$router;
     }
+//    public function SetHandlers($name, $value)
+//    {
+//        self::$router[$value['0']] = $value['1'];
+//    }
+//
+//    public static function GetHandlers()
+//    {
+//        $list = [];
+//        foreach (self::$router as $path => $call) {
+//            if (is_callable($call)) {//函数
+//                $list[$path] = $call;
+//            } else {
+//                $arr = explode('@', $call);
+//                $obj = new $arr['0']();
+//                $list[$path] = [$obj, $arr['1']];
+//            }
+//        }
+//        return $list;
+//    }
 }
