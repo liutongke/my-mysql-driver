@@ -31,15 +31,29 @@ use \chat\sw\Co\CoWs;
 use \chat\sw\Router\HttpRouter;
 use \chat\sw\Co\Config;
 
+define('DS', DIRECTORY_SEPARATOR);           //目录分隔符
+define('ROOT_PATH', getcwd() . DS);               //入口文件所在的目录
+//define('APP_PATH',ROOT_PATH.'Application'.DS);
+//define('FRAMEWORK_PATH', ROOT_PATH.'Framework'.DS);
+define('CONFIG_PATH', ROOT_PATH . 'config' . DS);
+//define('CONTROLLER_PATH', APP_PATH.'Controller'.DS);
+//define('MODEL_PATH', APP_PATH.'Model'.DS);
+//define('VIEW_PATH', APP_PATH.'View'.DS);
+//define('CORE_PATH', FRAMEWORK_PATH.'Core'.DS);
+//define('LIB_PATH', FRAMEWORK_PATH.'Lib'.DS);
+//var_dump(DS, ROOT_PATH, CONFIG_PATH);
 $di = DI();
-$di->config = new Config("./app/Config");
+$di->config = new Config("./Config");
 //var_dump($di->config->get('conf.mysql', 123));
 //die;
 //HttpRouter::Register("index/test", function ($b) {
 //    echo "test!!!";
 //});
-HttpRouter::Register("/app/test", "\chat\sw\Co\App@Index1");
-HttpRouter::Register("/ws", "\chat\sw\Co\Websocket@ws");
+\HttpRouter("/", "\chat\sw\Controller\App@Index1");
+\HttpRouter("/app/test", "\chat\sw\Controller\App@Index1");
+\HttpRouter("/stop", "\chat\sw\Controller\App@stop");
+\HttpRouter("/ws", "\chat\sw\Co\Websocket@ws");//websocket
+WsRouter("websocket", "\chat\sw\Controller\WsController@stop");
 //(new \chat\sw\Co\App())->Index1();
 //$router = new HttpRouter();
 //$router->GetHandlers("index/test", [1, 2]);

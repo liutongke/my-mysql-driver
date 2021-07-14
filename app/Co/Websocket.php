@@ -38,12 +38,12 @@ class Websocket
 {
     public function ws(\Swoole\Http\Request $request, \Swoole\Http\Response $response, $server)
     {
-        var_dump("getWorkId----->", $server);
+//        var_dump("getWorkId----->", $server);
         $response->upgrade();
         global $wsObjects;
         $objectId = spl_object_id($response);
         $wsObjects[$objectId] = $response;
-        var_dump($wsObjects);
+//        var_dump($wsObjects);
         while (true) {
             $frame = $response->recv();
             if ($frame === '') {

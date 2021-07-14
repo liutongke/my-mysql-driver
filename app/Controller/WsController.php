@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/12
- * Time: 15:39
+ * Date: 2021/7/14
+ * Time: 17:01
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,21 +25,13 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-function sys_download_file($path, $name = null, $isRemote = false, $isSSL = false, $proxy = '')
-{
-    $url = str_replace(" ", "%20", $path);
+namespace chat\sw\Controller;
 
-    if (function_exists('curl_init')) {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // 对认证证书来源的检查
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // 从证书中检查SSL加密算法是否存在
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        $temp = curl_exec($ch);
-        echo $temp;
-        file_put_contents("test.pdf", $temp);
+
+class WsController
+{
+    public function stop(\Swoole\Http\Request $request, \Swoole\Http\Response $response, $msg)
+    {
+        echo 123123;
     }
 }
-
-sys_download_file('', true, true);

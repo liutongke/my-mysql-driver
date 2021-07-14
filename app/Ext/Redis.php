@@ -3,7 +3,7 @@
 /*
  * User: keke
  * Date: 2018/7/26
- * Time: 14:42
+ * Time: 17:02
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -26,20 +26,24 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Websocket;
+namespace chat\sw\Ext;
 
-class SendMsg
+class Redis
 {
-
-    private $sw;
-
-    public function __construct(Chat $wsMethod)
+    //对redis连接的封装
+    public function __construct($config)
     {
-        $this->sw = $wsMethod;
+        //连接数据库
+        $this->redis = new \Redis();
+        $this->redis->connect($config['host'], $config['port']);
+        //授权
+//        $this->redis->auth($config['pass'] == '' ? '' : $config['pass']);
+        $config['pass'] == '' ?: $this->redis->auth($config['pass']);
     }
 
-    public function send($ws, $request)
-    {
-        $this->sw->Handle($ws, $request);
-    }
+    //获取值
+//    public function get($key)
+//    {
+//        return $this->redis->get($key);
+//    }
 }

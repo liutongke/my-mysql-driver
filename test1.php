@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2018/7/26
- * Time: 14:35
+ * Date: 2021/7/14
+ * Time: 18:03
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,19 +25,26 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Websocket;
+use Swoole\Process;
+use Swoole\Timer;
+use function Swoole\Coroutine\run;
 
-use chat\sw\Core\Handle;
+$pool = new Swoole\Process\Pool(2, SWOOLE_IPC_UNIXSOCK, 0, true);
 
-class Close implements Chat
-{
-    public function __construct()
-    {
+$pool->on('workerStart', function (Swoole\Process\Pool $pool, int $workerId) {
+    $process = $pool->getProcess(0);
+    $socket = $process->exportSocket();
+    if ($workerId == 0) {
+        echo $socket->recv();
+        $socket->send("hello proc1\n");
+        echo "proc0 stop\n";
+    } else {
+        $socket->send("hello proc0\n");
+        echo $socket->recv();
+        echo "proc1 stop\n";
+        $pool->shutdown();
     }
+});
 
-    public function Handle($ws, $fd)
-    {
-        Handle::Close($fd);
-        echo 'clole';
-    }
-}
+$pool->start();
+

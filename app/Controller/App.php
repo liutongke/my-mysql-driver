@@ -1,9 +1,8 @@
 <?php
-
 /*
  * User: keke
- * Date: 2018/7/26
- * Time: 17:02
+ * Date: 2021/7/12
+ * Time: 18:12
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -26,24 +25,25 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Core;
+namespace chat\sw\Controller;
 
-class Redis
+
+class App
 {
-    //对redis连接的封装
-    public function __construct($config)
+//    public function Index(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
+//    {
+//        $response->end("this is router test!");
+//    }
+
+    public function Index1(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
-        //连接数据库
-        $this->redis = new \Redis();
-        $this->redis->connect($config['host'], $config['port']);
-        //授权
-//        $this->redis->auth($config['pass'] == '' ? '' : $config['pass']);
-        $config['pass'] == '' ?: $this->redis->auth($config['pass']);
+        EchoHtml($response, "chatroom/index.html");
+//        $rand = rand(1111, 9999);
+//        $response->end("<h1>------>Index1</h1>{$rand}");
     }
 
-    //获取值
-//    public function get($key)
-//    {
-//        return $this->redis->get($key);
-//    }
+    public function stop(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
+    {
+        $response->end("<h1>------>stop</h1>");
+    }
 }

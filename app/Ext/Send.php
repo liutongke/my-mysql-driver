@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/12
- * Time: 18:12
+ * Date: 2018/7/26
+ * Time: 22:42
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,24 +25,19 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Co;
+namespace chat\sw\Ext;
 
-
-class App
+class Send
 {
-    public function Index(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
+    //对发送的方法进行封装
+    public static function msg($token, $username = 0, $state, $msg, $id = 0)
     {
-        $response->end("this is router test!");
-    }
-
-    public function Index1(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
-    {
-        $rand = rand(1111, 9999);
-        $response->end("<h1>------>Index1</h1>{$rand}");
-    }
-
-    public function stop(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
-    {
-        $response->end("<h1>------>stop</h1>");
+        return json_encode([
+            'token' => $token,
+            'username' => $username,
+            'state' => $state,//1单聊2群聊
+            'msg' => $msg,
+            'id' => $id
+        ]);
     }
 }
