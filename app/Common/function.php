@@ -29,6 +29,16 @@ function DI()
     return \chat\sw\Co\Di::one();
 }
 
+function Tb()
+{
+    $tb = new Swoole\Table(1024);
+    $tb->column('fd', Swoole\Table::TYPE_INT);
+    $tb->column('workerId', Swoole\Table::TYPE_INT);
+    $tb->column('ws', Swoole\Table::TYPE_STRING, 2048);
+    $tb->create();
+    return $tb;
+}
+
 function EchoHtml(\Swoole\Http\Response $response, $htmlPathName)
 {
 //    var_dump(file_get_contents(ROOT_PATH . "/public/" . $htmlPathName));
@@ -61,7 +71,7 @@ function DB()
         'charset' => 'utf8',
         'port' => $GLOBALS['config']['mysql']['port'],
 
-        // [optional] Table prefix
+        // [optional] CoTable prefix
         'prefix' => $GLOBALS['config']['mysql']['prefix'],
 
         // [optional] Enable logging (Logging is disabled by default for better performance)

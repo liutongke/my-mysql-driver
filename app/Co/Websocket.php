@@ -36,18 +36,26 @@ use Swoole\WebSocket\CloseFrame;
 //websocket
 class Websocket
 {
-    public function ws(\Swoole\Http\Request $request, \Swoole\Http\Response $response, $server)
+    public function ws(\Swoole\Http\Request $request, \Swoole\Http\Response $response, \Swoole\Coroutine\Http\Server $server, $workerId, \Swoole\Process\Pool $pool)
     {
-//        var_dump("getWorkId----->", $server);
+        var_dump("getWorkId----->", $server->worker_id);
         $response->upgrade();
-        global $wsObjects;
-        $objectId = spl_object_id($response);
-        $wsObjects[$objectId] = $response;
+//        $t = new \stdClass();
+//        $t->ojb = $response;
+//        serialize($t);
+//        global $wsObjects;
+//        $objectId = spl_object_id($response);
+//        $wsObjects[$objectId] = $response;
+        CoWs::$rps[$workerId] = $response;
+//        CoTable::getInstance()->set($workerId, ['fd' => $response->fd, 'workerId' => $workerId, 'ws' => serialize($server)]);
+//        array_push(CoWs::$rps, $response);
+//        array_push(CoWs::$fds, $response->fd);
 //        var_dump($wsObjects);
+        var_dump("连接的worker进行是{$workerId}");
         while (true) {
             $frame = $response->recv();
             if ($frame === '') {
-                unset($wsObjects[$objectId]);
+//                unset($wsObjects[$objectId]);
                 $response->close();
                 break;
             } else if ($frame === false) {
@@ -56,11 +64,22 @@ class Websocket
                 break;
             } else {
                 if ($frame->data == 'close' || get_class($frame) === CloseFrame::class) {
-                    unset($wsObjects[$objectId]);
+//                    unset($wsObjects[$objectId]);
                     $response->close();
                     break;
                 }
-                $response->push(WsRouter::MsgHandle($request, $response, $frame));
+                $list = CoTable::getInstance()->getAll();
+                var_dump("-------------->workerId:{$workerId}===>", CoWs::$rps);
+//                foreach ($list as $value) {
+//                    var_dump("==========>", $value);
+//                    $obj = unserialize($value['ws']);
+//                $server->push($response->fd, "来了老弟rps发送的workerId:{$workerId}");
+//                    $value->send("来了老弟send发送的workerId:{$workerId}");
+//                }
+//                foreach (CoWs::$fds as $fd) {
+//                    $server->push($fd, "来了老弟fds发送的workerId:{$workerId}");
+//                }
+//                $response->push(WsRouter::MsgHandle($request, $response, $frame));
             }
         }
     }

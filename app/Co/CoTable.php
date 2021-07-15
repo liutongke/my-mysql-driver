@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/13
- * Time: 11:06
+ * Date: 2021/7/15
+ * Time: 10:28
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -24,20 +24,64 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
-return [
-    'ws' => [
-        'host' => '0.0.0.0',
-        'port' => 9501,
-        'ssl' => false,
-        'reuse_port' => true,//端口复用
-    ],
-    'swoole_tables' => [
-        'ws' => [ // 表名，会加上 CoTable 后缀，比如这里是 wsTable
-            'size' => 102400, //  表容量
-            'column' => [ // 表字段，字段名为 value
-                ['name' => 'value', 'type' => \Swoole\Table::TYPE_INT, 'size' => 8],
-            ],
-        ],
-        // 还可以定义其它表
-    ],
-];
+
+namespace chat\sw\Co;
+
+class CoTable
+{
+    protected static $instance = NULL;
+    protected static $table;
+
+    public function __construct()
+    {
+        self::$table = Tb();
+    }
+
+    public static function getInstance()
+    {
+        if (static::$instance == NULL) {
+            static::$instance = (new self());
+        }
+        return static::$instance;
+    }
+
+    public function set(string $key, array $value): bool
+    {
+        return self::$table->set($key, $value);
+    }
+
+    public function get($key)
+    {
+        return self::$table->set($key);
+    }
+
+    public function getAll()
+    {
+        return self::$table;
+    }
+
+    public function incr()
+    {
+
+    }
+
+    public function decr()
+    {
+
+    }
+
+    public function exist()
+    {
+
+    }
+
+    public function del()
+    {
+
+    }
+
+    public function count()
+    {
+
+    }
+}

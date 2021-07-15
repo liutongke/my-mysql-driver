@@ -32,6 +32,6 @@ class WsController
 {
     public function stop(\Swoole\Http\Request $request, \Swoole\Http\Response $response, $msg)
     {
-        echo 123123;
+        return 123123;
     }
 }

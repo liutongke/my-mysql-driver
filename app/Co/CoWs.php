@@ -42,12 +42,14 @@ class CoWs
     private $pool;//进程池
     private $_config;
     private static $worker = ["WorkerStart"];
+    public static $rps = [];
 
     public function __construct()
     {
         $this->_config = DI()->config->get('conf.ws');
+        CoTable::getInstance();
         //多进程管理模块
-        $this->pool = new Process\Pool(2);
+        $this->pool = new Process\Pool(2, SWOOLE_IPC_UNIXSOCK, 0, true);
         //让每个OnWorkerStart回调都自动创建一个协程
         $this->pool->set(['enable_coroutine' => true]);
         foreach (self::$worker as $workerInfo) {
@@ -55,7 +57,7 @@ class CoWs
         }
     }
 
-    public function WorkerStart($pool, $workerId)
+    public function WorkerStart(\Swoole\Process\Pool $pool, $workerId)
     {
         var_dump($pool);
 //        $http = new \Swoole\Http\Server('0.0.0.0', 9501);
@@ -82,7 +84,7 @@ class CoWs
         foreach ($list as $url => $objInfo) {//$server->handle('/Index', [new App(), 'Index']);
 //            $server->handle($key, $value);
             $server->handle($url, function ($request, $response) use ($server, $objInfo, $pool, $workerId) {
-                call_user_func_array($objInfo, [$request, $response, $workerId]);
+                call_user_func_array($objInfo, [$request, $response, $server, $workerId, $pool]);
             });
         }
 //        $server->handle('/Index', [new App(), 'Index']);
