@@ -30,16 +30,16 @@ namespace chat\sw\Controller;
 
 class App
 {
-//    public function Index(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
-//    {
-//        $response->end("this is router test!");
-//    }
+    public function Index(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
+    {
+        $response->end("<h1>hello swoole!</h1>");
+    }
 
     public function Index1(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
-        EchoHtml($response, "chatroom/index.html");
-//        $rand = rand(1111, 9999);
-//        $response->end("<h1>------>Index1</h1>{$rand}");
+//        EchoHtml($response, "chatroom/index.html");
+        $rand = rand(1111, 9999);
+        $response->end("<h1>------>Index1</h1>{$rand}");
     }
 
     public function stop(\Swoole\Http\Request $request, \Swoole\Http\Response $response)

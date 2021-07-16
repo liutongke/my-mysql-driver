@@ -30,6 +30,7 @@ use \chat\sw\Co\Websocket;
 use \chat\sw\Co\CoWs;
 use \chat\sw\Router\HttpRouter;
 use \chat\sw\Co\Config;
+use \chat\sw\Co\Co;
 
 define('DS', DIRECTORY_SEPARATOR);           //目录分隔符
 define('ROOT_PATH', getcwd() . DS);               //入口文件所在的目录
@@ -49,9 +50,10 @@ $di->config = new Config("./Config");
 //HttpRouter::Register("index/test", function ($b) {
 //    echo "test!!!";
 //});
-\HttpRouter("/", "\chat\sw\Controller\App@Index1");
+\HttpRouter("/", "\chat\sw\Controller\App@Index");
 \HttpRouter("/app/test", "\chat\sw\Controller\App@Index1");
 \HttpRouter("/stop", "\chat\sw\Controller\App@stop");
+
 \HttpRouter("/ws", "\chat\sw\Co\Websocket@ws");//websocket
 WsRouter("websocket", "\chat\sw\Controller\WsController@stop");
 //(new \chat\sw\Co\App())->Index1();
@@ -59,7 +61,8 @@ WsRouter("websocket", "\chat\sw\Controller\WsController@stop");
 //$router->GetHandlers("index/test", [1, 2]);
 //$router->GetHandlers("app/test", [1, 2]);
 //$router->Register("index/test", \chat\sw\Co\App\Index);
-(new CoWs())->start();//协程风格
+//(new CoWs())->start();//协程风格
+(new Co())->run();
 //(new Websocket())->run();//异步风格
 //use \app\Jwt;
 //use \chat\sw\Websocket\Websocket;

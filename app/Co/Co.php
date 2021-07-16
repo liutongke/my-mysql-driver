@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/13
- * Time: 11:06
+ * Date: 2021/7/15
+ * Time: 22:44
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -24,26 +24,18 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
-return [
-    'http' => [
-        'host' => '0.0.0.0',
-        'port' => 9501,
-        'ssl' => false,
-        'reuse_port' => true,//端口复用
-    ],
-    'ws' => [
-        'host' => '0.0.0.0',
-        'port' => 9501,
-        'ssl' => false,
-        'reuse_port' => true,//端口复用
-    ],
-    'swoole_tables' => [
-        'ws' => [ // 表名，会加上 CoTable 后缀，比如这里是 wsTable
-            'size' => 102400, //  表容量
-            'column' => [ // 表字段，字段名为 value
-                ['name' => 'value', 'type' => \Swoole\Table::TYPE_INT, 'size' => 8],
-            ],
-        ],
-        // 还可以定义其它表
-    ],
-];
+
+namespace chat\sw\Co;
+
+use chat\sw\Router\HttpRouter;
+use Swoole\Process;
+use Swoole\Coroutine\Http\Server;
+
+class Co
+{
+    public function run()
+    {
+//        (new CoHttp())->start();
+        (new Ws())->start();
+    }
+}
