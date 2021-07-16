@@ -54,7 +54,7 @@ $di->config = new Config("./Config");
 //\HttpRouter("/", "\chat\sw\Controller\App@Index1");
 //\HttpRouter("/app/test", "\chat\sw\Controller\App@Index1");
 //\HttpRouter("/stop", "\chat\sw\Controller\App@stop");
-//\HttpRouter("/ws", "\chat\sw\Co\Websocket@ws");//websocket
+//\HttpRouter("/ws", "\chat\sw\Co\Events@ws");//websocket
 //WsRouter("websocket", "\chat\sw\Controller\WsController@stop");
 //CoTable::getInstance();
 //CoTable::getInstance()->table("http")->set("http", "http1", ['fd' => 1, 'data' => "test http"]);
@@ -73,12 +73,13 @@ $di->config = new Config("./Config");
 //$router->Register("index/test", \chat\sw\Co\App\Index);
 //(new CoWs())->start();//协程风格
 //(new CoHttp())->start();
-(new CoWs())->start();
-//(new Websocket())->run();//异步风格
+//(new CoWs())->start();
+(new \chat\sw\Core\CoServer())->start();
+//(new Events())->run();//异步风格
 //use \app\Jwt;
-//use \chat\sw\Websocket\Websocket;
+//use \chat\sw\Events\Events;
 //
-//$webSocket = new Websocket();
+//$webSocket = new Events();
 //$webSocket->run();
 //$res = DB()->insert('chat_fd', ['user_id' => 1,
 //    'fd' => 2,

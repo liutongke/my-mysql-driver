@@ -7,5 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'chat\\sw\\' => array($baseDir . '/app'),
-    'Medoo\\' => array($vendorDir . '/catfan/medoo/src'),
+    'Simps\\DB\\' => array($vendorDir . '/simple-swoole/db/src'),
 );

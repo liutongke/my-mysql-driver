@@ -36,6 +36,13 @@ return [
         'port' => 9501,
         'ssl' => false,
         'reuse_port' => true,//端口复用
+        'events' => [
+            ['open', \chat\sw\Core\Events::class, 'onOpen'],
+            ['message', \chat\sw\Core\Events::class, 'onMessage'],
+            ['close', \chat\sw\Core\Events::class, 'onClose'],
+            ['request', \chat\sw\Core\Events::class, 'onRequest'],
+            ['workerStart', \chat\sw\Core\Events::class, 'onWorkerStart'],
+        ],
     ],
     'swoole_tables' => [
         'http' => [ // 表名，会加上 CoTable 后缀，比如这里是 wsTable
@@ -54,5 +61,13 @@ return [
 //                ['name' => 'ws', 'type' => \Swoole\Table::TYPE_STRING, 'size' => 2048],
             ],
         ],
+    ],
+    'redis' => [
+        'host' => '192.168.99.100',
+        'port' => 14005,
+        'auth' => '',
+        'db_index' => 0,
+        'time_out' => 1,
+        'size' => 64,
     ],
 ];
