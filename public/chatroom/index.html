@@ -90,7 +90,7 @@
 <script type="text/javascript" src="static/layer/layer.js"></script>
 <script type="text/javascript">
     $(document).ready(function (e) {
-        var websocket = new WebSocket('wss://域名');
+        var websocket = new WebSocket('ws://127.0.0.1:13333/ws');
 
         websocket.onopen = function (evt) {
             console.log("Connected to WebSocket server.");
