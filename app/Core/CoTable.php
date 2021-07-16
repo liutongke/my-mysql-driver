@@ -25,16 +25,16 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Co;
+namespace chat\sw\Core;
 
 class CoTable
 {
     protected static $instance = NULL;
-    protected static $table;
+    protected static $table = [];
 
     public function __construct()
     {
-        self::$table = Tb();
+        $this->init();
     }
 
     public static function getInstance()
@@ -45,14 +45,41 @@ class CoTable
         return static::$instance;
     }
 
-    public function set(string $key, array $value): bool
+    private function init()
     {
-        return self::$table->set($key, $value);
+        $_config = DI()->config->get('conf.swoole_tables');
+        foreach ($_config as $tableName => $tableInfo) {
+            $tb = new \Swoole\Table($tableInfo['size']);
+            foreach ($tableInfo['column'] as $column) {
+                $tb->column($column['name'], $column['type'], $column['size']);
+            }
+            $tb->create();
+            self::$table[$tableName] = $tb;
+        }
+//        $tb = new \Swoole\Table(1024);
+//        $tb->column('fd', \Swoole\Table::TYPE_INT);
+//        $tb->column('workerId', \Swoole\Table::TYPE_INT);
+//        $tb->column('ws', \Swoole\Table::TYPE_STRING, 2048);
+//        $tb->create();
+//        self::$table = $tb;
     }
 
-    public function get($key)
+    public $_this;
+
+    public function table(string $tableName)
     {
-        return self::$table->set($key);
+        $this->_this = self::$table[$tableName];
+        return $this;
+    }
+
+    public function set(string $tableName, string $key, array $value): bool
+    {
+        return $this->_this->set($key, $value);
+    }
+
+    public function get(string $tableName, $key)
+    {
+        return self::$table[$tableName]->set($key);
     }
 
     public function getAll()

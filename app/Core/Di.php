@@ -2,7 +2,7 @@
 /*
  * User: keke
  * Date: 2021/7/13
- * Time: 10:57
+ * Time: 10:48
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,38 +25,47 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Co;
+namespace chat\sw\Core;
 
-class Config
+
+class Di
 {
-    private $path = '';
-    private $confMap = [];
+    protected static $instance = NULL;
+    protected $data = array();
 
-    public function __construct($confDirPath)
+    public function __construct()
     {
-        $this->path = $confDirPath;
+    }
+
+    public static function one()
+    {
+        if (static::$instance == NULL) {
+            static::$instance = new self();
+        }
+        return static::$instance;
+    }
+
+    public function set($key, $value)
+    {
+        $this->data[$key] = $value;
+        return $this;
     }
 
     public function get($key, $default = NULL)
     {
-        $keyArr = explode('.', $key);
-        $fileName = $keyArr['0'];
-        if (!isset($this->confMap[$fileName])) {
-            $this->loadConfig($fileName);
+        if (!isset($this->data[$key])) {
+            $this->data[$key] = $default;
         }
-        $confData = $this->confMap[$fileName];
-        foreach ($keyArr as $idx) {
-            if (isset($confData[$idx])) {
-                $data = $confData[$idx];
-                break;
-            }
-        }
-        return $data ?? $default;
+        return $this->data[$key];
     }
 
-    private function loadConfig($fileName)
+    public function __set($name, $value)
     {
-        $filePath = $this->path . DIRECTORY_SEPARATOR . $fileName . ".php";
-        $this->confMap[$fileName] = include_once($filePath);
+        $this->set($name, $value);
+    }
+
+    public function __get($name)
+    {
+        return $this->get($name, NULL);
     }
 }
