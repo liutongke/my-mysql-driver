@@ -46,8 +46,13 @@ class Events
 
     public function onMessage(\Swoole\WebSocket\Server $server, $frame)
     {
-        echo "receive from {$frame->fd}:{$frame->data},opcode:{$frame->opcode},fin:{$frame->finish}\n";
-        $server->push($frame->fd, "this is server");
+//        echo "receive from {$frame->fd}:{$frame->data},opcode:{$frame->opcode},fin:{$frame->finish}\n";
+        foreach ($server->connections as $fd) {
+            // 需要先判断是否是正确的websocket连接，否则有可能会push失败
+            if ($server->isEstablished($fd)) {
+                $server->push($fd, json_encode(['msg' => "hello world"]));
+            }
+        }
     }
 
     public function onClose($ser, $fd)
