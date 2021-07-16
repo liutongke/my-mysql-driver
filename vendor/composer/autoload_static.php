@@ -15,9 +15,9 @@ class ComposerStaticInitdbb3310c8429129709aff5e5745c217c
         array (
             'chat\\sw\\' => 8,
         ),
-        'M' => 
+        'S' => 
         array (
-            'Medoo\\' => 6,
+            'Simps\\DB\\' => 9,
         ),
     );
 
@@ -26,10 +26,14 @@ class ComposerStaticInitdbb3310c8429129709aff5e5745c217c
         array (
             0 => __DIR__ . '/../..' . '/app',
         ),
-        'Medoo\\' => 
+        'Simps\\DB\\' => 
         array (
-            0 => __DIR__ . '/..' . '/catfan/medoo/src',
+            0 => __DIR__ . '/..' . '/simple-swoole/db/src',
         ),
+    );
+
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -37,6 +41,7 @@ class ComposerStaticInitdbb3310c8429129709aff5e5745c217c
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInitdbb3310c8429129709aff5e5745c217c::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInitdbb3310c8429129709aff5e5745c217c::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitdbb3310c8429129709aff5e5745c217c::$classMap;
 
         }, null, ClassLoader::class);
     }

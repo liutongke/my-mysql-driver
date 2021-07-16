@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/13
- * Time: 10:57
+ * Date: 2021/7/15
+ * Time: 22:44
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -27,36 +27,15 @@
 
 namespace chat\sw\Co;
 
-class Config
+use chat\sw\Router\HttpRouter;
+use Swoole\Process;
+use Swoole\Coroutine\Http\Server;
+
+class Co
 {
-    private $path = '';
-    private $confMap = [];
-
-    public function __construct($confDirPath)
+    public function run()
     {
-        $this->path = $confDirPath;
-    }
-
-    public function get($key, $default = NULL)
-    {
-        $keyArr = explode('.', $key);
-        $fileName = $keyArr['0'];
-        if (!isset($this->confMap[$fileName])) {
-            $this->loadConfig($fileName);
-        }
-        $confData = $this->confMap[$fileName];
-        foreach ($keyArr as $idx) {
-            if (isset($confData[$idx])) {
-                $data = $confData[$idx];
-                break;
-            }
-        }
-        return $data ?? $default;
-    }
-
-    private function loadConfig($fileName)
-    {
-        $filePath = $this->path . DIRECTORY_SEPARATOR . $fileName . ".php";
-        $this->confMap[$fileName] = include_once($filePath);
+//        (new CoHttp())->start();
+        (new Ws())->start();
     }
 }

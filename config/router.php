@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/12
- * Time: 18:12
+ * Date: 2021/7/16
+ * Time: 10:58
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -24,27 +24,15 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
-
-namespace chat\sw\Controller;
-
-
-class App
-{
-    public function Index(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
-    {
-        $response->end("<h1>hello swoole!</h1>");
-    }
-
-    public function Index1(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
-    {
-        EchoHtml($response, "index.html");
-//        $rand = rand(1111, 9999);
-//        $response->end("<h1>------>Index1</h1>{$rand}");
-    }
-
-    public function stop(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
-    {
-        $tm = date('Y-m-d H:i:s');
-        $response->end("<h1>------>stop{$tm}</h1>");
-    }
-}
+return [
+    'http' => [
+        \HttpRouter("/user/list", "\chat\sw\Controller\Index@list"),
+        \HttpRouter("/", "\chat\sw\Controller\App@Index1"),
+        \HttpRouter("/app/test", "\chat\sw\Controller\App@Index1"),
+        \HttpRouter("/stop", "\chat\sw\Controller\App@stop"),
+        \HttpRouter("/ws", "\chat\sw\Co\Websocket@ws"),//websocket
+    ],
+    'ws' => [
+        WsRouter("websocket", "\chat\sw\Controller\WsController@stop"),
+    ]
+];

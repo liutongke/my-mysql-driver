@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/12
- * Time: 18:12
+ * Date: 2021/7/16
+ * Time: 14:54
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -28,23 +28,22 @@
 namespace chat\sw\Controller;
 
 
-class App
+class Index
 {
-    public function Index(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
+    public function list(\Swoole\Http\Request $request, \Swoole\Http\Response $response, $server)
     {
-        $response->end("<h1>hello swoole!</h1>");
-    }
-
-    public function Index1(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
-    {
-        EchoHtml($response, "index.html");
-//        $rand = rand(1111, 9999);
-//        $response->end("<h1>------>Index1</h1>{$rand}");
-    }
-
-    public function stop(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
-    {
-        $tm = date('Y-m-d H:i:s');
-        $response->end("<h1>------>stop{$tm}</h1>");
+        $redis = new \Simps\DB\BaseRedis();
+        // $server->connections 遍历所有websocket连接用户的fd，给所有用户推送
+        foreach ($server->connections as $fd) {
+            $redis->set('key', $fd);
+//            // 需要先判断是否是正确的websocket连接，否则有可能会push失败
+            var_dump($fd, $server->isEstablished($fd));
+//            if ($this->server->isEstablished($fd)) {
+//                $this->server->push($fd, $request->get['message']);
+//            }
+        }
+        $redis->get('key');
+        $response->end("hhhhh");
+        return;
     }
 }

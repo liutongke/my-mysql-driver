@@ -4,7 +4,7 @@ use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 use function Swoole\Coroutine\run;
 
-//$http = new Swoole\Http\Server('0.0.0.0', 9500);
+//$http = new Swoole\CoHttp\Server('0.0.0.0', 9500);
 //
 //$http->on('Request', function ($request, $response) {
 //    $response->header('Content-Type', 'text/html; charset=utf-8');

@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/12
- * Time: 18:12
+ * Date: 2021/7/15
+ * Time: 14:55
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -24,27 +24,21 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
+$pool = new Swoole\Process\Pool(2, SWOOLE_IPC_UNIXSOCK, 0, true);
 
-namespace chat\sw\Controller;
-
-
-class App
-{
-    public function Index(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
-    {
-        $response->end("<h1>hello swoole!</h1>");
+$pool->on('workerStart', function (Swoole\Process\Pool $pool, int $workerId) {
+    $process = $pool->getProcess(0);
+    $socket = $process->exportSocket();
+    if ($workerId == 0) {
+        echo $socket->recv();
+        $socket->send("hello proc1\n");
+        echo "proc0 stop\n";
+    } else {
+        $socket->send("hello proc0\n");
+        echo $socket->recv();
+        echo "proc1 stop\n";
+//        $pool->shutdown();
     }
+});
 
-    public function Index1(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
-    {
-        EchoHtml($response, "index.html");
-//        $rand = rand(1111, 9999);
-//        $response->end("<h1>------>Index1</h1>{$rand}");
-    }
-
-    public function stop(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
-    {
-        $tm = date('Y-m-d H:i:s');
-        $response->end("<h1>------>stop{$tm}</h1>");
-    }
-}
+$pool->start();

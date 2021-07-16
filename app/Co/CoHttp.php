@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/12
- * Time: 10:37
+ * Date: 2021/7/15
+ * Time: 22:37
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -27,28 +27,20 @@
 
 namespace chat\sw\Co;
 
-use chat\sw\Core\CoTable;
+
 use chat\sw\Router\HttpRouter;
 use Swoole\Process;
-use Swoole\Coroutine;
-use Swoole\Coroutine\Server\Connection;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
-use Swoole\WebSocket\CloseFrame;
 use Swoole\Coroutine\Http\Server;
-use function Swoole\Coroutine\run;
 
-class CoWs
+class CoHttp
 {
     private $pool;//进程池
     private $_config;
     private static $worker = ["WorkerStart"];
-    public static $rps = [];
 
     public function __construct()
     {
-        $this->_config = DI()->config->get('conf.ws');
-        CoTable::getInstance();
+        $this->_config = DI()->config->get('conf.http');
         //多进程管理模块
         $this->pool = new Process\Pool(2, SWOOLE_IPC_UNIXSOCK, 0, true);
         //让每个OnWorkerStart回调都自动创建一个协程
@@ -60,15 +52,8 @@ class CoWs
 
     public function WorkerStart(\Swoole\Process\Pool $pool, $workerId)
     {
+        echo "----------->start http\n";
         var_dump($pool);
-//        $http = new \Swoole\CoHttp\Server('0.0.0.0', 9501);
-//
-//        $http->on('Request', function ($request, $response) {
-//            $response->header('Content-Type', 'text/html; charset=utf-8');
-//            $response->end('<h1>Hello Swoole. #' . rand(1000, 9999) . '</h1>');
-//        });
-
-//        $http->start();
         $this->startServ($pool, $workerId);
     }
 
@@ -84,7 +69,6 @@ class CoWs
         $list = HttpRouter::GetHandlers();
         foreach ($list as $url => $objInfo) {//$server->handle('/Index', [new App(), 'Index']);
 //            $server->handle($key, $value);
-            var_dump($url);
             $server->handle($url, function ($request, $response) use ($server, $objInfo, $pool, $workerId) {
                 call_user_func_array($objInfo, [$request, $response, $server, $workerId, $pool]);
             });

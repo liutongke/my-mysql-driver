@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/13
- * Time: 10:48
+ * Date: 2021/7/15
+ * Time: 15:19
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -24,48 +24,28 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
+$server = new Swoole\WebSocket\Server("0.0.0.0", 9501);
 
-namespace chat\sw\Co;
-
-
-class Di
-{
-    protected static $instance = NULL;
-    protected $data = array();
-
-    public function __construct()
-    {
+$server->set(['worker_num' => 9]);
+$server->on('open', function (Swoole\WebSocket\Server $server, $request) {
+    foreach ($server->connections as $fd) {
+        var_dump("fd===>{$fd}");
     }
+    var_dump("workerId:{$server->worker_id}");
+    $GLOBALS['fd'][$request->fd]['id'] = $request->fd;//设置用户id
+    echo "server: handshake success with fd{$request->fd}\n";
+});
 
-    public static function one()
-    {
-        if (static::$instance == NULL) {
-            static::$instance = new self();
-        }
-        return static::$instance;
+$server->on('message', function (Swoole\WebSocket\Server $server, $frame) {
+    echo "receive from {$frame->fd}:{$frame->data},opcode:{$frame->opcode},fin:{$frame->finish}\n";
+//    $server->push($frame->fd, "this is server");
+    foreach ($server->connections as $fd) {
+        $server->push($fd, "test in");
     }
+});
 
-    public function set($key, $value)
-    {
-        $this->data[$key] = $value;
-        return $this;
-    }
+$server->on('close', function ($ser, $fd) {
+    echo "client {$fd} closed\n";
+});
 
-    public function get($key, $default = NULL)
-    {
-        if (!isset($this->data[$key])) {
-            $this->data[$key] = $default;
-        }
-        return $this->data[$key];
-    }
-
-    public function __set($name, $value)
-    {
-        $this->set($name, $value);
-    }
-
-    public function __get($name)
-    {
-        return $this->get($name, NULL);
-    }
-}
+$server->start();

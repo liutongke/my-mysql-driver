@@ -26,13 +26,14 @@
  */
 function DI()
 {
-    return \chat\sw\Co\Di::one();
+    return \chat\sw\Core\Di::one();
 }
 
 function EchoHtml(\Swoole\Http\Response $response, $htmlPathName)
 {
+    $response->header("Content-Type", "text/html; charset=utf-8");
 //    var_dump(file_get_contents(ROOT_PATH . "/public/" . $htmlPathName));
-    $response->end(file_get_contents(ROOT_PATH . "/public/" . $htmlPathName));
+    $response->end(file_get_contents(ROOT_PATH . "public/chatroom/" . $htmlPathName));
 }
 
 //websocket路由设置
@@ -61,7 +62,7 @@ function DB()
         'charset' => 'utf8',
         'port' => $GLOBALS['config']['mysql']['port'],
 
-        // [optional] Table prefix
+        // [optional] CoTable prefix
         'prefix' => $GLOBALS['config']['mysql']['prefix'],
 
         // [optional] Enable logging (Logging is disabled by default for better performance)

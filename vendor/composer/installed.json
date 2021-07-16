@@ -1,63 +1,78 @@
-[
-    {
-        "name": "catfan/medoo",
-        "version": "dev-master",
-        "version_normalized": "9999999-dev",
-        "source": {
-            "type": "git",
-            "url": "https://github.com/catfan/Medoo.git",
-            "reference": "8d90cba0e8ff176028847527d0ea76fe41a06ecf"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://api.github.com/repos/catfan/Medoo/zipball/8d90cba0e8ff176028847527d0ea76fe41a06ecf",
-            "reference": "8d90cba0e8ff176028847527d0ea76fe41a06ecf",
-            "shasum": ""
-        },
-        "require": {
-            "ext-pdo": "*",
-            "php": ">=5.4"
-        },
-        "suggest": {
-            "ext-pdo_dblib": "For MSSQL or Sybase database on Linux/UNIX platform",
-            "ext-pdo_mysql": "For MySQL or MariaDB database",
-            "ext-pdo_oci": "For Oracle database",
-            "ext-pdo_oci8": "For Oracle version 8 database",
-            "ext-pdo_pqsql": "For PostgreSQL database",
-            "ext-pdo_sqlite": "For SQLite database",
-            "ext-pdo_sqlsrv": "For MSSQL database"
-        },
-        "time": "2018-06-14T18:59:08+00:00",
-        "type": "framework",
-        "installation-source": "source",
-        "autoload": {
-            "psr-4": {
-                "Medoo\\": "/src"
-            }
-        },
-        "notification-url": "https://packagist.org/downloads/",
-        "license": [
-            "MIT"
-        ],
-        "authors": [
-            {
-                "name": "Angel Lai",
-                "email": "angel@catfan.me"
-            }
-        ],
-        "description": "The lightest PHP database framework to accelerate development",
-        "homepage": "https://medoo.in",
-        "keywords": [
-            "database",
-            "lightweight",
-            "mariadb",
-            "mssql",
-            "mysql",
-            "oracle",
-            "php framework",
-            "postgresql",
-            "sql",
-            "sqlite"
-        ]
-    }
-]
+{
+    "packages": [
+        {
+            "name": "simple-swoole/db",
+            "version": "v1.0.7",
+            "version_normalized": "1.0.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/simple-swoole/db.git",
+                "reference": "b08364734955c809ca718094c6b4b42bf0e79af7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/simple-swoole/db/zipball/b08364734955c809ca718094c6b4b42bf0e79af7",
+                "reference": "b08364734955c809ca718094c6b4b42bf0e79af7",
+                "shasum": ""
+            },
+            "require": {
+                "ext-swoole": ">=4.4",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.9"
+            },
+            "suggest": {
+                "swoole/library": "Required to use database, and the swoole version is less than 4.4.17"
+            },
+            "time": "2021-05-20T08:39:05+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Simps\\DB\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Luffy",
+                    "email": "52o@qq52o.cn"
+                }
+            ],
+            "description": "A db component for Simps.",
+            "keywords": [
+                "Simple",
+                "coroutine",
+                "db",
+                "php",
+                "simps",
+                "swoole"
+            ],
+            "support": {
+                "issues": "https://github.com/simple-swoole/db/issues",
+                "source": "https://github.com/simple-swoole/db/tree/v1.0.7"
+            },
+            "funding": [
+                {
+                    "url": "https://simps.io/#/zh-cn/donate",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/simple-swoole",
+                    "type": "github"
+                },
+                {
+                    "url": "https://opencollective.com/simps",
+                    "type": "open_collective"
+                }
+            ],
+            "install-path": "../simple-swoole/db"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}
