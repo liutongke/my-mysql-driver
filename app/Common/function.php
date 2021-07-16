@@ -26,23 +26,14 @@
  */
 function DI()
 {
-    return \chat\sw\Co\Di::one();
-}
-
-function Tb()
-{
-    $tb = new Swoole\Table(1024);
-    $tb->column('fd', Swoole\Table::TYPE_INT);
-    $tb->column('workerId', Swoole\Table::TYPE_INT);
-    $tb->column('ws', Swoole\Table::TYPE_STRING, 2048);
-    $tb->create();
-    return $tb;
+    return \chat\sw\Core\Di::one();
 }
 
 function EchoHtml(\Swoole\Http\Response $response, $htmlPathName)
 {
+    $response->header("Content-Type", "text/html; charset=utf-8");
 //    var_dump(file_get_contents(ROOT_PATH . "/public/" . $htmlPathName));
-    $response->end(file_get_contents(ROOT_PATH . "/public/" . $htmlPathName));
+    $response->end(file_get_contents(ROOT_PATH . "public/chatroom/" . $htmlPathName));
 }
 
 //websocket路由设置

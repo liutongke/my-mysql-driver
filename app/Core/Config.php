@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/12
- * Time: 18:12
+ * Date: 2021/7/13
+ * Time: 10:57
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,26 +25,38 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Controller;
+namespace chat\sw\Core;
 
-
-class App
+class Config
 {
-    public function Index(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
+    private $path = '';
+    private $confMap = [];
+
+    public function __construct($confDirPath)
     {
-        $response->end("<h1>hello swoole!</h1>");
+        $this->path = $confDirPath;
     }
 
-    public function Index1(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
+    public function get($key, $default = NULL)
     {
-        EchoHtml($response, "index.html");
-//        $rand = rand(1111, 9999);
-//        $response->end("<h1>------>Index1</h1>{$rand}");
+        $keyArr = explode('.', $key);
+        $fileName = $keyArr['0'];
+        if (!isset($this->confMap[$fileName])) {
+            $this->loadConfig($fileName);
+        }
+        $confData = $this->confMap[$fileName];
+        foreach ($keyArr as $idx) {
+            if (isset($confData[$idx])) {
+                $data = $confData[$idx];
+                break;
+            }
+        }
+        return $data ?? $default;
     }
 
-    public function stop(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
+    private function loadConfig($fileName)
     {
-        $tm = date('Y-m-d H:i:s');
-        $response->end("<h1>------>stop{$tm}</h1>");
+        $filePath = $this->path . DIRECTORY_SEPARATOR . $fileName . ".php";
+        $this->confMap[$fileName] = include_once($filePath);
     }
 }

@@ -28,9 +28,11 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use \chat\sw\Co\Websocket;
 use \chat\sw\Co\CoWs;
+use chat\sw\Core\CoTable;
 use \chat\sw\Router\HttpRouter;
-use \chat\sw\Co\Config;
-use \chat\sw\Co\Co;
+
+use \chat\sw\Core\Config;
+use \chat\sw\Core\CoHttp;
 
 define('DS', DIRECTORY_SEPARATOR);           //目录分隔符
 define('ROOT_PATH', getcwd() . DS);               //入口文件所在的目录
@@ -50,24 +52,35 @@ $di->config = new Config("./Config");
 //HttpRouter::Register("index/test", function ($b) {
 //    echo "test!!!";
 //});
-\HttpRouter("/", "\chat\sw\Controller\App@Index");
-\HttpRouter("/app/test", "\chat\sw\Controller\App@Index1");
-\HttpRouter("/stop", "\chat\sw\Controller\App@stop");
-
-\HttpRouter("/ws", "\chat\sw\Co\Websocket@ws");//websocket
-WsRouter("websocket", "\chat\sw\Controller\WsController@stop");
+//\HttpRouter("/", "\chat\sw\Controller\App@Index1");
+//\HttpRouter("/app/test", "\chat\sw\Controller\App@Index1");
+//\HttpRouter("/stop", "\chat\sw\Controller\App@stop");
+//\HttpRouter("/ws", "\chat\sw\Co\Events@ws");//websocket
+//WsRouter("websocket", "\chat\sw\Controller\WsController@stop");
+//CoTable::getInstance();
+//CoTable::getInstance()->table("http")->set("http", "http1", ['fd' => 1, 'data' => "test http"]);
+//CoTable::getInstance()->table("ws")->set("ws", "ws1", ['fd' => 1, 'workerId' => 1]);
+//$list = CoTable::getInstance()->getAll();
+//foreach ($list as $key => $table) {
+//    var_dump("------------>{$key}");
+//    foreach ($table as $row) {
+//        var_dump($row);
+//    }
+//}
 //(new \chat\sw\Co\App())->Index1();
 //$router = new HttpRouter();
 //$router->GetHandlers("index/test", [1, 2]);
 //$router->GetHandlers("app/test", [1, 2]);
 //$router->Register("index/test", \chat\sw\Co\App\Index);
 //(new CoWs())->start();//协程风格
-(new Co())->run();
-//(new Websocket())->run();//异步风格
+//(new CoHttp())->start();
+//(new CoWs())->start();
+(new \chat\sw\Core\CoServer())->start();
+//(new Events())->run();//异步风格
 //use \app\Jwt;
-//use \chat\sw\Websocket\Websocket;
+//use \chat\sw\Events\Events;
 //
-//$webSocket = new Websocket();
+//$webSocket = new Events();
 //$webSocket->run();
 //$res = DB()->insert('chat_fd', ['user_id' => 1,
 //    'fd' => 2,

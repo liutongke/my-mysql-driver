@@ -39,12 +39,16 @@ class HttpRouter implements Router
 
     public function SetHandlers($name, $value)
     {
+        if (strcmp(substr($value['0'], 0, 1), "/") !== 0) {
+            $value['0'] = "/" . $value['0'];
+        }
+        $key = strtolower($value['0']);
         if (is_callable($value['1'])) {//函数
-            self::$router[$value['0']] = $value['1'];
+            self::$router[$key] = $value['1'];
         } else {
             $arr = explode('@', $value['1']);
             $obj = new $arr['0']();
-            self::$router[$value['0']] = [$obj, $arr['1']];
+            self::$router[$key] = [$obj, $arr['1']];
         }
     }
 

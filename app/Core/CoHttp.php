@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/12
- * Time: 10:37
+ * Date: 2021/7/16
+ * Time: 11:01
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,7 +25,7 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Co;
+namespace chat\sw\Core;
 
 use chat\sw\Core\CoTable;
 use chat\sw\Router\HttpRouter;
@@ -38,16 +38,16 @@ use Swoole\WebSocket\CloseFrame;
 use Swoole\Coroutine\Http\Server;
 use function Swoole\Coroutine\run;
 
-class CoWs
+class CoHttp
 {
     private $pool;//进程池
     private $_config;
     private static $worker = ["WorkerStart"];
-    public static $rps = [];
 
     public function __construct()
     {
-        $this->_config = DI()->config->get('conf.ws');
+        DI()->config->get('router.http');
+        $this->_config = DI()->config->get('conf.http');
         CoTable::getInstance();
         //多进程管理模块
         $this->pool = new Process\Pool(2, SWOOLE_IPC_UNIXSOCK, 0, true);
@@ -61,7 +61,7 @@ class CoWs
     public function WorkerStart(\Swoole\Process\Pool $pool, $workerId)
     {
         var_dump($pool);
-//        $http = new \Swoole\CoHttp\Server('0.0.0.0', 9501);
+//        $http = new \Swoole\Http\Server('0.0.0.0', 9501);
 //
 //        $http->on('Request', function ($request, $response) {
 //            $response->header('Content-Type', 'text/html; charset=utf-8');
@@ -84,7 +84,6 @@ class CoWs
         $list = HttpRouter::GetHandlers();
         foreach ($list as $url => $objInfo) {//$server->handle('/Index', [new App(), 'Index']);
 //            $server->handle($key, $value);
-            var_dump($url);
             $server->handle($url, function ($request, $response) use ($server, $objInfo, $pool, $workerId) {
                 call_user_func_array($objInfo, [$request, $response, $server, $workerId, $pool]);
             });
