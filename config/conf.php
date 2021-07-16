@@ -43,6 +43,14 @@ return [
             ['request', \chat\sw\Core\Events::class, 'onRequest'],
             ['workerStart', \chat\sw\Core\Events::class, 'onWorkerStart'],
         ],
+        'settings' => [
+            'daemonize' => false,//设置 daemonize => true 时，程序将转入后台作为守护进程运行。长时间运行的服务器端程序必须启用此项。如果不启用守护进程，当 ssh 终端退出后，程序将被终止运行
+//            'dispatch_mode' => 2,//数据包分发策略。【默认值：2】
+            'worker_num' => swoole_cpu_num(),
+            'log_file' => 'storage/logs/log',
+            'log_rotation' => SWOOLE_LOG_ROTATION_DAILY,
+            'log_date_format' => '%Y-%m-%d %H:%M:%S',
+        ],
     ],
     'swoole_tables' => [
         'http' => [ // 表名，会加上 CoTable 后缀，比如这里是 wsTable

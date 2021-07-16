@@ -27,7 +27,6 @@
 
 namespace chat\sw\Core;
 
-
 use chat\sw\Router\HttpRouter;
 use Simps\DB\Redis;
 
@@ -58,7 +57,7 @@ class Events
 
     public function onRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
-        if ($request->server['path_info'] == '/favicon.ico' || $request->server['request_uri'] == '/favicon.ico') {
+        if ($request->server['path_info'] == '/favicon.ico' || $request->server['request_uri'] == '/favicon.ico' || $request->server['request_uri'] == '/favicon.png') {
             $response->end();
             return;
         }

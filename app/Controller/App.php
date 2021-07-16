@@ -37,7 +37,7 @@ class App
 
     public function Index1(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
-        EchoHtml($response, "chatroom/index.html");
+        EchoHtml($response, "index.html");
 //        $rand = rand(1111, 9999);
 //        $response->end("<h1>------>Index1</h1>{$rand}");
     }

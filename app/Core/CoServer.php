@@ -49,7 +49,7 @@ class CoServer
         CoTable::getInstance();
         $this->server = new \Swoole\WebSocket\Server($this->_config['host'], $this->_config['port']);
         if (isset($this->_config['settings']) && !empty($this->_config['settings'])) {
-            $this->_server->set($this->_config['settings']);
+            $this->server->set($this->_config['settings']);
         }
         foreach ($this->_config['events'] as $eventsInfo) {
 //            var_dump($eventsInfo['0'], $eventsInfo['1'], $eventsInfo['2']);
