@@ -169,7 +169,8 @@
             }
             console.log(msg);
             var token = $("#token").val();
-            content = '{"msg":' + msg + ',"stats":2,"token":"' + token + '"}';
+            // content = '{"msg":' + msg + ',"stats":2,"token":"' + token + '"}';
+            content = '{"data":' + msg + ',"stats":2,"token":"' + token + ',"path":"/c2c"' + '"}';
             // console.log(content);
             //发送信息给服务器
             websocket.send(content);

@@ -45,6 +45,9 @@ define('CONFIG_PATH', ROOT_PATH . 'config' . DS);
 //define('CORE_PATH', FRAMEWORK_PATH.'Core'.DS);
 //define('LIB_PATH', FRAMEWORK_PATH.'Lib'.DS);
 //var_dump(DS, ROOT_PATH, CONFIG_PATH);
+//string(1) "/"
+//string(14) "/var/www/html/"
+//string(21) "/var/www/html/config/"
 $di = DI();
 $di->config = new Config("./Config");
 //var_dump($di->config->get('conf.mysql', 123));

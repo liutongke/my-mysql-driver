@@ -50,6 +50,9 @@ return [
             'log_file' => 'storage/logs/log',
             'log_rotation' => SWOOLE_LOG_ROTATION_DAILY,
             'log_date_format' => '%Y-%m-%d %H:%M:%S',
+//            'document_root' => ROOT_PATH,
+//            'enable_static_handler' => true,
+//            'static_handler_locations' => ['/chatroom', '/app/images'],//设置静态处理器的路径。类型为数组，默认不启用。
         ],
     ],
     'swoole_tables' => [

@@ -41,16 +41,18 @@ class Events
 
     public function onOpen(\Swoole\WebSocket\Server $server, $request)
     {
+        var_dump($request);
         echo "server: handshake success with fd{$request->fd}\n";
     }
 
     public function onMessage(\Swoole\WebSocket\Server $server, $frame)
     {
+        var_dump($frame->data, $frame->opcode);
 //        echo "receive from {$frame->fd}:{$frame->data},opcode:{$frame->opcode},fin:{$frame->finish}\n";
         foreach ($server->connections as $fd) {
             // 需要先判断是否是正确的websocket连接，否则有可能会push失败
             if ($server->isEstablished($fd)) {
-                $server->push($fd, json_encode(['msg' => "hello world"]));
+                $server->push($fd, json_encode(['msg' => json_decode($frame->data, true)['data']]));
             }
         }
     }
@@ -66,7 +68,7 @@ class Events
             $response->end();
             return;
         }
-        $pathUrl = strtolower($request->server['path_info']);//请求的地址
+        $pathUrl = strtolower($request->server['request_uri']);//请求的地址
         $setUrlList = HttpRouter::GetHandlers();
         if (!isset($setUrlList[$pathUrl])) {
             $response->end("<h1>err 404</h1>");
