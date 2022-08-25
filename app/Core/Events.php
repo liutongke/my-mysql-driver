@@ -28,6 +28,7 @@
 namespace chat\sw\Core;
 
 use chat\sw\Router\HttpRouter;
+use chat\sw\Router\WsRouter;
 use Simps\DB\Redis;
 
 class Events
@@ -47,12 +48,19 @@ class Events
     public function onMessage(\Swoole\WebSocket\Server $server, $frame)
     {
 //        echo "receive from {$frame->fd}:{$frame->data},opcode:{$frame->opcode},fin:{$frame->finish}\n";
-        foreach ($server->connections as $fd) {
-            // 需要先判断是否是正确的websocket连接，否则有可能会push失败
-            if ($server->isEstablished($fd)) {
-                $server->push($fd, json_encode(['msg' => "hello world"]));
-            }
-        }
+        $server->push($frame->fd, WsRouter::MsgHandle($server, $frame));//处理路由
+//        var_dump($frame->opcode == WEBSOCKET_OPCODE_TEXT, $frame->opcode == WEBSOCKET_OPCODE_BINARY);
+//        if ($server->isEstablished($frame->fd)) {
+//            $task_id = $server->task(["t" => 1], 0);
+//            $server->push($frame->fd, json_encode(['msg' => "hello world"]));
+//        }
+//        foreach ($server->connections as $fd) {
+//            // 需要先判断是否是正确的websocket连接，否则有可能会push失败
+//            if ($server->isEstablished($fd)) {
+//                $task_id = $server->task(["t" => 1], 0);
+//                $server->push($fd, json_encode(['msg' => "hello world"]));
+//            }
+//        }
     }
 
     public function onClose($ser, $fd)
@@ -81,5 +89,18 @@ class Events
         if (!empty($config)) {
             Redis::getInstance($config);
         }
+    }
+
+    //使用 task 必须为 Server 设置 onTask 和 onFinish 回调，否则 Server->start 会失败
+    public function onTask(\Swoole\Server $server, int $task_id, int $src_worker_id, array $data)
+    {
+        echo "Tasker进程接收到数据,task_id:";
+        var_dump($task_id);
+        var_dump($data);
+    }
+
+    public function onFinish(\Swoole\Server $server, int $task_id, int $src_worker_id, array $data)
+    {
+
     }
 }

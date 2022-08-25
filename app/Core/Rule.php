@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/14
- * Time: 17:01
+ * Date: 2022/8/26
+ * Time: 0:04
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,24 +25,35 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Controller;
+namespace chat\sw\Core;
 
 
-use chat\sw\Core\Rule;
-
-class WsController extends Rule
+abstract class Rule
 {
-    public function rule()
-    {
-        return [
-            'stop' => [
-                'data' => ['name' => 'data', 'require' => true, 'type' => 'string']
-            ]
-        ];
-    }
+    //        ['engineData' => [
+//            'data' => ['name' => 'data', 'require' => true, 'type' => 'string']
+//        ]
+//        ];
+    abstract protected function rule();
 
-    public function stop(\Swoole\WebSocket\Server $server, array $msg): array
+    //参数处理
+    public function getByRule($data, string $action): array
     {
-        return ["code" => 0, "msg" => "123123"];
+        $rules = $this->rule();
+        if (!isset($rules[$action])) {
+            return ["res" => false, "data" => ""];
+        }
+
+        $rule = $rules[$action];
+        $t = ["res" => false, "data" => ""];
+
+        foreach ($rule as $k => $v) {
+            var_dump($k, $v);
+            if ($v['require'] && !isset($data[$k])) {//必须滴
+                $t = ["res" => true, "data" => "must require {$k}"];
+            }
+        }
+
+        return $t;
     }
 }

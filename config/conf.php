@@ -27,13 +27,13 @@
 return [
     'http' => [
         'host' => '0.0.0.0',
-        'port' => 9501,
+        'port' => 9500,
         'ssl' => false,
         'reuse_port' => true,//端口复用
     ],
     'ws' => [
         'host' => '0.0.0.0',
-        'port' => 9501,
+        'port' => 9500,
         'ssl' => false,
         'reuse_port' => true,//端口复用
         'events' => [
@@ -41,6 +41,8 @@ return [
             ['message', \chat\sw\Core\Events::class, 'onMessage'],
             ['close', \chat\sw\Core\Events::class, 'onClose'],
             ['request', \chat\sw\Core\Events::class, 'onRequest'],
+            ['Task', \chat\sw\Core\Events::class, 'onTask'],
+            ['Finish', \chat\sw\Core\Events::class, 'onFinish'],
             ['workerStart', \chat\sw\Core\Events::class, 'onWorkerStart'],
         ],
         'settings' => [
@@ -50,6 +52,7 @@ return [
             'log_file' => 'storage/logs/log',
             'log_rotation' => SWOOLE_LOG_ROTATION_DAILY,
             'log_date_format' => '%Y-%m-%d %H:%M:%S',
+            'task_worker_num' => 10,
         ],
     ],
     'swoole_tables' => [

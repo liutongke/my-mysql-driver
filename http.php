@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/14
- * Time: 17:01
+ * Date: 2022/8/25
+ * Time: 18:50
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -24,25 +24,11 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
+$http = new Swoole\Http\Server('0.0.0.0', 9500);
 
-namespace chat\sw\Controller;
+$http->on('Request', function ($request, $response) {
+    $response->header('Content-Type', 'text/html; charset=utf-8');
+    $response->end('<h1>Hello Swoole. #' . rand(1000, 9999) . '</h1>');
+});
 
-
-use chat\sw\Core\Rule;
-
-class WsController extends Rule
-{
-    public function rule()
-    {
-        return [
-            'stop' => [
-                'data' => ['name' => 'data', 'require' => true, 'type' => 'string']
-            ]
-        ];
-    }
-
-    public function stop(\Swoole\WebSocket\Server $server, array $msg): array
-    {
-        return ["code" => 0, "msg" => "123123"];
-    }
-}
+$http->start();
