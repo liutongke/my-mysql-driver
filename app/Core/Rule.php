@@ -48,7 +48,7 @@ abstract class Rule
         $t = ["res" => false, "data" => ""];
 
         foreach ($rule as $k => $v) {
-            var_dump($k, $v);
+//            var_dump($k, $v);
             if ($v['require'] && !isset($data[$k])) {//必须滴
                 $t = ["res" => true, "data" => "must require {$k}"];
             }

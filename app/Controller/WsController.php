@@ -43,6 +43,9 @@ class WsController extends Rule
 
     public function stop(\Swoole\WebSocket\Server $server, array $msg): array
     {
+        $msg["keke"];
+        $redis = \chat\sw\Ext\Redis::getInstance();//        var_dump($redis);
+        $redis->redis->set(rand(10000, 99999), json_encode(\Swoole\Coroutine::stats()), 60);//此处产生协程调度，cpu切到下一个协程(下一个请求)，不会阻塞进程
         return ["code" => 0, "msg" => "123123"];
     }
 }

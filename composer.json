@@ -10,7 +10,6 @@
   ],
   "minimum-stability": "dev",
   "require": {
-    "simple-swoole/db": "~1.0.0"
   },
   "autoload": {
     "psr-4": {

@@ -46,3 +46,4 @@ websocket.onerror = function (evt, e) {
     console.log('Error occured: ' + evt.data);
 };
 ```
+default nginx laravel配置文件

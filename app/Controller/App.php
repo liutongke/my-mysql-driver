@@ -32,7 +32,22 @@ class App
 {
     public function Index(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
-        $response->end("<h1>hello swoole!</h1>");
+        $redis = \chat\sw\Ext\Redis::getInstance();
+//        var_dump($redis);
+//        $redis->set("tset", 1, 600);
+        $key = md5(uniqid(mt_rand(1, 999999)));
+        $redis->redis->set($key, $key);
+//        $response->end("<h1>hello swoole!</h1>");
+        DI()->logger->info("日志测试");
+        return [
+            "code" => 200,
+            "msg" => "hello World!",
+            "data" => [
+                "id" => 1,
+                "name" => "Reds",
+                "Colors" => ["Crimson", "Red", "Ruby", "Maroon"]
+            ]
+        ];
     }
 
     public function Index1(\Swoole\Http\Request $request, \Swoole\Http\Response $response)

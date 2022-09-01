@@ -29,7 +29,6 @@ namespace chat\sw\Core;
 
 use chat\sw\Router\HttpRouter;
 use chat\sw\Router\WsRouter;
-use Simps\DB\Redis;
 
 class Events
 {
@@ -48,7 +47,24 @@ class Events
     public function onMessage(\Swoole\WebSocket\Server $server, $frame)
     {
 //        echo "receive from {$frame->fd}:{$frame->data},opcode:{$frame->opcode},fin:{$frame->finish}\n";
-        $server->push($frame->fd, WsRouter::MsgHandle($server, $frame));//处理路由
+
+        register_shutdown_function(function () use ($server, $frame) {
+            $error = error_get_last();
+            var_dump($error);
+            if (!empty($error)) {
+
+                $server->push($frame->fd, json_encode(['id' => -1, 'err' => 400, 'path' => '', 'data' => $error]));
+            }
+//            switch ($error['type'] ?? null) {
+//                case E_ERROR :
+//                case E_PARSE :
+//                case E_CORE_ERROR :
+//                case E_COMPILE_ERROR :
+//
+//                    break;
+//            }
+            $server->push($frame->fd, WsRouter::MsgHandle($server, $frame));//处理路由
+        });
 //        var_dump($frame->opcode == WEBSOCKET_OPCODE_TEXT, $frame->opcode == WEBSOCKET_OPCODE_BINARY);
 //        if ($server->isEstablished($frame->fd)) {
 //            $task_id = $server->task(["t" => 1], 0);
@@ -65,7 +81,7 @@ class Events
 
     public function onClose($ser, $fd)
     {
-        echo "client {$fd} closed\n";
+//        echo "client {$fd} closed\n";
     }
 
     public function onRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
@@ -74,21 +90,31 @@ class Events
             $response->end();
             return;
         }
+        register_shutdown_function(function () use ($request, $response) {
+            $error = error_get_last();
+            var_dump($error);
+
+
+        });
         $pathUrl = strtolower($request->server['path_info']);//请求的地址
         $setUrlList = HttpRouter::GetHandlers();
         if (!isset($setUrlList[$pathUrl])) {
             $response->end("<h1>err 404</h1>");
             return;
         }
-        call_user_func_array($setUrlList[$pathUrl], [$request, $response, $this->server]);
+        $rps = call_user_func_array($setUrlList[$pathUrl], [$request, $response, $this->server]);
+        Logger::echoCmd($request, $response, $this->server);
+        $response->end(json_encode($rps));
     }
 
     public function onWorkerStart(\Swoole\Server $server, int $workerId)
     {
-        $config = DI()->config->get('conf.redis');
-        if (!empty($config)) {
-            Redis::getInstance($config);
-        }
+//        var_dump("workerId:" . $workerId);
+//        $redis = \chat\sw\Ext\Redis::getInstance();
+////        var_dump($redis);
+//        $redis->redis->set('key' . $workerId, 600, 60);//此处产生协程调度，cpu切到下一个协程(下一个请求)，不会阻塞进程
+
+//        var_dump(\Swoole\Coroutine::stats());
     }
 
     //使用 task 必须为 Server 设置 onTask 和 onFinish 回调，否则 Server->start 会失败

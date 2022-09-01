@@ -46,6 +46,8 @@ class CoServer
         DI()->config->get('router.http');
         DI()->config->get('router.ws');
         $this->_config = DI()->config->get('conf.ws');
+        DI()->logger = Logger::getInstance(ROOT_PATH);//初始化日志
+
         CoTable::getInstance();
         $this->server = new \Swoole\WebSocket\Server($this->_config['host'], $this->_config['port']);
         if (isset($this->_config['settings']) && !empty($this->_config['settings'])) {

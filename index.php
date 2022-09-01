@@ -34,6 +34,8 @@ use \chat\sw\Router\HttpRouter;
 use \chat\sw\Core\Config;
 use \chat\sw\Core\CoHttp;
 
+date_default_timezone_set('Asia/Shanghai');// 时区设置
+
 define('DS', DIRECTORY_SEPARATOR);           //目录分隔符
 define('ROOT_PATH', getcwd() . DS);               //入口文件所在的目录
 //define('APP_PATH',ROOT_PATH.'Application'.DS);

@@ -52,8 +52,18 @@ return [
             'log_file' => 'storage/logs/log',
             'log_rotation' => SWOOLE_LOG_ROTATION_DAILY,
             'log_date_format' => '%Y-%m-%d %H:%M:%S',
+//            'log_level' => SWOOLE_LOG_DEBUG,
             'task_worker_num' => 10,
+            'enable_coroutine' => true,//是否启用异步风格服务器的协程支持
         ],
+
+//        SWOOLE_LOG_DEBUG	调试日志，仅作为内核开发调试使用
+//        SWOOLE_LOG_TRACE	跟踪日志，可用于跟踪系统问题，调试日志是经过精心设置的，会携带关键性信息
+//        SWOOLE_LOG_INFO	普通信息，仅作为信息展示
+//        SWOOLE_LOG_NOTICE	提示信息，系统可能存在某些行为，如重启、关闭
+//        SWOOLE_LOG_WARNING	警告信息，系统可能存在某些问题
+//        SWOOLE_LOG_ERROR	错误信息，系统发生了某些关键性的错误，需要即时解决
+//        SWOOLE_LOG_NONE	相当于关闭日志信息，日志信息不会抛出
     ],
     'swoole_tables' => [
         'http' => [ // 表名，会加上 CoTable 后缀，比如这里是 wsTable
@@ -74,8 +84,8 @@ return [
         ],
     ],
     'redis' => [
-        'host' => '192.168.99.100',
-        'port' => 14005,
+        'host' => '192.168.0.107',
+        'port' => 6379,
         'auth' => '',
         'db_index' => 0,
         'time_out' => 1,

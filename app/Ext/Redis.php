@@ -30,20 +30,26 @@ namespace chat\sw\Ext;
 
 class Redis
 {
+    private static $_instance = NULL;
+    public $redis = "";
+
     //对redis连接的封装
-    public function __construct($config)
+    public function __construct()
     {
+        $config = DI()->config->get('conf.redis');
         //连接数据库
         $this->redis = new \Redis();
         $this->redis->connect($config['host'], $config['port']);
         //授权
-//        $this->redis->auth($config['pass'] == '' ? '' : $config['pass']);
-        $config['pass'] == '' ?: $this->redis->auth($config['pass']);
+        $config['auth'] == '' ?: $this->redis->auth($config['auth']);
+        $this->redis->select($config['db_index']);
     }
 
-    //获取值
-//    public function get($key)
-//    {
-//        return $this->redis->get($key);
-//    }
+    public static function getInstance()
+    {
+        if (is_null(self::$_instance)) {
+            self::$_instance = new self();
+        }
+        return self::$_instance;
+    }
 }

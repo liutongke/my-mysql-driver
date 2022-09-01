@@ -15,20 +15,12 @@ class ComposerStaticInitdbb3310c8429129709aff5e5745c217c
         array (
             'chat\\sw\\' => 8,
         ),
-        'S' => 
-        array (
-            'Simps\\DB\\' => 9,
-        ),
     );
 
     public static $prefixDirsPsr4 = array (
         'chat\\sw\\' => 
         array (
             0 => __DIR__ . '/../..' . '/app',
-        ),
-        'Simps\\DB\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/simple-swoole/db/src',
         ),
     );
 
