@@ -50,7 +50,7 @@ class Events
 
         register_shutdown_function(function () use ($server, $frame) {
             $error = error_get_last();
-            var_dump($error);
+            var_dump("------>", $error);
             if (!empty($error)) {
 
                 $server->push($frame->fd, json_encode(['id' => -1, 'err' => 400, 'path' => '', 'data' => $error]));
@@ -90,31 +90,56 @@ class Events
             $response->end();
             return;
         }
+
         register_shutdown_function(function () use ($request, $response) {
             $error = error_get_last();
-            var_dump($error);
-
-
+            if (!empty($error)) {
+                Logger::getInstance()->error($error['message']);
+                $response->end("<h1>err 404</h1>");
+            }
         });
+
         $pathUrl = strtolower($request->server['path_info']);//请求的地址
         $setUrlList = HttpRouter::GetHandlers();
         if (!isset($setUrlList[$pathUrl])) {
             $response->end("<h1>err 404</h1>");
             return;
         }
-        $rps = call_user_func_array($setUrlList[$pathUrl], [$request, $response, $this->server]);
+
+        try {
+            $rps = call_user_func_array($setUrlList[$pathUrl], [$request, $response, $this->server]);
+        } catch (\Exception $e) {
+//            var_dump($e);
+//            echo $e['message'];
+//            echo $e['file'];
+//            echo "---------------";
+//            echo $e->getMessage();
+//            echo "---------------";
+        }
+
         Logger::echoCmd($request, $response, $this->server);
         $response->end(json_encode($rps));
     }
 
     public function onWorkerStart(\Swoole\Server $server, int $workerId)
     {
+        if ($server->taskworker) {
+            self::setProcessName("swoole server task:{$workerId}");
+        } else {
+            self::setProcessName("swoole server worker:{$workerId}");
+        }
+//        echo "onWorkerStart:{$workerId}\n";
 //        var_dump("workerId:" . $workerId);
 //        $redis = \chat\sw\Ext\Redis::getInstance();
 ////        var_dump($redis);
 //        $redis->redis->set('key' . $workerId, 600, 60);//此处产生协程调度，cpu切到下一个协程(下一个请求)，不会阻塞进程
 
 //        var_dump(\Swoole\Coroutine::stats());
+    }
+
+    public static function setProcessName(string $processName)
+    {
+        swoole_set_process_name($processName);
     }
 
     //使用 task 必须为 Server 设置 onTask 和 onFinish 回调，否则 Server->start 会失败

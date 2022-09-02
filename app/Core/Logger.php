@@ -64,7 +64,7 @@ class Logger
         $date = date('Y-m-d H:i:s');
         $levelStr = $this->levelMap($logLevel);
         $filePath = $this->logFolder . "/{$prefix}.log";
-        $logData = "[{$date}] | {$levelStr} |  {$msg}\n";
+        $logData = "[swoole] | [{$date}] | {$levelStr} |  {$msg}\n";
         file_put_contents($filePath, "{$logData}", FILE_APPEND | LOCK_EX);
         return $logData;
     }

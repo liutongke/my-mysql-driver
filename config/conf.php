@@ -32,6 +32,7 @@ return [
         'reuse_port' => true,//端口复用
     ],
     'ws' => [
+        'type' => 1,//启动哪种服务 1 WebSocket
         'host' => '0.0.0.0',
         'port' => 9500,
         'ssl' => false,
@@ -49,10 +50,10 @@ return [
             'daemonize' => false,//设置 daemonize => true 时，程序将转入后台作为守护进程运行。长时间运行的服务器端程序必须启用此项。如果不启用守护进程，当 ssh 终端退出后，程序将被终止运行
 //            'dispatch_mode' => 2,//数据包分发策略。【默认值：2】
             'worker_num' => swoole_cpu_num(),
-            'log_file' => 'storage/logs/log',
+            'log_file' => 'swoole/log',
             'log_rotation' => SWOOLE_LOG_ROTATION_DAILY,
             'log_date_format' => '%Y-%m-%d %H:%M:%S',
-//            'log_level' => SWOOLE_LOG_DEBUG,
+            'log_level' => SWOOLE_LOG_DEBUG,
             'task_worker_num' => 10,
             'enable_coroutine' => true,//是否启用异步风格服务器的协程支持
         ],
@@ -84,7 +85,7 @@ return [
         ],
     ],
     'redis' => [
-        'host' => '192.168.0.107',
+        'host' => '192.168.0.105',
         'port' => 6379,
         'auth' => '',
         'db_index' => 0,

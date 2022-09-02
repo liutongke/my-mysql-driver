@@ -33,12 +33,15 @@ class App
     public function Index(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
         $redis = \chat\sw\Ext\Redis::getInstance();
+//        $data = [];
+        $data["test"];
+        new data();
 //        var_dump($redis);
 //        $redis->set("tset", 1, 600);
         $key = md5(uniqid(mt_rand(1, 999999)));
         $redis->redis->set($key, $key);
 //        $response->end("<h1>hello swoole!</h1>");
-        DI()->logger->info("日志测试");
+        DI()->logger->info("日志测试{$key}");
         return [
             "code" => 200,
             "msg" => "hello World!",
