@@ -31,6 +31,23 @@ class Error
 {
     use Singleton;
 
+    function __construct()
+    {
+        set_error_handler([$this, 'errorHandler']);
+    }
+
+    public function errorHandler($errno, $errstr, $errfile, $line)
+    {
+        $errorStr = $this->ErrorLevels($errno);
+        DI()->logger->log("{$errorStr}:{$errstr}:{$errfile} {$line}", $errno);
+    }
+
+    public function httpBadRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response, $error)
+    {
+        DI()->logger->error($error['message']);
+        $response->status(500);
+        $response->end(json_encode(['code' => 500, 'msg' => $error['message']]));
+    }
 //E_ERROR	1
 //E_WARNING	2
 //E_PARSE	4

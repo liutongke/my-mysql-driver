@@ -35,7 +35,7 @@ class App
         $redis = \chat\sw\Ext\Redis::getInstance();
 //        $data = [];
         $data["test"];
-        new data();
+//        new data();
 //        var_dump($redis);
 //        $redis->set("tset", 1, 600);
         $key = md5(uniqid(mt_rand(1, 999999)));

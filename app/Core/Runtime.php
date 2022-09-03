@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/15
- * Time: 22:44
+ * Date: 2022/9/2
+ * Time: 23:33
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,17 +25,35 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Co;
+namespace chat\sw\Core;
 
-use chat\sw\Router\HttpRouter;
-use Swoole\Process;
-use Swoole\Coroutine\Http\Server;
 
-class Co
+class Runtime
 {
-    public function run()
+    use Singleton;
+
+    private $tm;
+    private $debug;
+
+    function __construct(bool $debug)
     {
-//        (new CoHttp())->start();
-        (new Ws())->start();
+        $this->debug = $debug;
+    }
+
+    public function start()
+    {
+        if ($this->debug) {
+            $this->tm = microtime(true);
+        }
+    }
+
+    public function end()
+    {
+        if ($this->debug) {
+            $endTm = microtime(true);
+            $runTime = ($endTm - $this->tm) * 1000;
+            return round($runTime, 3) . "ms";
+        }
+        return "0";
     }
 }

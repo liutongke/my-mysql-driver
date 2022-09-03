@@ -91,33 +91,26 @@ class Events
             return;
         }
 
+        Runtime::getInstance()->start();
         register_shutdown_function(function () use ($request, $response) {
             $error = error_get_last();
             if (!empty($error)) {
-                Logger::getInstance()->error($error['message']);
-                $response->end("<h1>err 404</h1>");
+                Error::getInstance()->httpBadRequest($request, $response, $error);
             }
         });
 
         $pathUrl = strtolower($request->server['path_info']);//请求的地址
         $setUrlList = HttpRouter::GetHandlers();
         if (!isset($setUrlList[$pathUrl])) {
-            $response->end("<h1>err 404</h1>");
+            DI()->logger->error($request);
+            $response->status(404);
+            $response->end(json_encode(['code' => 404, 'msg' => 'url err']));
             return;
         }
 
-        try {
-            $rps = call_user_func_array($setUrlList[$pathUrl], [$request, $response, $this->server]);
-        } catch (\Exception $e) {
-//            var_dump($e);
-//            echo $e['message'];
-//            echo $e['file'];
-//            echo "---------------";
-//            echo $e->getMessage();
-//            echo "---------------";
-        }
-
-        Logger::echoCmd($request, $response, $this->server);
+        $rps = call_user_func_array($setUrlList[$pathUrl], [$request, $response, $this->server]);
+        var_dump($this->server);
+        DI()->logger->echoCmd($request, $response, $this->server, Runtime::getInstance()->end());
         $response->end(json_encode($rps));
     }
 

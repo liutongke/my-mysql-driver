@@ -43,22 +43,15 @@ class Logger
         }
     }
 
-    public static function echoCmd(\Swoole\Http\Request $request, \Swoole\Http\Response $response, \Swoole\WebSocket\Server $server)
+    public function echoCmd(\Swoole\Http\Request $request, \Swoole\Http\Response $response, \Swoole\WebSocket\Server $server, $runTime)
     {
 //        [GIN] 2022/08/31 - 17:59:38 | 200 |     17.2792ms |   192.168.0.105 | GET      "/"
         $requestTm = date("Y/m/d-H:i:s", $request->server['request_time']);
-//        var_dump($request, $response);
-//        $server['path_info']
-//        $server['request_method']
 
-        $fd_info = $server->getClientInfo($request->fd);
-
-//        $runTime = (microtime() - $fd_info['last_time']) * 1000 . ' ms';
-        $runTime = '0.1ms';
-        echo "[swoole] | {$requestTm} | 200 | {$runTime} | {$request->server['remote_addr']} | {$request->server['path_info']} | {$request->server['request_method']}\n";
+        echo "[http] | {$requestTm} | 200 | {$runTime} | {$request->server['remote_addr']} | {$request->server['path_info']} | {$request->server['request_method']}\n";
     }
 
-    private function log($msg, $logLevel)
+    public function log($msg, $logLevel)
     {
         $prefix = date('Ym');
         $date = date('Y-m-d H:i:s');

@@ -34,9 +34,13 @@ class CoServer
 
     public static function welcome()
     {
+        $conf = DI()->config->get('conf.ws');
+        $phpVersion = phpversion();
         $swooleVersion = SWOOLE_VERSION;
         echo <<<EOL
-        Swoole: {$swooleVersion}\n
+        Swoole:{$swooleVersion}\n
+        php version:{$phpVersion}\n
+        port:{$conf['port']}\n
         EOL;
     }
 
@@ -66,15 +70,8 @@ class CoServer
         DI()->config->get('router.http');
         DI()->config->get('router.ws');
         DI()->logger = Logger::getInstance(ROOT_PATH);//初始化日志
-        $this->errorHandler();
-    }
-
-    public function errorHandler()
-    {
-        set_error_handler(function ($errno, $errstr, $errfile, $line) {
-            $errorStr = Error::getInstance()->ErrorLevels($errno);
-            Logger::getInstance()->info("{$errorStr}:{$errstr}:{$errfile} {$line}");
-        });
+        DI()->runTm = Runtime::getInstance(true);
+        DI()->Error = Error::getInstance();
     }
 
     const webSocketServer = 1;
