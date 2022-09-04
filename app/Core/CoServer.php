@@ -40,7 +40,7 @@ class CoServer
         $phpVersion = phpversion();
         $swooleVersion = SWOOLE_VERSION;
 
-        echo "Swoole:{$swooleVersion}\nphp version:{$phpVersion}\nport:{$conf['port']}\n";
+        Logger::echoSuccessCmd("Swoole: {$swooleVersion}, PHP: {$phpVersion}, Port: {$conf['port']}");
     }
 
     public function __construct()

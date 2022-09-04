@@ -182,4 +182,12 @@ class Events
     {
 
     }
+
+    public function onStart(\Swoole\Server $server)
+    {
+        $host = $server->host;
+        $port = $server->port;
+        Logger::echoSuccessCmd("Swoole Http Server running：http://{$host}:{$port}");
+        Logger::echoSuccessCmd("Swoole websocket Server running：ws://{$host}:{$port}");
+    }
 }

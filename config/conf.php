@@ -46,6 +46,7 @@ return [
             ['Task', \chat\sw\Core\Events::class, 'onTask'],
             ['Finish', \chat\sw\Core\Events::class, 'onFinish'],
             ['workerStart', \chat\sw\Core\Events::class, 'onWorkerStart'],
+            ['start', \chat\sw\Core\Events::class, 'onStart'],
         ],
         'settings' => [
             'daemonize' => false,//设置 daemonize => true 时，程序将转入后台作为守护进程运行。长时间运行的服务器端程序必须启用此项。如果不启用守护进程，当 ssh 终端退出后，程序将被终止运行

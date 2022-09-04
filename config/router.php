@@ -31,6 +31,9 @@ return [
         \HttpRouter("/test", "\chat\sw\Controller\App@Index"),
         \HttpRouter("/app/test", "\chat\sw\Controller\App@Index1"),
         \HttpRouter("/stop", "\chat\sw\Controller\App@stop"),
+        \HttpRouter("/t", function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
+            $response->end('hello');
+        }),
     ],
     'ws' => [
         WsRouter("websocket", "\chat\sw\Controller\WsController@stop"),
