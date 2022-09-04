@@ -59,6 +59,9 @@ return [
             'task_worker_num' => 10,
             'enable_coroutine' => true,//是否启用异步风格服务器的协程支持
 //            'buffer_output_size' => 32 * 1024 * 1024, //配置发送输出缓存区内存尺寸。【默认值：2M】
+//            'document_root' => ROOT_PATH,
+//            'enable_static_handler' => true,
+//            'static_handler_locations' => ['/chatroom', '/app/images'],//设置静态处理器的路径。类型为数组，默认不启用。
         ],
 
 //        SWOOLE_LOG_DEBUG	调试日志，仅作为内核开发调试使用
