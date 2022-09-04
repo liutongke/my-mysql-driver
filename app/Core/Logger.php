@@ -33,22 +33,46 @@ class Logger
     use Singleton;
 
     private $logFolder;
+    private $debug;
 
-    public function __construct($logDir)
+    public function __construct($logDir, $debug)
     {
         $this->logFolder = "{$logDir}runtime";
+        $this->debug = $debug;
 
         if (!file_exists($this->logFolder)) {
             mkdir($this->logFolder, 0777, TRUE);
         }
     }
 
-    public function echoCmd(\Swoole\Http\Request $request, \Swoole\Http\Response $response, \Swoole\WebSocket\Server $server, $runTime)
+    public function echoWsCmd(\Swoole\WebSocket\Server $server, $fd, $runTime)
     {
-//        [GIN] 2022/08/31 - 17:59:38 | 200 |     17.2792ms |   192.168.0.105 | GET      "/"
-        $requestTm = date("Y/m/d-H:i:s", $request->server['request_time']);
+        if ($this->debug) {
+            $clientInfo = $server->getClientInfo($fd);
+            $lastTime = $clientInfo['last_time'];
+            $remoteIp = $clientInfo['remote_ip'];
+            $requestTm = date("Y/m/d-H:i:s", $lastTime);
 
-        echo "[http] | {$requestTm} | 200 | {$runTime} | {$request->server['remote_addr']} | {$request->server['path_info']} | {$request->server['request_method']}\n";
+            $this->console("[websocket] | {$requestTm} | $remoteIp | 200 | {$runTime}\n");
+        }
+    }
+
+    public function echoHttpCmd(\Swoole\Http\Request $request, \Swoole\Http\Response $response, \Swoole\WebSocket\Server $server, $runTime)
+    {
+        if ($this->debug) {
+            $clientInfo = $server->getClientInfo($request->fd);
+            $lastTime = $clientInfo['last_time'];
+            $remoteIp = $clientInfo['remote_ip'];
+//        [GIN] 2022/08/31 - 17:59:38 | 200 |     17.2792ms |   192.168.0.105 | GET      "/"
+            $requestTm = date("Y/m/d-H:i:s", $lastTime);
+
+            $this->console("[http] | {$requestTm} | $remoteIp | 200 | {$runTime} |  {$request->server['path_info']} | {$request->server['request_method']}\n");
+        }
+    }
+
+    public function console($msg)
+    {
+        echo $msg;
     }
 
     public function log($msg, $logLevel)

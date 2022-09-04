@@ -28,9 +28,9 @@ return [
     'http' => [
         \HttpRouter("/user/list", "\chat\sw\Controller\Index@list"),
         \HttpRouter("/", "\chat\sw\Controller\App@Index"),
+        \HttpRouter("/test", "\chat\sw\Controller\App@Index"),
         \HttpRouter("/app/test", "\chat\sw\Controller\App@Index1"),
         \HttpRouter("/stop", "\chat\sw\Controller\App@stop"),
-        \HttpRouter("/ws", "\chat\sw\Co\Websocket@ws"),//websocket
     ],
     'ws' => [
         WsRouter("websocket", "\chat\sw\Controller\WsController@stop"),

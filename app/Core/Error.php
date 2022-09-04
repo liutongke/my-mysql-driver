@@ -48,6 +48,12 @@ class Error
         $response->status(500);
         $response->end(json_encode(['code' => 500, 'msg' => $error['message']]));
     }
+
+    public function push()
+    {
+        $server = CoServer::getInstance()->getServer();
+        $server->send();
+    }
 //E_ERROR	1
 //E_WARNING	2
 //E_PARSE	4

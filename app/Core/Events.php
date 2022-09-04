@@ -44,58 +44,89 @@ class Events
         echo "server: handshake success with fd{$request->fd}\n";
     }
 
+    public function onClose($ser, $fd)
+    {
+        echo "client {$fd} closed\n";
+    }
+
     public function onMessage(\Swoole\WebSocket\Server $server, $frame)
     {
 //        echo "receive from {$frame->fd}:{$frame->data},opcode:{$frame->opcode},fin:{$frame->finish}\n";
+        DI()->runTm->start();
 
-        register_shutdown_function(function () use ($server, $frame) {
+        $ws = new WsResponse($server);
+        $ws->setFd($frame->fd);
+
+        register_shutdown_function(function () use ($server, $frame, $ws) {
             $error = error_get_last();
-            var_dump("------>", $error);
-            if (!empty($error)) {
 
-                $server->push($frame->fd, json_encode(['id' => -1, 'err' => 400, 'path' => '', 'data' => $error]));
+            if (!empty($error)) {
+                DI()->logger->error($error['message']);
+                $ws->setStatus(HttpCode::$StatusInternalServerError);
+                $ws->setCode(HttpCode::$StatusInternalServerError);
+                $ws->setMsg($error);
+                $ws->output();
             }
-//            switch ($error['type'] ?? null) {
-//                case E_ERROR :
-//                case E_PARSE :
-//                case E_CORE_ERROR :
-//                case E_COMPILE_ERROR :
-//
-//                    break;
-//            }
-            $server->push($frame->fd, WsRouter::MsgHandle($server, $frame));//处理路由
         });
-//        var_dump($frame->opcode == WEBSOCKET_OPCODE_TEXT, $frame->opcode == WEBSOCKET_OPCODE_BINARY);
-//        if ($server->isEstablished($frame->fd)) {
-//            $task_id = $server->task(["t" => 1], 0);
-//            $server->push($frame->fd, json_encode(['msg' => "hello world"]));
-//        }
-//        foreach ($server->connections as $fd) {
-//            // 需要先判断是否是正确的websocket连接，否则有可能会push失败
-//            if ($server->isEstablished($fd)) {
-//                $task_id = $server->task(["t" => 1], 0);
-//                $server->push($fd, json_encode(['msg' => "hello world"]));
-//            }
-//        }
+
+        $this->handlerWsData($server, $frame, $ws);
+
+        DI()->logger->echoWsCmd($this->server, $frame->fd, DI()->runTm->end());
+
+        $ws->output();
     }
 
-    public function onClose($ser, $fd)
+    public function handlerWsData(\Swoole\WebSocket\Server $server, $frame, \chat\sw\Core\WsResponse $ws)
     {
-//        echo "client {$fd} closed\n";
+        $res = json_decode($frame->data, true);
+        $list = WsRouter::GetHandlers();
+        if (!is_array($res) || !isset($list[strtolower($res['path'])]) || empty($res)) {
+            $ws->setCode(HttpCode::$StatusBadRequest);
+            $ws->setMsg('data err');
+        }
+        $c = $list[strtolower($res['path'])];
+        $api = $c['0'];
+        $action = $c['1'];
+        //先处理必须携带的参数
+        $rule = $api->getByRule($res['data'], $action);
+        if ($rule['res']) {//验证未通过
+            $ws->setId($res['id']);
+            $ws->setCode(HttpCode::$StatusBadRequest);
+            $ws->setMsg($rule['data']);
+            $ws->setPath($res['path']);
+            $ws->setData($res['data']);
+        }
+        $data = $api->{$action}($server, $res);
+
+        $ws->setId($res['id']);
+        $ws->setCode(HttpCode::$StatusOK);
+        $ws->setPath($res['path']);
+        $ws->setData($data);
     }
 
     public function onRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
-        if ($request->server['path_info'] == '/favicon.ico' || $request->server['request_uri'] == '/favicon.ico' || $request->server['request_uri'] == '/favicon.png') {
+        if (
+            $request->server['path_info'] == '/favicon.ico' || $request->server['request_uri'] == '/favicon.ico' ||
+            $request->server['request_uri'] == '/favicon.png'
+        ) {
             $response->end();
             return;
         }
 
-        Runtime::getInstance()->start();
-        register_shutdown_function(function () use ($request, $response) {
+        DI()->runTm->start();
+
+        $rs = new HttpResponse($response);
+
+        register_shutdown_function(function () use ($rs) {
             $error = error_get_last();
             if (!empty($error)) {
-                Error::getInstance()->httpBadRequest($request, $response, $error);
+                DI()->logger->error($error['message']);
+                $rs->setStatus(HttpCode::$StatusInternalServerError);
+                $rs->setCode(HttpCode::$StatusInternalServerError);
+                $rs->setData($error['message']);
+                $rs->output();
+//                Error::getInstance()->httpBadRequest($request, $response, $error);
             }
         });
 
@@ -103,15 +134,26 @@ class Events
         $setUrlList = HttpRouter::GetHandlers();
         if (!isset($setUrlList[$pathUrl])) {
             DI()->logger->error($request);
-            $response->status(404);
-            $response->end(json_encode(['code' => 404, 'msg' => 'url err']));
+            $rs->setStatus(HttpCode::$StatusNotFound);
+            $rs->setCode(HttpCode::$StatusNotFound);
+            $rs->setData('url not find');
+            $rs->output();
             return;
         }
 
-        $rps = call_user_func_array($setUrlList[$pathUrl], [$request, $response, $this->server]);
-        var_dump($this->server);
-        DI()->logger->echoCmd($request, $response, $this->server, Runtime::getInstance()->end());
-        $response->end(json_encode($rps));
+        try {
+            $rps = call_user_func_array($setUrlList[$pathUrl], [$request, $response, $this->server]);
+        } catch (\Exception $e) {
+            echo "------->";
+            echo $e->getMessage();
+        }
+
+        DI()->logger->echoHttpCmd($request, $response, $this->server, DI()->runTm->end());
+
+        $rs->setStatus(HttpCode::$StatusOK);
+        $rs->setCode(HttpCode::$StatusOK);
+        $rs->setData($rps);
+        $rs->output();
     }
 
     public function onWorkerStart(\Swoole\Server $server, int $workerId)
@@ -121,13 +163,6 @@ class Events
         } else {
             self::setProcessName("swoole server worker:{$workerId}");
         }
-//        echo "onWorkerStart:{$workerId}\n";
-//        var_dump("workerId:" . $workerId);
-//        $redis = \chat\sw\Ext\Redis::getInstance();
-////        var_dump($redis);
-//        $redis->redis->set('key' . $workerId, 600, 60);//此处产生协程调度，cpu切到下一个协程(下一个请求)，不会阻塞进程
-
-//        var_dump(\Swoole\Coroutine::stats());
     }
 
     public static function setProcessName(string $processName)

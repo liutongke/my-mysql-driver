@@ -54,27 +54,6 @@ class WsRouter implements Router
         return self::$router;
     }
 
-    public static function MsgHandle(\Swoole\WebSocket\Server $server, $frame)
-    {
-//        var_dump(json_encode([
-//            "id" => "123123123",
-//            "path" => "websocket",
-//            "data" => "",
-//        ]));
-        $res = json_decode($frame->data, true);
-        $list = self::GetHandlers();
-        if (!is_array($res) || !isset($list[strtolower($res['path'])]) || empty($res)) {
-            return json_encode(['id' => -1, 'err' => 400, 'path' => '', 'data' => date("Y-m-d H:i:s")]);
-        }
-        $c = $list[strtolower($res['path'])];
-        //先处理必须携带的参数
-        $rule = $c['0']->getByRule($res['data'], $c['1']);
-        if ($rule['res']) {//验证未通过
-            return json_encode(['id' => $res["id"], 'err' => 400, 'path' => $res["path"], 'data' => $rule['data']]);
-        }
-        $data = $c['0']->{$c['1']}($server, $res);
-        return json_encode(['id' => $res["id"], 'err' => 0, 'path' => $res["path"], 'data' => $data]);
-    }
 //    public static function MsgHandle($request, $response, $frame)
 //    {
 //        $res = json_decode($frame->data, true);

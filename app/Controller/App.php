@@ -34,7 +34,7 @@ class App
     {
         $redis = \chat\sw\Ext\Redis::getInstance();
 //        $data = [];
-        $data["test"];
+//        $data["test"];
 //        new data();
 //        var_dump($redis);
 //        $redis->set("tset", 1, 600);

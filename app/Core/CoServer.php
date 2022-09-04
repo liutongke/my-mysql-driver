@@ -30,6 +30,8 @@ namespace chat\sw\Core;
 
 class CoServer
 {
+    use Singleton;
+
     public $server;
 
     public static function welcome()
@@ -37,11 +39,8 @@ class CoServer
         $conf = DI()->config->get('conf.ws');
         $phpVersion = phpversion();
         $swooleVersion = SWOOLE_VERSION;
-        echo <<<EOL
-        Swoole:{$swooleVersion}\n
-        php version:{$phpVersion}\n
-        port:{$conf['port']}\n
-        EOL;
+
+        echo "Swoole:{$swooleVersion}\nphp version:{$phpVersion}\nport:{$conf['port']}\n";
     }
 
     public function __construct()
@@ -51,8 +50,6 @@ class CoServer
         $this->initialize();
         $this->ws_config = DI()->config->get('conf.ws');
 
-        CoTable::getInstance();
-
         $this->initSwooleServer($this->ws_config['host'], $this->ws_config['port'], $this->ws_config['type']);
 
         if (isset($this->ws_config['settings']) && !empty($this->ws_config['settings'])) {
@@ -60,7 +57,6 @@ class CoServer
         }
 
         foreach ($this->ws_config['events'] as $eventsInfo) {
-//            var_dump($eventsInfo['0'], $eventsInfo['1'], $eventsInfo['2']);
             $this->server->on($eventsInfo['0'], [new $eventsInfo['1']($this->server), $eventsInfo['2']]);
         }
     }
@@ -69,8 +65,8 @@ class CoServer
     {
         DI()->config->get('router.http');
         DI()->config->get('router.ws');
-        DI()->logger = Logger::getInstance(ROOT_PATH);//初始化日志
-        DI()->runTm = Runtime::getInstance(true);
+        DI()->logger = Logger::getInstance(ROOT_PATH, DI()->config->get('conf.debug'));//初始化日志
+        DI()->runTm = Runtime::getInstance(DI()->config->get('conf.debug'));
         DI()->Error = Error::getInstance();
     }
 
@@ -89,5 +85,10 @@ class CoServer
     {
         Events::setProcessName("swoole server Master");
         $this->server->start();
+    }
+
+    public function getServer()
+    {
+        return $this->server;
     }
 }
