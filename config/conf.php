@@ -52,7 +52,7 @@ return [
             'daemonize' => false,//设置 daemonize => true 时，程序将转入后台作为守护进程运行。长时间运行的服务器端程序必须启用此项。如果不启用守护进程，当 ssh 终端退出后，程序将被终止运行
 //            'dispatch_mode' => 2,//数据包分发策略。【默认值：2】
             'worker_num' => swoole_cpu_num(),
-            'log_file' => 'swoole/log',
+            'log_file' => 'storage/swoole',
             'log_rotation' => SWOOLE_LOG_ROTATION_DAILY,
             'log_date_format' => '%Y-%m-%d %H:%M:%S',
             'log_level' => SWOOLE_LOG_DEBUG,
@@ -60,7 +60,7 @@ return [
             'enable_coroutine' => true,//是否启用异步风格服务器的协程支持
 //            'buffer_output_size' => 32 * 1024 * 1024, //配置发送输出缓存区内存尺寸。【默认值：2M】
 //            'document_root' => ROOT_PATH,
-//            'enable_static_handler' => true,
+//            'enable_static_handler' => true,//开启静态文件请求处理功能
 //            'static_handler_locations' => ['/chatroom', '/app/images'],//设置静态处理器的路径。类型为数组，默认不启用。
         ],
 

@@ -40,6 +40,7 @@ abstract class Rule
     public function getByRule($data, string $action): array
     {
         $rules = $this->rule();
+
         if (!isset($rules[$action])) {
             return ["res" => false, "data" => ""];
         }

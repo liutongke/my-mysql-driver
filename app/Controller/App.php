@@ -28,8 +28,19 @@
 namespace chat\sw\Controller;
 
 
-class App
+use chat\sw\Core\Rule;
+
+class App extends Rule
 {
+    public function rule()
+    {
+        return [
+            'Index' => [
+                'pic' => ['name' => 'pic', 'require' => true, 'type' => 'string']
+            ]
+        ];
+    }
+
     public function Index(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
         $redis = \chat\sw\Ext\Redis::getInstance();
@@ -42,27 +53,22 @@ class App
         $redis->redis->set($key, $key);
 //        $response->end("<h1>hello swoole!</h1>");
         DI()->logger->info("日志测试{$key}");
+
         return [
             "code" => 200,
             "msg" => "hello World!",
             "data" => [
                 "id" => 1,
+                "getUrl" => $request->get['keke'],
                 "name" => "Reds",
                 "Colors" => ["Crimson", "Red", "Ruby", "Maroon"]
             ]
         ];
     }
 
-    public function Index1(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
-    {
-        EchoHtml($response, "index.html");
-//        $rand = rand(1111, 9999);
-//        $response->end("<h1>------>Index1</h1>{$rand}");
-    }
-
-    public function stop(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
+    public function post(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
         $tm = date('Y-m-d H:i:s');
-        $response->end("<h1>------>stop{$tm}</h1>");
+        return $request->post;
     }
 }

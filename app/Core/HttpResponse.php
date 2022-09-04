@@ -33,6 +33,7 @@ class HttpResponse
     private $response;
     private $data;
     private $code;
+    private $msg;
 
     public function __construct(\Swoole\Http\Response $response)
     {
@@ -42,6 +43,12 @@ class HttpResponse
     public function setStatus($ret)
     {
         $this->response->status($ret);
+        return $this;
+    }
+
+    public function setMsg($msg)
+    {
+        $this->msg = $msg;
         return $this;
     }
 
@@ -61,6 +68,7 @@ class HttpResponse
     {
         $this->response->end(json_encode([
             'code' => $this->code,
+            'msg' => $this->msg ?? 'success',
             'data' => $this->data,
         ]));
     }

@@ -37,7 +37,7 @@ class Logger
 
     public function __construct($logDir, $debug)
     {
-        $this->logFolder = "{$logDir}runtime";
+        $this->logFolder = "{$logDir}storage/log";
         $this->debug = $debug;
 
         if (!file_exists($this->logFolder)) {
@@ -68,7 +68,7 @@ class Logger
             $remoteIp = $clientInfo['remote_ip'];
             $requestTm = date("Y/m/d-H:i:s", $lastTime);
 
-            $this->console("[websocket] | {$requestTm} | $remoteIp | 200 | {$runTime}\n");
+            $this->console("[websocket] | {$requestTm} | $remoteIp | 200 | {$runTime}");
         }
     }
 
@@ -81,18 +81,18 @@ class Logger
 //        [GIN] 2022/08/31 - 17:59:38 | 200 |     17.2792ms |   192.168.0.105 | GET      "/"
             $requestTm = date("Y/m/d-H:i:s", $lastTime);
 
-            $this->console("[http] | {$requestTm} | $remoteIp | 200 | {$runTime} |  {$request->server['path_info']} | {$request->server['request_method']}\n");
+            $this->console("[http] | {$requestTm} | $remoteIp | 200 | {$runTime} | {$request->server['path_info']} | {$request->server['request_method']}");
         }
     }
 
     public function console($msg)
     {
-        echo $msg;
+        echo $msg . PHP_EOL;
     }
 
     public function log($msg, $logLevel)
     {
-        $prefix = date('Ym');
+        $prefix = date('Ymd');
         $date = date('Y-m-d H:i:s');
         $levelStr = $this->levelMap($logLevel);
         $filePath = $this->logFolder . "/{$prefix}.log";

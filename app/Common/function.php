@@ -29,13 +29,6 @@ function DI()
     return \chat\sw\Core\Di::one();
 }
 
-function EchoHtml(\Swoole\Http\Response $response, $htmlPathName)
-{
-    $response->header("Content-Type", "text/html; charset=utf-8");
-//    var_dump(file_get_contents(ROOT_PATH . "/public/" . $htmlPathName));
-    $response->end(file_get_contents(ROOT_PATH . "public/chatroom/" . $htmlPathName));
-}
-
 //websocket路由设置
 function WsRouter($url, $callable)
 {

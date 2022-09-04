@@ -1,6 +1,5 @@
 .idea/
 demo/
 /example-app
-/runtime
-/swoole
 /remove
+/storage

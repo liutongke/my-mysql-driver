@@ -95,13 +95,13 @@ class Events
             $ws->setMsg($rule['data']);
             $ws->setPath($res['path']);
             $ws->setData($res['data']);
+        } else {
+            $data = $api->{$action}($server, $res);
+            $ws->setId($res['id']);
+            $ws->setCode(HttpCode::$StatusOK);
+            $ws->setPath($res['path']);
+            $ws->setData($data);
         }
-        $data = $api->{$action}($server, $res);
-
-        $ws->setId($res['id']);
-        $ws->setCode(HttpCode::$StatusOK);
-        $ws->setPath($res['path']);
-        $ws->setData($data);
     }
 
     public function onRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
@@ -126,33 +126,46 @@ class Events
                 $rs->setCode(HttpCode::$StatusInternalServerError);
                 $rs->setData($error['message']);
                 $rs->output();
-//                Error::getInstance()->httpBadRequest($request, $response, $error);
             }
         });
 
         $pathUrl = strtolower($request->server['path_info']);//请求的地址
         $setUrlList = HttpRouter::GetHandlers();
         if (!isset($setUrlList[$pathUrl])) {
-            DI()->logger->error($request);
+//            DI()->logger->error($request);
             $rs->setStatus(HttpCode::$StatusNotFound);
             $rs->setCode(HttpCode::$StatusNotFound);
             $rs->setData('url not find');
             $rs->output();
             return;
         }
+        $data = null;
 
-        try {
-            $rps = call_user_func_array($setUrlList[$pathUrl], [$request, $response, $this->server]);
-        } catch (\Exception $e) {
-            echo "------->";
-            echo $e->getMessage();
+        switch ($request->server['request_method']) {
+            case 'GET':
+                $data = $request->get;
+                break;
+
+            case 'POST':
+                $data = $request->post;
+                break;
         }
-
-        DI()->logger->echoHttpCmd($request, $response, $this->server, DI()->runTm->end());
+        $c = $setUrlList[$pathUrl];
+        $api = $c['0'];
+        $action = $c['1'];
+        //先处理必须携带的参数
+        $rule = $api->getByRule($data, $action);
 
         $rs->setStatus(HttpCode::$StatusOK);
-        $rs->setCode(HttpCode::$StatusOK);
-        $rs->setData($rps);
+        if ($rule['res']) {//验证未通过
+            $rs->setCode(HttpCode::$StatusBadRequest);
+            $rs->setData($rule['data']);
+        } else {
+            $rps = call_user_func_array($c, [$request, $response, $this->server]);
+            $rs->setCode(HttpCode::$StatusOK);
+            $rs->setData($rps);
+        }
+        DI()->logger->echoHttpCmd($request, $response, $this->server, DI()->runTm->end());
         $rs->output();
     }
 
@@ -185,9 +198,7 @@ class Events
 
     public function onStart(\Swoole\Server $server)
     {
-        $host = $server->host;
-        $port = $server->port;
-        Logger::echoSuccessCmd("Swoole Http Server running：http://{$host}:{$port}");
-        Logger::echoSuccessCmd("Swoole websocket Server running：ws://{$host}:{$port}");
+        Logger::echoSuccessCmd("Swoole Http Server running：http://{ $server->host}:{$server->port}");
+        Logger::echoSuccessCmd("Swoole websocket Server running：ws://{ $server->host}:{$server->port}");
     }
 }
