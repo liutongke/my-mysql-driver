@@ -25,10 +25,10 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace App\Core;
+namespace Sapi;
 
 
-use App\Router\WsRouter;
+use Sapi\Router\WsRouter;
 
 class WsRequest
 {
@@ -65,7 +65,7 @@ class WsRequest
         $ws->output();
     }
 
-    public function handlerWsData(\Swoole\WebSocket\Server $server, $frame, \App\Core\WsResponse $ws)
+    public function handlerWsData(\Swoole\WebSocket\Server $server, $frame, \Sapi\WsResponse $ws)
     {
         $res = json_decode($frame->data, true);
         $list = WsRouter::GetHandlers();

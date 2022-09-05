@@ -1,9 +1,8 @@
 <?php
-
 /*
  * User: keke
- * Date: 2018/7/26
- * Time: 17:02
+ * Date: 2022/8/26
+ * Time: 0:04
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -26,30 +25,36 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace App\Ext;
+namespace Sapi;
 
-class Redis
+
+abstract class Rule
 {
-    private static $_instance = NULL;
-    public $redis = "";
+    //        ['engineData' => [
+//            'data' => ['name' => 'data', 'require' => true, 'type' => 'string']
+//        ]
+//        ];
+    abstract protected function rule();
 
-    //对redis连接的封装
-    public function __construct()
+    //参数处理
+    public function getByRule($data, string $action): array
     {
-        $config = DI()->config->get('conf.redis');
-        //连接数据库
-        $this->redis = new \Redis();
-        $this->redis->connect($config['host'], $config['port']);
-        //授权
-        $config['auth'] == '' ?: $this->redis->auth($config['auth']);
-        $this->redis->select($config['db_index']);
-    }
+        $rules = $this->rule();
 
-    public static function getInstance()
-    {
-        if (is_null(self::$_instance)) {
-            self::$_instance = new self();
+        if (!isset($rules[$action])) {
+            return ["res" => false, "data" => ""];
         }
-        return self::$_instance;
+
+        $rule = $rules[$action];
+        $t = ["res" => false, "data" => ""];
+
+        foreach ($rule as $k => $v) {
+//            var_dump($k, $v);
+            if ($v['require'] && !isset($data[$k])) {//必须滴
+                $t = ["res" => true, "data" => "must require {$k}"];
+            }
+        }
+
+        return $t;
     }
 }

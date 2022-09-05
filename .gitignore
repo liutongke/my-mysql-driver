@@ -1,5 +1,3 @@
-.idea/
-demo/
-/example-app
-/remove
-/storage
+vendor
+.idea
+composer.lock

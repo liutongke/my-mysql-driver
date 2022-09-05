@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/13
- * Time: 14:37
+ * Date: 2022/9/3
+ * Time: 13:55
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,12 +25,51 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace App\Router;
+namespace Sapi;
 
 
-interface Router
+class HttpResponse
 {
-    public function SetHandlers($name, $value);
+    private $response;
+    private $data;
+    private $code;
+    private $msg;
 
-    public static function GetHandlers();
+    public function __construct(\Swoole\Http\Response $response)
+    {
+        $this->response = $response;
+    }
+
+    public function setStatus($ret)
+    {
+        $this->response->status($ret);
+        return $this;
+    }
+
+    public function setMsg($msg)
+    {
+        $this->msg = $msg;
+        return $this;
+    }
+
+    public function setData($data)
+    {
+        $this->data = $data;
+        return $this;
+    }
+
+    public function setCode($code)
+    {
+        $this->code = $code;
+        return $this;
+    }
+
+    public function output()
+    {
+        $this->response->end(json_encode([
+            'code' => $this->code,
+            'msg' => $this->msg ?? 'success',
+            'data' => $this->data,
+        ]));
+    }
 }

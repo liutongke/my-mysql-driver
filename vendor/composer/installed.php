@@ -1,20 +1,20 @@
 <?php return array(
     'root' => array(
-        'name' => 'swoole/chat',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => NULL,
-        'type' => 'cms',
+        'name' => 'api-swoole/sapi',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'reference' => 'f7279e123bcdca0db87099b057ecd159ba2a6823',
+        'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
         'dev' => true,
     ),
     'versions' => array(
-        'swoole/chat' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => NULL,
-            'type' => 'cms',
+        'api-swoole/sapi' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => 'f7279e123bcdca0db87099b057ecd159ba2a6823',
+            'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
             'dev_requirement' => false,

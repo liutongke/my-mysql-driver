@@ -2,7 +2,7 @@
 /*
  * User: keke
  * Date: 2021/7/13
- * Time: 10:57
+ * Time: 14:37
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,38 +25,12 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace App\Core;
+namespace Sapi\Router;
 
-class Config
+
+interface Router
 {
-    private $path = '';
-    private $confMap = [];
+    public function SetHandlers($name, $value);
 
-    public function __construct($confDirPath)
-    {
-        $this->path = $confDirPath;
-    }
-
-    public function get($key, $default = NULL)
-    {
-        $keyArr = explode('.', $key);
-        $fileName = $keyArr['0'];
-        if (!isset($this->confMap[$fileName])) {
-            $this->loadConfig($fileName);
-        }
-        $confData = $this->confMap[$fileName];
-        foreach ($keyArr as $idx) {
-            if (isset($confData[$idx])) {
-                $data = $confData[$idx];
-                break;
-            }
-        }
-        return $data ?? $default;
-    }
-
-    private function loadConfig($fileName)
-    {
-        $filePath = $this->path . DIRECTORY_SEPARATOR . $fileName . ".php";
-        $this->confMap[$fileName] = include_once($filePath);
-    }
+    public static function GetHandlers();
 }

@@ -25,7 +25,7 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace App\Core;
+namespace Sapi;
 
 
 class Di

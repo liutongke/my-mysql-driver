@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2022/9/2
- * Time: 23:33
+ * Date: 2022/9/1
+ * Time: 23:22
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,35 +25,17 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace App\Core;
+namespace Sapi;
 
-
-class Runtime
+trait Singleton
 {
-    use Singleton;
+    private static $instance;
 
-    private $tm;
-    private $debug;
-
-    function __construct(bool $debug)
+    static function getInstance(...$args)
     {
-        $this->debug = $debug;
-    }
-
-    public function start()
-    {
-        if ($this->debug) {
-            $this->tm = microtime(true);
+        if (!isset(static::$instance)) {
+            static::$instance = new static(...$args);
         }
-    }
-
-    public function end()
-    {
-        if ($this->debug) {
-            $endTm = microtime(true);
-            $runTime = ($endTm - $this->tm) * 1000;
-            return round($runTime, 3) . "ms";
-        }
-        return "0";
+        return static::$instance;
     }
 }

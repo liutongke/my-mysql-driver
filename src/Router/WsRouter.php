@@ -25,7 +25,7 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace App\Router;
+namespace Sapi\Router;
 
 
 class WsRouter implements Router

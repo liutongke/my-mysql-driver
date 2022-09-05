@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2022/8/26
- * Time: 0:04
+ * Date: 2022/9/2
+ * Time: 23:33
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,36 +25,35 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace App\Core;
+namespace Sapi;
 
 
-abstract class Rule
+class Runtime
 {
-    //        ['engineData' => [
-//            'data' => ['name' => 'data', 'require' => true, 'type' => 'string']
-//        ]
-//        ];
-    abstract protected function rule();
+    use Singleton;
 
-    //参数处理
-    public function getByRule($data, string $action): array
+    private $tm;
+    private $debug;
+
+    function __construct(bool $debug)
     {
-        $rules = $this->rule();
+        $this->debug = $debug;
+    }
 
-        if (!isset($rules[$action])) {
-            return ["res" => false, "data" => ""];
+    public function start()
+    {
+        if ($this->debug) {
+            $this->tm = microtime(true);
         }
+    }
 
-        $rule = $rules[$action];
-        $t = ["res" => false, "data" => ""];
-
-        foreach ($rule as $k => $v) {
-//            var_dump($k, $v);
-            if ($v['require'] && !isset($data[$k])) {//必须滴
-                $t = ["res" => true, "data" => "must require {$k}"];
-            }
+    public function end()
+    {
+        if ($this->debug) {
+            $endTm = microtime(true);
+            $runTime = ($endTm - $this->tm) * 1000;
+            return round($runTime, 3) . "ms";
         }
-
-        return $t;
+        return "0";
     }
 }

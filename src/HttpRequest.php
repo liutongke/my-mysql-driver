@@ -25,9 +25,9 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace App\Core;
+namespace Sapi;
 
-use App\Router\HttpRouter;
+use Sapi\Router\HttpRouter;
 
 class HttpRequest
 {

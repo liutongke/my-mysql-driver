@@ -1,26 +1,17 @@
 {
   "name": "api-swoole/sapi",
   "description": "基于swoole实现的一个轻量级框架，支持http/websocket。",
-  "type": "cms",
+  "type": "library",
   "keywords": [
     "php",
     "swoole"
-  ],
-  "authors": [
-    {
-      "name": "PHP科科",
-      "email": "liutongke@live.com"
-    }
   ],
   "minimum-stability": "dev",
   "require": {
   },
   "autoload": {
     "psr-4": {
-      "App\\": "src/"
-    },
-    "files": [
-      "app/Common/function.php"
-    ]
+      "Sapi\\": "src/"
+    }
   }
 }

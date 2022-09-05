@@ -25,7 +25,7 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace App\Router;
+namespace Sapi\Router;
 
 //路由
 class HttpRouter implements Router
