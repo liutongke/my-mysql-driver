@@ -26,19 +26,19 @@
  */
 function DI()
 {
-    return \chat\sw\Core\Di::one();
+    return \App\Core\Di::one();
 }
 
 //websocket路由设置
 function WsRouter($url, $callable)
 {
-    \chat\sw\Router\WsRouter::Register($url, $callable);
+    \App\Router\WsRouter::Register($url, $callable);
 }
 
 //http路由设置
 function HttpRouter($url, $callable)
 {
-    \chat\sw\Router\HttpRouter::Register($url, $callable);
+    \App\Router\HttpRouter::Register($url, $callable);
 }
 
 //中断格式化打印

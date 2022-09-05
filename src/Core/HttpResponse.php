@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/13
- * Time: 10:57
+ * Date: 2022/9/3
+ * Time: 13:55
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,38 +25,51 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Core;
+namespace App\Core;
 
-class Config
+
+class HttpResponse
 {
-    private $path = '';
-    private $confMap = [];
+    private $response;
+    private $data;
+    private $code;
+    private $msg;
 
-    public function __construct($confDirPath)
+    public function __construct(\Swoole\Http\Response $response)
     {
-        $this->path = $confDirPath;
+        $this->response = $response;
     }
 
-    public function get($key, $default = NULL)
+    public function setStatus($ret)
     {
-        $keyArr = explode('.', $key);
-        $fileName = $keyArr['0'];
-        if (!isset($this->confMap[$fileName])) {
-            $this->loadConfig($fileName);
-        }
-        $confData = $this->confMap[$fileName];
-        foreach ($keyArr as $idx) {
-            if (isset($confData[$idx])) {
-                $data = $confData[$idx];
-                break;
-            }
-        }
-        return $data ?? $default;
+        $this->response->status($ret);
+        return $this;
     }
 
-    private function loadConfig($fileName)
+    public function setMsg($msg)
     {
-        $filePath = $this->path . DIRECTORY_SEPARATOR . $fileName . ".php";
-        $this->confMap[$fileName] = include_once($filePath);
+        $this->msg = $msg;
+        return $this;
+    }
+
+    public function setData($data)
+    {
+        $this->data = $data;
+        return $this;
+    }
+
+    public function setCode($code)
+    {
+        $this->code = $code;
+        return $this;
+    }
+
+    public function output()
+    {
+        $this->response->end(json_encode([
+            'code' => $this->code,
+            'msg' => $this->msg ?? 'success',
+            'data' => $this->data,
+        ]));
     }
 }

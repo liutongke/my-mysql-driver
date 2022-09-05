@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2022/9/1
- * Time: 23:22
+ * Date: 2022/9/2
+ * Time: 23:33
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,17 +25,35 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Core;
+namespace App\Core;
 
-trait Singleton
+
+class Runtime
 {
-    private static $instance;
+    use Singleton;
 
-    static function getInstance(...$args)
+    private $tm;
+    private $debug;
+
+    function __construct(bool $debug)
     {
-        if (!isset(static::$instance)) {
-            static::$instance = new static(...$args);
+        $this->debug = $debug;
+    }
+
+    public function start()
+    {
+        if ($this->debug) {
+            $this->tm = microtime(true);
         }
-        return static::$instance;
+    }
+
+    public function end()
+    {
+        if ($this->debug) {
+            $endTm = microtime(true);
+            $runTime = ($endTm - $this->tm) * 1000;
+            return round($runTime, 3) . "ms";
+        }
+        return "0";
     }
 }

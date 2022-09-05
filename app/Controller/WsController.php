@@ -25,10 +25,10 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Controller;
+namespace App\Controller;
 
 
-use chat\sw\Core\Rule;
+use App\Core\Rule;
 
 class WsController extends Rule
 {
@@ -50,7 +50,7 @@ class WsController extends Rule
     {
 //        $msg["keke"];
 //        new data();
-        $redis = \chat\sw\Ext\Redis::getInstance();//        var_dump($redis);
+        $redis = \App\Ext\Redis::getInstance();//        var_dump($redis);
         $redis->redis->set(rand(10000, 99999), json_encode(\Swoole\Coroutine::stats()), 60);//此处产生协程调度，cpu切到下一个协程(下一个请求)，不会阻塞进程
         return ["code" => 0, "msg" => "123123"];
     }

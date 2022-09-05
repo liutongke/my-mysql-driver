@@ -25,9 +25,9 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Core;
+namespace App\Core;
 
-use chat\sw\Router\HttpRouter;
+use App\Router\HttpRouter;
 
 class HttpRequest
 {

@@ -25,10 +25,10 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Controller;
+namespace App\Controller;
 
 
-use chat\sw\Core\Rule;
+use App\Core\Rule;
 
 class App extends Rule
 {
@@ -43,7 +43,7 @@ class App extends Rule
 
     public function Index(\Swoole\Http\Request $request, \Swoole\Http\Response $response): array
     {
-//        $redis = \chat\sw\Ext\Redis::getInstance();
+//        $redis = \App\Ext\Redis::getInstance();
 //        $data = [];
 //        $data["test"];
 //        new data();

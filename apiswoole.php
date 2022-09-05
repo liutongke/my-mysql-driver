@@ -26,10 +26,8 @@
  */
 require_once __DIR__ . '/vendor/autoload.php';
 
-use \chat\sw\Co\Websocket;
-use \chat\sw\Co\CoWs;
-use \chat\sw\Core\Config;
-use \chat\sw\Core\CoHttp;
+use \App\Core\Config;
+use \App\Core\CoServer;
 
 date_default_timezone_set('Asia/Shanghai');// 时区设置
 
@@ -53,5 +51,4 @@ if ($di->config->get('conf.debug')) {
     ini_set('display_errors', 'On');
 }
 
-\chat\sw\Core\CoServer::getInstance()->start();
-//(new \chat\sw\Core\CoServer())->start();
+CoServer::getInstance()->start();

@@ -25,8 +25,7 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Core;
-
+namespace App\Core;
 
 class CoServer
 {
@@ -39,7 +38,7 @@ class CoServer
         $this->initialize();
         $this->ws_config = DI()->config->get('conf.ws');
 
-        $this->initSwooleServer($this->ws_config['host'], $this->ws_config['port'], $this->ws_config['type']);
+        $this->initSwooleServer($this->ws_config['host'], $this->ws_config['port']);
 
         if (isset($this->ws_config['settings']) && !empty($this->ws_config['settings'])) {
             $this->server->set($this->ws_config['settings']);
@@ -48,12 +47,23 @@ class CoServer
         foreach ($this->ws_config['events'] as $eventsInfo) {
             $this->server->on($eventsInfo['0'], [new $eventsInfo['1']($this->server), $eventsInfo['2']]);
         }
+
+        $this->tcp_config = DI()->config->get('conf.tcp');
+        if (!empty($this->tcp_config)) {
+            $tcp_server = $this->server->listen($this->tcp_config['host'], $this->tcp_config['port'], $this->tcp_config['sockType']);
+
+            $tcp_server->set($this->tcp_config['settings']);
+
+            foreach ($this->tcp_config['events'] as $eventsInfo) {
+                $tcp_server->on($eventsInfo['0'], [new $eventsInfo['1']($this->server), $eventsInfo['2']]);
+            }
+        }
     }
 
     public function initialize()
     {
-        DI()->config->get('router.http');
-        DI()->config->get('router.ws');
+        DI()->config->get('http');
+        DI()->config->get('websocket');
         DI()->logger = Logger::getInstance(ROOT_PATH, DI()->config->get('conf.debug'));//初始化日志
         DI()->runTm = Runtime::getInstance(DI()->config->get('conf.debug'));
         DI()->Error = Error::getInstance();
@@ -61,13 +71,9 @@ class CoServer
 
     const webSocketServer = 1;
 
-    public function initSwooleServer($host, $prot, $type)
+    public function initSwooleServer($host, $prot)
     {
-        switch ($type) {
-            case self::webSocketServer:
-                $this->server = new \Swoole\WebSocket\Server($host, $prot);
-                break;
-        }
+        $this->server = new \Swoole\WebSocket\Server($host, $prot);
     }
 
     public function start()

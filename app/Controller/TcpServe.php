@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/13
- * Time: 14:37
+ * Date: 2022/9/5
+ * Time: 18:53
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,12 +25,13 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace App\Router;
+namespace App\Controller;
 
 
-interface Router
+class TcpServe
 {
-    public function SetHandlers($name, $value);
-
-    public static function GetHandlers();
+    public function onReceive($server, $fd, $threadId, $data)
+    {
+        echo $data;
+    }
 }

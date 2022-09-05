@@ -25,10 +25,10 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Core;
+namespace App\Core;
 
 
-use chat\sw\Router\WsRouter;
+use App\Router\WsRouter;
 
 class WsRequest
 {
@@ -65,7 +65,7 @@ class WsRequest
         $ws->output();
     }
 
-    public function handlerWsData(\Swoole\WebSocket\Server $server, $frame, \chat\sw\Core\WsResponse $ws)
+    public function handlerWsData(\Swoole\WebSocket\Server $server, $frame, \App\Core\WsResponse $ws)
     {
         $res = json_decode($frame->data, true);
         $list = WsRouter::GetHandlers();

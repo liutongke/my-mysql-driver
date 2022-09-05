@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/13
- * Time: 14:37
+ * Date: 2021/7/16
+ * Time: 10:58
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -24,13 +24,7 @@
  *                   `=---='
  *——————————————————代码永无BUG —————————————————
  */
-
-namespace App\Router;
-
-
-interface Router
-{
-    public function SetHandlers($name, $value);
-
-    public static function GetHandlers();
-}
+return [
+    WsRouter("websocket", "\App\Controller\WsController@stop"),
+    WsRouter("/", "\App\Controller\WsController@index"),
+];

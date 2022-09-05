@@ -26,7 +26,7 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Ext;
+namespace App\Ext;
 
 class Redis
 {

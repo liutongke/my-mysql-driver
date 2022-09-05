@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2022/9/3
- * Time: 13:55
+ * Date: 2022/8/26
+ * Time: 0:04
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -25,51 +25,36 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Core;
+namespace App\Core;
 
 
-class HttpResponse
+abstract class Rule
 {
-    private $response;
-    private $data;
-    private $code;
-    private $msg;
+    //        ['engineData' => [
+//            'data' => ['name' => 'data', 'require' => true, 'type' => 'string']
+//        ]
+//        ];
+    abstract protected function rule();
 
-    public function __construct(\Swoole\Http\Response $response)
+    //参数处理
+    public function getByRule($data, string $action): array
     {
-        $this->response = $response;
-    }
+        $rules = $this->rule();
 
-    public function setStatus($ret)
-    {
-        $this->response->status($ret);
-        return $this;
-    }
+        if (!isset($rules[$action])) {
+            return ["res" => false, "data" => ""];
+        }
 
-    public function setMsg($msg)
-    {
-        $this->msg = $msg;
-        return $this;
-    }
+        $rule = $rules[$action];
+        $t = ["res" => false, "data" => ""];
 
-    public function setData($data)
-    {
-        $this->data = $data;
-        return $this;
-    }
+        foreach ($rule as $k => $v) {
+//            var_dump($k, $v);
+            if ($v['require'] && !isset($data[$k])) {//必须滴
+                $t = ["res" => true, "data" => "must require {$k}"];
+            }
+        }
 
-    public function setCode($code)
-    {
-        $this->code = $code;
-        return $this;
-    }
-
-    public function output()
-    {
-        $this->response->end(json_encode([
-            'code' => $this->code,
-            'msg' => $this->msg ?? 'success',
-            'data' => $this->data,
-        ]));
+        return $t;
     }
 }

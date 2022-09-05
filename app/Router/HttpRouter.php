@@ -25,7 +25,7 @@
  *——————————————————代码永无BUG —————————————————
  */
 
-namespace chat\sw\Router;
+namespace App\Router;
 
 //路由
 class HttpRouter implements Router

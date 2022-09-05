@@ -1,6 +1,6 @@
 {
-  "name": "swoole/chat",
-  "description": "this is swoole chat demo",
+  "name": "api-swoole/sapi",
+  "description": "基于swoole实现的一个轻量级框架，支持http/websocket。",
   "type": "cms",
   "keywords": [
     "php",
@@ -17,7 +17,7 @@
   },
   "autoload": {
     "psr-4": {
-      "chat\\sw\\": "app/"
+      "App\\": "src/"
     },
     "files": [
       "app/Common/function.php"
