@@ -27,9 +27,6 @@
 
 namespace chat\sw\Core;
 
-use chat\sw\Router\HttpRouter;
-use chat\sw\Router\WsRouter;
-
 class Events
 {
     private $server;
@@ -52,121 +49,12 @@ class Events
     public function onMessage(\Swoole\WebSocket\Server $server, $frame)
     {
 //        echo "receive from {$frame->fd}:{$frame->data},opcode:{$frame->opcode},fin:{$frame->finish}\n";
-        DI()->runTm->start();
-
-        $ws = new WsResponse($server);
-        $ws->setFd($frame->fd);
-
-        register_shutdown_function(function () use ($server, $frame, $ws) {
-            $error = error_get_last();
-
-            if (!empty($error)) {
-                DI()->logger->error($error['message']);
-                $ws->setStatus(HttpCode::$StatusInternalServerError);
-                $ws->setCode(HttpCode::$StatusInternalServerError);
-                $ws->setMsg($error);
-                $ws->output();
-            }
-        });
-
-        $this->handlerWsData($server, $frame, $ws);
-
-        DI()->logger->echoWsCmd($this->server, $frame->fd, DI()->runTm->end());
-
-        $ws->output();
-    }
-
-    public function handlerWsData(\Swoole\WebSocket\Server $server, $frame, \chat\sw\Core\WsResponse $ws)
-    {
-        $res = json_decode($frame->data, true);
-        $list = WsRouter::GetHandlers();
-        if (!is_array($res) || !isset($list[strtolower($res['path'])]) || empty($res)) {
-            $ws->setCode(HttpCode::$StatusBadRequest);
-            $ws->setMsg('data err');
-        }
-        $c = $list[strtolower($res['path'])];
-        $api = $c['0'];
-        $action = $c['1'];
-        //先处理必须携带的参数
-        $rule = $api->getByRule($res['data'], $action);
-        if ($rule['res']) {//验证未通过
-            $ws->setId($res['id']);
-            $ws->setCode(HttpCode::$StatusBadRequest);
-            $ws->setMsg($rule['data']);
-            $ws->setPath($res['path']);
-            $ws->setData($res['data']);
-        } else {
-            $data = $api->{$action}($server, $res);
-            $ws->setId($res['id']);
-            $ws->setCode(HttpCode::$StatusOK);
-            $ws->setPath($res['path']);
-            $ws->setData($data);
-        }
+        WsRequest::getInstance()->handlerWs($server, $frame);
     }
 
     public function onRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
-        if (
-            $request->server['path_info'] == '/favicon.ico' || $request->server['request_uri'] == '/favicon.ico' ||
-            $request->server['request_uri'] == '/favicon.png'
-        ) {
-            $response->end();
-            return;
-        }
-
-        DI()->runTm->start();
-
-        $rs = new HttpResponse($response);
-
-        register_shutdown_function(function () use ($rs) {
-            $error = error_get_last();
-            if (!empty($error)) {
-                DI()->logger->error($error['message']);
-                $rs->setStatus(HttpCode::$StatusInternalServerError);
-                $rs->setCode(HttpCode::$StatusInternalServerError);
-                $rs->setData($error['message']);
-                $rs->output();
-            }
-        });
-
-        $pathUrl = strtolower($request->server['path_info']);//请求的地址
-        $setUrlList = HttpRouter::GetHandlers();
-        if (!isset($setUrlList[$pathUrl])) {
-//            DI()->logger->error($request);
-            $rs->setStatus(HttpCode::$StatusNotFound);
-            $rs->setCode(HttpCode::$StatusNotFound);
-            $rs->setData('url not find');
-            $rs->output();
-            return;
-        }
-        $data = null;
-
-        switch ($request->server['request_method']) {
-            case 'GET':
-                $data = $request->get;
-                break;
-
-            case 'POST':
-                $data = $request->post;
-                break;
-        }
-        $c = $setUrlList[$pathUrl];
-        $api = $c['0'];
-        $action = $c['1'];
-        //先处理必须携带的参数
-        $rule = $api->getByRule($data, $action);
-
-        $rs->setStatus(HttpCode::$StatusOK);
-        if ($rule['res']) {//验证未通过
-            $rs->setCode(HttpCode::$StatusBadRequest);
-            $rs->setData($rule['data']);
-        } else {
-            $rps = call_user_func_array($c, [$request, $response, $this->server]);
-            $rs->setCode(HttpCode::$StatusOK);
-            $rs->setData($rps);
-        }
-        DI()->logger->echoHttpCmd($request, $response, $this->server, DI()->runTm->end());
-        $rs->output();
+        HttpRequest::getInstance()->handlerHttp($request, $response, $this->server);
     }
 
     public function onWorkerStart(\Swoole\Server $server, int $workerId)
@@ -198,7 +86,22 @@ class Events
 
     public function onStart(\Swoole\Server $server)
     {
-        Logger::echoSuccessCmd("Swoole Http Server running：http://{ $server->host}:{$server->port}");
-        Logger::echoSuccessCmd("Swoole websocket Server running：ws://{ $server->host}:{$server->port}");
+        echo <<<EOL
+                 _  _____                    _      
+     /\         (_)/ ____|                  | |     
+    /  \   _ __  _| (_____      _____   ___ | | ___ 
+   / /\ \ | '_ \| |\___ \ \ /\ / / _ \ / _ \| |/ _ \
+  / ____ \| |_) | |____) \ V  V / (_) | (_) | |  __/
+ /_/    \_\ .__/|_|_____/ \_/\_/ \___/ \___/|_|\___|
+          | |                                       
+          |_|                                       
+EOL. "\n";
+
+        $phpVersion = phpversion();
+        $swooleVersion = SWOOLE_VERSION;
+
+        Logger::echoSuccessCmd("Swoole: {$swooleVersion}, PHP: {$phpVersion}, Port: {$server->port}");
+        Logger::echoSuccessCmd("Swoole Http Server running：http://{$server->host}:{$server->port}");
+        Logger::echoSuccessCmd("Swoole websocket Server running：ws://{$server->host}:{$server->port}");
     }
 }

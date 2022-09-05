@@ -45,19 +45,14 @@ class Logger
         }
     }
 
-    public static function println($strings)
-    {
-        echo $strings . PHP_EOL;
-    }
-
     public static function echoSuccessCmd($msg)
     {
-        self::println("[Success] \033[32m{$msg}\033[0m");
+        echo "[Success] \033[32m{$msg}\033[0m\n";
     }
 
     public static function echoErrCmd($msg)
     {
-        self::println('[ERROR] ' . "\033[31m{$msg}\033[0m");
+        echo "[ERROR] \033[31m{$msg}\033[0m\n";
     }
 
     public function echoWsCmd(\Swoole\WebSocket\Server $server, $fd, $runTime)

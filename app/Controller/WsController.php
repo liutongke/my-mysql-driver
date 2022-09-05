@@ -41,6 +41,11 @@ class WsController extends Rule
         ];
     }
 
+    public function index(\Swoole\WebSocket\Server $server, array $msg): array
+    {
+        return ['err' => 200, 'data' => 'hello apiSwoole'];
+    }
+
     public function stop(\Swoole\WebSocket\Server $server, array $msg): array
     {
 //        $msg["keke"];

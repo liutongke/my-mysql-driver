@@ -2,6 +2,10 @@
   "name": "swoole/chat",
   "description": "this is swoole chat demo",
   "type": "cms",
+  "keywords": [
+    "php",
+    "swoole"
+  ],
   "authors": [
     {
       "name": "PHP科科",

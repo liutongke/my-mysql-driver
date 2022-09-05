@@ -34,5 +34,6 @@ return [
     ],
     'ws' => [
         WsRouter("websocket", "\chat\sw\Controller\WsController@stop"),
+        WsRouter("/", "\chat\sw\Controller\WsController@index"),
     ]
 ];

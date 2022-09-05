@@ -36,37 +36,37 @@ class App extends Rule
     {
         return [
             'Index' => [
-                'pic' => ['name' => 'pic', 'require' => true, 'type' => 'string']
+//                'pic' => ['name' => 'pic', 'require' => true]
             ]
         ];
     }
 
-    public function Index(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
+    public function Index(\Swoole\Http\Request $request, \Swoole\Http\Response $response): array
     {
-        $redis = \chat\sw\Ext\Redis::getInstance();
+//        $redis = \chat\sw\Ext\Redis::getInstance();
 //        $data = [];
 //        $data["test"];
 //        new data();
 //        var_dump($redis);
 //        $redis->set("tset", 1, 600);
-        $key = md5(uniqid(mt_rand(1, 999999)));
-        $redis->redis->set($key, $key);
+//        $key = md5(uniqid(mt_rand(1, 999999)));
+//        $redis->redis->set($key, $key);
 //        $response->end("<h1>hello swoole!</h1>");
-        DI()->logger->info("日志测试{$key}");
+//        DI()->logger->info("日志测试{$key}");
 
         return [
             "code" => 200,
             "msg" => "hello World!",
             "data" => [
                 "id" => 1,
-                "getUrl" => $request->get['keke'],
+//                "getUrl" => $request->get['keke'],
                 "name" => "Reds",
                 "Colors" => ["Crimson", "Red", "Ruby", "Maroon"]
             ]
         ];
     }
 
-    public function post(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
+    public function post(\Swoole\Http\Request $request, \Swoole\Http\Response $response): array
     {
         $tm = date('Y-m-d H:i:s');
         return $request->post;

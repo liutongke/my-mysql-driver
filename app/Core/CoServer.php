@@ -34,19 +34,8 @@ class CoServer
 
     public $server;
 
-    public static function welcome()
-    {
-        $conf = DI()->config->get('conf.ws');
-        $phpVersion = phpversion();
-        $swooleVersion = SWOOLE_VERSION;
-
-        Logger::echoSuccessCmd("Swoole: {$swooleVersion}, PHP: {$phpVersion}, Port: {$conf['port']}");
-    }
-
     public function __construct()
     {
-        self::welcome();
-
         $this->initialize();
         $this->ws_config = DI()->config->get('conf.ws');
 
