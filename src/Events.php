@@ -106,12 +106,12 @@ EOL. "\n";
 
         $tcp_config = DI()->config->get('conf.tcp');
         if (is_array($tcp_config) || !empty($tcp_config)) {
-            Logger::echoSuccessCmd("Swoole tcp Server running：telnet://{$tcp_config['host']}:{$tcp_config['port']}");
+            Logger::echoSuccessCmd("Swoole tcp Server running：{$tcp_config['host']}:{$tcp_config['port']}");
         }
 
         $udp_config = DI()->config->get('conf.udp');
         if (is_array($udp_config) || !empty($udp_config)) {
-            Logger::echoSuccessCmd("Swoole udp Server running：tcp://{$udp_config['host']}:{$udp_config['port']}");
+            Logger::echoSuccessCmd("Swoole udp Server running：{$udp_config['host']}:{$udp_config['port']}");
         }
     }
 }
