@@ -88,7 +88,7 @@ class HttpRequest
 
         $rs->setStatus(HttpCode::$StatusOK);
 
-        if (!is_callable($routeInfo) && method_exists($routeInfo['0'], 'getRules')) {//先处理必须携带的参数
+        if (is_array($routeInfo) && method_exists($routeInfo['0'], 'getRules')) {//先处理必须携带的参数
             $rule = $routeInfo['0']->getRules($data, $routeInfo['1']);
         }
 

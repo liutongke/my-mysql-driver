@@ -40,15 +40,10 @@ php apiswoole.php
 
 namespace App\Controller;
 
-use Sapi\Rule;
+use Sapi\Api;
 
-class Hello extends Rule
+class Hello extends Api
 {
-    public function rule()
-    {
-
-    }
-
     public function index()
     {
         return [
@@ -83,6 +78,8 @@ php apiswoole.php
 [Success] Swoole: 4.5.9, PHP: 7.4.13, Port: 9501
 [Success] Swoole Http Server running：http://0.0.0.0:9501
 [Success] Swoole websocket Server running：ws://0.0.0.0:9501
+[Success] Swoole tcp Server running：0.0.0.0:9500
+[Success] Swoole udp Server running：0.0.0.0:9502
 ```
 
 ### **2.4访问接口**
@@ -162,6 +159,23 @@ return [
 
 ```
 DI()->config->get('conf.tcp') #返回数组
+```
+返回数组数据结构：
+
+```json
+{
+    "host": "0.0.0.0",
+    "port": 9500,
+    "sockType": 1,
+    "events": [
+        [
+            "receive",
+            "App\\Controller\\TcpServe",
+            "onReceive"
+        ]
+    ],
+    "settings": []
+}
 ```
 
 # **(五).日志**
@@ -249,12 +263,16 @@ return [
 ```
 完整的URL地址组成`http://ip网址:端口/定义的路由`。
 
+
 构建基本路由只需要一个 URI 与一个 `闭包`，提供了一个非常简单定义路由的方法：
 
+
 ```
-\HttpRouter("/hello", function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
-        $response->end('hello');
-    })
+return [
+    \HttpRouter("/start", function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
+        return 'hello';
+    }),
+];
 ```
 
 
@@ -271,11 +289,11 @@ use Sapi\Api;
 
 class Hello extends Api
 {
-    public function index(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
+    public function index()
     {
         return [
             'code' => 200,
-            'data' => 'hello world',
+            'data' => 'hello world'
         ];
     }
 }
@@ -289,13 +307,17 @@ class Hello extends Api
 *   二维下标是接口参数名称。
 *   三维下标`name`对应客户端传入的值，下标`require`表示值传入可选项,`true`必须传入，`false`非必须传入。
 
+
 ```
+<?php
+
 namespace App\Controller;
 
 use Sapi\Api;
 
 class Auth extends Api
 {
+
     public function rule()
     {
         return [
@@ -307,10 +329,13 @@ class Auth extends Api
 
     public function login(\Swoole\Http\Request $request, \Swoole\Http\Response $response): array
     {
+
         return [
             "code" => 200,
-            "msg" => "hello World!",
-            "data" => 'login'
+            "msg" => "login",
+            "data" => [
+                'username' => $request->post['username']
+            ]
         ];
     }
 }
@@ -318,12 +343,15 @@ class Auth extends Api
 
 
 
+
 ### **6.5websocket路由**
 
 websocket服务器的路由定义文件位于`./confg/websocket.php`中。声明具体的路由规则，第一个参数为定义的浏览器访问地址，第二个参数`@`前半部分为文件的完整命名空间，`@`后半部分为在类中调用的具体方法。
+
 ```
 return [
-    WsRouter("/", "\App\Controller\WsController@index"),
+    WsRouter("/", "\App\Controller\Websocket@index"),
+    WsRouter("/login", "\App\Controller\Websocket@login"),
 ];
 ```
 完整的URL地址组成` ws://ip网址:端口`。
@@ -334,7 +362,7 @@ return [
 
 ##### **补充：websocket客户端消息传入格式**
 
- 是客户端发送的数据信息，默认需以json格式传送，必须包含id、path、data三个字段。
+ 客户端发送的数据信息，默认需以json格式传送，必须包含id、path、data三个字段。
 * `id`字段消息体的唯一标识。
 * `path`字段是`./confg/websocket.php`路由声明的访问地址。
 * `data`字段是项目的具体消息参数，控制方法默认的`$msg`。
@@ -348,28 +376,30 @@ return [
 }
 ```
 
+控制器代码部分示例：
 
 ```
 <?php
 
 namespace App\Controller;
 
+use Sapi\Api;
 
-use Sapi\Rule;
-
-class WsController extends Rule
+class Websocket extends Api
 {
-    public function rule()
-    {
-        
-    }
-
     public function index(\Swoole\WebSocket\Server $server, array $msg): array
     {
-        return ['err' => 200, 'data' => 'hello apiSwoole'];
+        return [
+            'err' => 200,
+            'data' => [
+                'name' => 'api-swoole',
+                'version' => '1.0.0',
+            ]
+        ];
     }
 }
 ```
+
 
 ### **6.7websocket接口参数规则**
 
@@ -378,42 +408,55 @@ class WsController extends Rule
 *   二维下标是接口参数名称。
 *   三维下标`name`对应客户端传入的值，下标`require`表示值传入可选项,`true`必须传入，`false`非必须传入。
 
-```
-namespace App\Controller;
 
+```
+<?php
+
+namespace App\Controller;
 
 use Sapi\Api;
 
-class WsController extends Api
+class Websocket extends Api
 {
     public function rule()
     {
         return [
-            'index' => [
+            'login' => [
                 'username' => ['name' => 'username', 'require' => true]
             ]
         ];
     }
 
-    public function index(\Swoole\WebSocket\Server $server, array $msg): array
+    public function login(\Swoole\WebSocket\Server $server, array $msg): array
     {
-        return ['err' => 200, 'data' => 'hello apiSwoole'];
+        return [
+            'err' => 200,
+            'data' => [
+                'username' => $msg['username'],
+            ]
+        ];
     }
+
 }
 ```
+
 
 ### **6.8http/websocket勾子函数**
 
 `Api`类内置了钩子函数`userCheck`,HTTP/websocket控制器均可继承`Api`类重载。例如可完成用户身份验证。
 
 
+首先定义声明`Base.php`文件。
 ```
+<?php
+
 namespace App\Controller;
 
 use Sapi\Api;
 
-class Auth extends Api
+class Base extends Api
 {
+    //用户权限验证
     public function userCheck()
     {
         if (true) {
@@ -421,11 +464,26 @@ class Auth extends Api
         }
     }
 
+}
+```
+
+然后继承`Base.php`实现类重载，。
+
+```
+<?php
+
+namespace App\Controller;
+
+use Sapi\Api;
+
+class Auth extends Base
+{
+
     public function rule()
     {
         return [
             'login' => [
-                'pic' => ['name' => 'pic', 'require' => true]
+                'username' => ['name' => 'username', 'require' => true]
             ]
         ];
     }
@@ -434,25 +492,28 @@ class Auth extends Api
     {
         return [
             "code" => 200,
-            "msg" => "hello World!",
-            "data" => 'login'
+            "msg" => "login",
+            "data" => [
+                'username' => $request->post['username']
+            ]
         ];
     }
 }
 ```
 
-# **(七).TCP服务器**
 
-`Server` 可以监听多个端口，每个端口都可以设置不同的协议处理方式，例如 80 端口处理 HTTP 协议，9507 端口处理 TCP 协议。`SSL/TLS` 传输加密也可以只对特定的端口启用。参考Swoole官方文档[(多端口监听)](https://wiki.swoole.com/#/server/port)
 
-TCP服务器配置选项在`./config/conf.php`中增加tcp字段。具体配置信息可以参考Swoole文档[TCP配置。](https://wiki.swoole.com/#/server/setting)
+# **(七).TCP/UDP服务器**
+
+`Server` 可以监听多个端口，每个端口都可以设置不同的协议处理方式，例如 80 端口处理 HTTP 协议，9500 端口处理 TCP 协议,9502 端口处理 UDP 协议。`SSL/TLS` 传输加密也可以只对特定的端口启用。参考Swoole官方文档[(多端口监听)](https://wiki.swoole.com/#/server/port)
+
+### **7.1TCP服务器配置**
+TCP服务器配置选项在`./config/conf.php`中增加**tcp**字段。具体配置信息可以参考Swoole文档[TCP配置。](https://wiki.swoole.com/#/server/setting)
 
 ```
     'tcp' => [
-        'type' => 1,//启动哪种服务 1 WebSocket
         'host' => '0.0.0.0',
         'port' => 9500,
-        'ssl' => false,
         'sockType' => SWOOLE_SOCK_TCP,
         'events' => [
             ['receive', \App\Controller\TcpServe::class, 'onReceive'],//TCP服务器回调
@@ -461,6 +522,46 @@ TCP服务器配置选项在`./config/conf.php`中增加tcp字段。具体配置�
     ],
 ```
 
+### **7.1UDP服务器配置**
+UDP服务器配置选项在`./config/conf.php`中增加**udp**字段。具体配置信息可以参考Swoole文档[UDP配置。](https://wiki.swoole.com/#/server/setting)
 
 
+
+```
+    'udp' => [
+        'host' => '0.0.0.0',
+        'port' => 9502,
+        'sockType' => SWOOLE_SOCK_UDP,
+        'events' => [
+            ['packet', \App\Controller\UdpServe::class, 'onPacket'],//UDP服务器回调
+        ],
+        'settings' => [],
+    ],
+```
+# **(八).数据库**
+
+Swoole 开发组采用 Hook 原生 PHP 函数的方式实现协程客户端，通过一行代码就可以让原来的同步 IO 的代码变成可以协程调度的异步 IO，即一键协程化。`Swoole` 提供的 [Swoole\Server 类簇](https://wiki.swoole.com/#/server/init)都是自动做好的，不需要手动做，参考 [enable_coroutine](https://wiki.swoole.com/#/server/setting?id=enable_coroutine)。具体内容可参考Swoole官网[一键协程化](https://wiki.swoole.com/#/runtime)
+
+### **7.1Redis**
+
+Redis服务器配置选项在`./config/conf.php`中。
+
+
+```
+    'redis' => [
+        'host' => 'Redis服务器地址',
+        'port' => 指定 Redis 监听端口,
+        'auth' => '登录密码',
+        'db_index' => 指定数据库,
+    ],
+```
+项目中使用Redis
+
+
+```
+use App\Ext\Redis;
+
+$redis = Redis::getInstance();
+$res = $redis->redis->set('test', 'test');
+```
 
