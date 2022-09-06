@@ -93,6 +93,8 @@ class CoServer
 
     public function initSwooleServer($host, $prot)
     {
+        //https://wiki.swoole.com/#/runtime
+        \Swoole\Coroutine::set(['hook_flags' => SWOOLE_HOOK_TCP]);
         $this->server = new \Swoole\WebSocket\Server($host, $prot);
     }
 
