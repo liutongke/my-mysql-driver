@@ -38,7 +38,7 @@ class HttpRequest
 
     }
 
-    public function handlerHttp(\Swoole\Http\Request $request, \Swoole\Http\Response $response, \Swoole\WebSocket\Server $server)
+    public function handlerMsg(\Swoole\Http\Request $request, \Swoole\Http\Response $response, \Swoole\WebSocket\Server $server)
     {
         if (
             $request->server['path_info'] == '/favicon.ico' || $request->server['request_uri'] == '/favicon.ico' ||
@@ -86,10 +86,13 @@ class HttpRequest
         }
         $routeInfo = $setUrlList[$pathUrl];
 
-        $rule = $routeInfo['0']->getByRule($data, $routeInfo['1']);//先处理必须携带的参数
-
         $rs->setStatus(HttpCode::$StatusOK);
-        if ($rule['res']) {//验证未通过
+
+        if (!is_callable($routeInfo) && method_exists($routeInfo['0'], 'getRules')) {//先处理必须携带的参数
+            $rule = $routeInfo['0']->getRules($data, $routeInfo['1']);
+        }
+
+        if (isset($rule['res']) && $rule['res']) {//验证未通过
             $rs->setCode(HttpCode::$StatusBadRequest);
             $rs->setData($rule['data']);
         } else {

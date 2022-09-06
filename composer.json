@@ -4,10 +4,14 @@
   "type": "library",
   "keywords": [
     "php",
-    "swoole"
+    "swoole",
+    "api-swoole",
+    "coroutine"
   ],
   "minimum-stability": "dev",
   "require": {
+    "php": ">=7.4",
+    "ext-swoole": ">=4.5"
   },
   "autoload": {
     "psr-4": {

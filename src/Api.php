@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2022/8/26
- * Time: 0:04
+ * Date: 2022/9/6
+ * Time: 13:31
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -28,32 +28,32 @@
 namespace Sapi;
 
 
-class Rule
+class Api
 {
-    //        ['engineData' => [
-//            'data' => ['name' => 'data', 'require' => true, 'type' => 'string']
-//        ]
-//        ];
-    use Singleton;
-
-    //参数处理
-    public function getByRule($data, string $action, $rules): array
+    public function __construct()
     {
+//        $this->userCheck();//用户检验
+    }
 
-        if (!isset($rules[$action])) {
-            return ["res" => false, "data" => ""];
+    //定义规则
+    protected function rule()
+    {
+        return [];
+    }
+
+    //定义规则,用户自定义规则
+    protected function userCheck()
+    {
+    }
+
+    public function getRules($data, string $action): array
+    {
+        $check = $this->userCheck();
+
+        if (!empty($check)) {
+            return ["res" => true, "data" => $check];
         }
 
-        $rule = $rules[$action];
-        $t = ["res" => false, "data" => ""];
-
-        foreach ($rule as $k => $v) {
-//            var_dump($k, $v);
-            if ($v['require'] && !isset($data[$k])) {//必须滴
-                $t = ["res" => true, "data" => "must require {$k}"];
-            }
-        }
-
-        return $t;
+        return Rule::getInstance()->getByRule($data, $action, $this->rule());
     }
 }

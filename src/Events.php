@@ -49,12 +49,12 @@ class Events
     public function onMessage(\Swoole\WebSocket\Server $server, $frame)
     {
 //        echo "receive from {$frame->fd}:{$frame->data},opcode:{$frame->opcode},fin:{$frame->finish}\n";
-        WsRequest::getInstance()->handlerWs($server, $frame);
+        WsRequest::getInstance()->handlerMsg($server, $frame);
     }
 
     public function onRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
-        HttpRequest::getInstance()->handlerHttp($request, $response, $this->server);
+        HttpRequest::getInstance()->handlerMsg($request, $response, $this->server);
     }
 
     public function onWorkerStart(\Swoole\Server $server, int $workerId)
@@ -103,5 +103,15 @@ EOL. "\n";
         Logger::echoSuccessCmd("Swoole: {$swooleVersion}, PHP: {$phpVersion}, Port: {$server->port}");
         Logger::echoSuccessCmd("Swoole Http Server running：http://{$server->host}:{$server->port}");
         Logger::echoSuccessCmd("Swoole websocket Server running：ws://{$server->host}:{$server->port}");
+
+        $tcp_config = DI()->config->get('conf.tcp');
+        if (is_array($tcp_config) || !empty($tcp_config)) {
+            Logger::echoSuccessCmd("Swoole tcp Server running：telnet://{$tcp_config['host']}:{$tcp_config['port']}");
+        }
+
+        $udp_config = DI()->config->get('conf.udp');
+        if (is_array($udp_config) || !empty($udp_config)) {
+            Logger::echoSuccessCmd("Swoole udp Server running：tcp://{$udp_config['host']}:{$udp_config['port']}");
+        }
     }
 }

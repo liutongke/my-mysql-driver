@@ -48,6 +48,12 @@ class CoServer
             $this->server->on($eventsInfo['0'], [new $eventsInfo['1']($this->server), $eventsInfo['2']]);
         }
 
+        $this->tcpServer();
+        $this->udpServer();
+    }
+
+    public function tcpServer()
+    {
         $this->tcp_config = DI()->config->get('conf.tcp');
         if (!empty($this->tcp_config)) {
             $tcp_server = $this->server->listen($this->tcp_config['host'], $this->tcp_config['port'], $this->tcp_config['sockType']);
@@ -58,6 +64,11 @@ class CoServer
                 $tcp_server->on($eventsInfo['0'], [new $eventsInfo['1']($this->server), $eventsInfo['2']]);
             }
         }
+    }
+
+    public function udpServer()
+    {
+
     }
 
     public function initialize()

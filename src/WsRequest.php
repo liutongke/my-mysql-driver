@@ -39,7 +39,7 @@ class WsRequest
 
     }
 
-    public function handlerWs(\Swoole\WebSocket\Server $server, $frame)
+    public function handlerMsg(\Swoole\WebSocket\Server $server, $frame)
     {
         DI()->runTm->start();
 
@@ -77,9 +77,12 @@ class WsRequest
         $c = $list[strtolower($res['path'])];
         $api = $c['0'];
         $action = $c['1'];
-        //先处理必须携带的参数
-        $rule = $api->getByRule($res['data'], $action);
-        if ($rule['res']) {//验证未通过
+
+        if (method_exists($api, 'getRules')) {//先处理必须携带的参数
+            $rule = $api->getRules($res['data'], $action);
+        }
+
+        if (isset($rule['res']) && $rule['res']) {//验证未通过
             $ws->setId($res['id']);
             $ws->setCode(HttpCode::$StatusBadRequest);
             $ws->setMsg($rule['data']);
