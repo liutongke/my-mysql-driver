@@ -8,7 +8,7 @@
 ### **1.2通过 Composer 创建项目**
 
 ```
-composer require api-swoole/library:dev-master
+composer create-project api-swoole/skeleton
 ```
 ### **1.3启动**
 支持 HTTP 服务、WebSocket 服务、tcp服务,项目根目录`./apiswoole.php`执行命令。
@@ -402,7 +402,7 @@ class WsController extends Api
 }
 ```
 
-### **6.8websocket勾子函数**
+### **6.8http/websocket勾子函数**
 
 `Api`类内置了钩子函数`userCheck`,HTTP/websocket控制器均可继承`Api`类重载。例如可完成用户身份验证。
 

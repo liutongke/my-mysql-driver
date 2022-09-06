@@ -68,7 +68,16 @@ class CoServer
 
     public function udpServer()
     {
+        $this->udp_config = DI()->config->get('conf.udp');
+        if (!empty($this->udp_config)) {
+            $tcp_server = $this->server->listen($this->udp_config['host'], $this->udp_config['port'], $this->udp_config['sockType']);
 
+            $tcp_server->set($this->udp_config['settings']);
+
+            foreach ($this->udp_config['events'] as $eventsInfo) {
+                $tcp_server->on($eventsInfo['0'], [new $eventsInfo['1']($this->server), $eventsInfo['2']]);
+            }
+        }
     }
 
     public function initialize()
