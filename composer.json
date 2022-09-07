@@ -1,12 +1,15 @@
 {
   "name": "api-swoole/sapi",
-  "description": "基于swoole实现的一个轻量级框架，支持http/websocket。",
+  "description": "基于swoole实现的一个轻量级框架，支持http、websocket、tcp、udp。",
   "type": "library",
   "keywords": [
     "php",
     "swoole",
     "api-swoole",
-    "coroutine"
+    "coroutine",
+    "tcp",
+    "udp",
+    "websocket"
   ],
   "minimum-stability": "dev",
   "require": {
