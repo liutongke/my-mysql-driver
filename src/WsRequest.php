@@ -46,17 +46,17 @@ class WsRequest
         $ws = new WsResponse($server);
         $ws->setFd($frame->fd);
 
-        DI()->Error->fatalErrorHandler(function () use ($server, $frame, $ws) {
-            $error = error_get_last();
-
-            if (!empty($error)) {
-                DI()->logger->error($error['message']);
-                $ws->setStatus(HttpCode::$StatusInternalServerError);
-                $ws->setCode(HttpCode::$StatusInternalServerError);
-                $ws->setMsg($error);
-                $ws->output();
-            }
-        });
+//        DI()->Errors->fatalErrorHandler(function () use ($server, $frame, $ws) {
+//            $error = error_get_last();
+//
+//            if (!empty($error)) {
+//                DI()->logger->error($error['message']);
+//                $ws->setStatus(HttpCode::$StatusInternalServerError);
+//                $ws->setCode(HttpCode::$StatusInternalServerError);
+//                $ws->setMsg($error);
+//                $ws->output();
+//            }
+//        });
 
         $this->handlerWsData($server, $frame, $ws);
 

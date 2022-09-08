@@ -46,49 +46,54 @@ class HttpRequest
             return;
         }
 
-        DI()->runTm->start();
+        try {
+            DI()->runTm->start();
 
-        $rs = new HttpResponse($response);
-        DI()->Error->fatalErrorHandler(function () use ($rs) {
-            $error = error_get_last();
-            if (!empty($error)) {
-                DI()->logger->error($error['message']);
-                $rs->setStatus(HttpCode::$StatusInternalServerError);
-                $rs->setCode(HttpCode::$StatusInternalServerError);
-                $rs->setData($error['message']);
-                $rs->output();
-            }
-        });
+            $rs = new HttpResponse($response);
 
-        $pathUrl = strtolower($request->server['path_info']);//请求的地址
-        $setUrlList = HttpRouter::GetHandlers();
-        if (!isset($setUrlList[$pathUrl])) {
+            $pathUrl = strtolower($request->server['path_info']);//请求的地址
+            $setUrlList = HttpRouter::GetHandlers();
+            if (!isset($setUrlList[$pathUrl])) {
 //            DI()->logger->error($request);
-            $rs->setStatus(HttpCode::$StatusNotFound);
-            $rs->setCode(HttpCode::$StatusNotFound);
-            $rs->setData('url not find');
+                $rs->setStatus(HttpCode::$StatusNotFound);
+                $rs->setCode(HttpCode::$StatusNotFound);
+                $rs->setData('url not find');
+                $rs->output();
+                return;
+            }
+
+            $routeInfo = $setUrlList[$pathUrl];
+
+            $rs->setStatus(HttpCode::$StatusOK);
+
+            if (is_array($routeInfo) && method_exists($routeInfo['0'], 'getRules')) {//先处理必须携带的参数
+                $rule = $routeInfo['0']->getRules(call_user_func(function ($request) {
+                    return strcmp($request->server['request_method'], 'GET') == 0 ? $request->get : $request->post;
+                }, $request), $routeInfo['1']);
+            }
+
+            if (isset($rule['res']) && $rule['res']) {//验证未通过
+                $rs->setCode(HttpCode::$StatusBadRequest);
+                $rs->setData($rule['data']);
+            } else {
+                $rs->setCode(HttpCode::$StatusOK);
+                $rs->setData(call_user_func_array($routeInfo, [$request, $response, $server]));
+            }
+
+            DI()->logger->echoHttpCmd($request, $response, $server, DI()->runTm->end());
             $rs->output();
-            return;
+        } catch (\Error $e) {
+//            $e->getMessage();
+//            $e->getFile();
+//            $e->getCode();
+//            $e->getFile();
+//            var_dump($e);
+
+            $rs->setStatus(HttpCode::$StatusInternalServerError);
+            $rs->setCode(HttpCode::$StatusInternalServerError);
+            $rs->setData($e->getMessage());
+            $rs->output();
+            throw new \Exception($e);
         }
-
-        $routeInfo = $setUrlList[$pathUrl];
-
-        $rs->setStatus(HttpCode::$StatusOK);
-
-        if (is_array($routeInfo) && method_exists($routeInfo['0'], 'getRules')) {//先处理必须携带的参数
-            $rule = $routeInfo['0']->getRules(call_user_func(function ($request) {
-                return strcmp($request->server['request_method'], 'GET') == 0 ? $request->get : $request->post;
-            }, $request), $routeInfo['1']);
-        }
-
-        if (isset($rule['res']) && $rule['res']) {//验证未通过
-            $rs->setCode(HttpCode::$StatusBadRequest);
-            $rs->setData($rule['data']);
-        } else {
-            $rs->setCode(HttpCode::$StatusOK);
-            $rs->setData(call_user_func_array($routeInfo, [$request, $response, $server]));
-        }
-        DI()->logger->echoHttpCmd($request, $response, $server, DI()->runTm->end());
-        $rs->output();
     }
 }

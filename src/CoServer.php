@@ -104,7 +104,7 @@ class CoServer
         DI()->config->get('websocket');
         DI()->logger = Logger::getInstance(ROOT_PATH, DI()->config->get('conf.debug'));//初始化日志
         DI()->runTm = Runtime::getInstance(DI()->config->get('conf.debug'));
-        DI()->Error = Error::getInstance();
+        DI()->Error = Errors::getInstance();
     }
 
     const webSocketServer = 1;

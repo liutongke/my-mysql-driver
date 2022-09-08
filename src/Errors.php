@@ -27,22 +27,28 @@
 
 namespace Sapi;
 
-class Error
+class Errors
 {
     use Singleton;
 
     function __construct()
     {
         set_error_handler([$this, 'errorHandler']);
+        register_shutdown_function([$this, 'fatalErrorHandler']);
     }
 
-    public function fatalErrorHandler(callable $func)
+    public function fatalErrorHandler()
     {
-        register_shutdown_function($func);
+        $last_error = error_get_last();
+        if ($last_error) {
+            $this->errorHandler($last_error['type'], $last_error['message'], $last_error['file'], $last_error['line']);
+        }
     }
 
     public function errorHandler($errno, $errstr, $errfile, $line)
     {
+        echo "哎呀，捕捉到bug了";
+//        echo $errno, $errstr, $errfile, $line;
         $errorStr = $this->ErrorLevels($errno);
         DI()->logger->log("{$errorStr}:{$errstr}:{$errfile} {$line}", $errno);
     }
