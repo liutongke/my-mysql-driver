@@ -36,6 +36,25 @@ class CoServer
     public function __construct()
     {
         $this->initialize();
+        $this->mainServer();
+        $this->addProcess();
+        $this->tcpServer();
+        $this->udpServer();
+    }
+
+    public function addProcess()
+    {
+        $this->process_config = DI()->config->get('conf.process');
+
+        if (!empty($this->process_config) && is_array($this->process_config)) {
+            foreach ($this->process_config as $processData) {
+                $this->server->addProcess(call_user_func([new $processData['0'], $processData['1']], $this->server));
+            }
+        }
+    }
+
+    public function mainServer()
+    {
         $this->ws_config = DI()->config->get('conf.ws');
 
         $this->initSwooleServer($this->ws_config['host'], $this->ws_config['port']);
@@ -47,9 +66,6 @@ class CoServer
         foreach ($this->ws_config['events'] as $eventsInfo) {
             $this->server->on($eventsInfo['0'], [new $eventsInfo['1']($this->server), $eventsInfo['2']]);
         }
-
-        $this->tcpServer();
-        $this->udpServer();
     }
 
     public function tcpServer()
