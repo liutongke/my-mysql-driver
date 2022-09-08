@@ -40,10 +40,8 @@ class HttpRequest
 
     public function handlerMsg(\Swoole\Http\Request $request, \Swoole\Http\Response $response, \Swoole\WebSocket\Server $server)
     {
-        if (
-            $request->server['path_info'] == '/favicon.ico' || $request->server['request_uri'] == '/favicon.ico' ||
-            $request->server['request_uri'] == '/favicon.png'
-        ) {
+        $chromeRule = ['/favicon.ico', '/favicon.png'];
+        if (in_array($request->server['path_info'], $chromeRule) || in_array($request->server['request_uri'], $chromeRule)) {
             $response->end();
             return;
         }
@@ -51,8 +49,7 @@ class HttpRequest
         DI()->runTm->start();
 
         $rs = new HttpResponse($response);
-
-        register_shutdown_function(function () use ($rs) {
+        DI()->Error->fatalErrorHandler(function () use ($rs) {
             $error = error_get_last();
             if (!empty($error)) {
                 DI()->logger->error($error['message']);
@@ -73,23 +70,15 @@ class HttpRequest
             $rs->output();
             return;
         }
-        $data = null;
 
-        switch ($request->server['request_method']) {
-            case 'GET':
-                $data = $request->get;
-                break;
-
-            case 'POST':
-                $data = $request->post;
-                break;
-        }
         $routeInfo = $setUrlList[$pathUrl];
 
         $rs->setStatus(HttpCode::$StatusOK);
 
         if (is_array($routeInfo) && method_exists($routeInfo['0'], 'getRules')) {//先处理必须携带的参数
-            $rule = $routeInfo['0']->getRules($data, $routeInfo['1']);
+            $rule = $routeInfo['0']->getRules(call_user_func(function ($request) {
+                return strcmp($request->server['request_method'], 'GET') == 0 ? $request->get : $request->post;
+            }, $request), $routeInfo['1']);
         }
 
         if (isset($rule['res']) && $rule['res']) {//验证未通过

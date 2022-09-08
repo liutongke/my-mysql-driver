@@ -46,7 +46,7 @@ class WsRequest
         $ws = new WsResponse($server);
         $ws->setFd($frame->fd);
 
-        register_shutdown_function(function () use ($server, $frame, $ws) {
+        DI()->Error->fatalErrorHandler(function () use ($server, $frame, $ws) {
             $error = error_get_last();
 
             if (!empty($error)) {

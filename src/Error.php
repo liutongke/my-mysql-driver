@@ -36,6 +36,11 @@ class Error
         set_error_handler([$this, 'errorHandler']);
     }
 
+    public function fatalErrorHandler(callable $func)
+    {
+        register_shutdown_function($func);
+    }
+
     public function errorHandler($errno, $errstr, $errfile, $line)
     {
         $errorStr = $this->ErrorLevels($errno);
