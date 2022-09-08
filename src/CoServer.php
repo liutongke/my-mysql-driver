@@ -48,7 +48,9 @@ class CoServer
 
         if (!empty($this->process_config) && is_array($this->process_config)) {
             foreach ($this->process_config as $processData) {
-                $this->server->addProcess(call_user_func([new $processData['0'], $processData['1']], $this->server));
+                if (isset($processData['0']) && $processData['1']) {
+                    $this->server->addProcess(call_user_func([new $processData['0'], $processData['1']], $this->server));
+                }
             }
         }
     }
