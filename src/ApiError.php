@@ -27,7 +27,7 @@
 
 namespace Sapi;
 
-class Errors
+class ApiError
 {
     use Singleton;
 
@@ -47,11 +47,16 @@ class Errors
 
     public function errorHandler($errno, $errstr, $errfile, $line)
     {
-        echo "哎呀，捕捉到bug了";
-//        echo $errno, $errstr, $errfile, $line;
-        $errorStr = $this->ErrorLevels($errno);
-        DI()->logger->log("{$errorStr}:{$errstr}:{$errfile} {$line}", $errno);
+        $err = [
+            'err_code' => $errno,
+            'msg' => $errstr,
+            'file' => $errfile,
+            'line' => $line,
+        ];
+        $content = json_encode($err) . PHP_EOL;
+        DI()->logger->error($content);
     }
+
 //E_ERROR	1
 //E_WARNING	2
 //E_PARSE	4
@@ -68,41 +73,4 @@ class Errors
 //E_DEPRECATED	8192
 //E_USER_DEPRECATED	16384
 //E_ALL	32767
-    public function ErrorLevels($errno): string
-    {
-        switch ($errno) {
-            case 1:
-                return 'E_ERROR';
-            case 2:
-                return 'E_WARNING';
-            case 4:
-                return 'E_PARSE';
-            case 8:
-                return 'E_NOTICE';
-            case 16:
-                return 'E_CORE_ERROR';
-            case 32:
-                return 'E_CORE_WARNING';
-            case 64:
-                return 'E_COMPILE_ERROR';
-            case 128:
-                return 'E_COMPILE_WARNING';
-            case 256:
-                return 'E_USER_ERROR';
-            case 512:
-                return 'E_USER_WARNING';
-            case 1024:
-                return 'E_USER_NOTICE';
-            case 2048    :
-                return 'E_STRICT';
-            case 4096:
-                return 'E_RECOVERABLE_ERROR';
-            case 8192:
-                return 'E_DEPRECATED';
-            case 16384:
-                return 'E_USER_DEPRECATED';
-            case 32767:
-                return 'E_ALL';
-        }
-    }
 }

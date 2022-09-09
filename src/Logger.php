@@ -34,9 +34,11 @@ class Logger
 
     private $logFolder;
     private $debug;
+    private $logConf;
 
     public function __construct($logDir, $debug)
     {
+        $this->logConf = DI()->config->get('conf.log');
         $this->logFolder = "{$logDir}storage/log";
         $this->debug = $debug;
 
@@ -55,7 +57,7 @@ class Logger
         echo "[ERROR] \033[31m{$msg}\033[0m\n";
     }
 
-    public function echoWsCmd(\Swoole\WebSocket\Server $server, $fd, $runTime)
+    public function echoWsCmd(\Swoole\WebSocket\Server $server, $fd, $runTime, $data, $code = 200)
     {
         if ($this->debug) {
             $clientInfo = $server->getClientInfo($fd);
@@ -63,11 +65,11 @@ class Logger
             $remoteIp = $clientInfo['remote_ip'];
             $requestTm = date("Y/m/d-H:i:s", $lastTime);
 
-            $this->console("[websocket] | {$requestTm} | $remoteIp | 200 | {$runTime}");
+            $this->console("[websocket] | {$requestTm} | $remoteIp | $code | {$runTime} | {$data}");
         }
     }
 
-    public function echoHttpCmd(\Swoole\Http\Request $request, \Swoole\Http\Response $response, \Swoole\WebSocket\Server $server, $runTime)
+    public function echoHttpCmd(\Swoole\Http\Request $request, \Swoole\Http\Response $response, \Swoole\WebSocket\Server $server, $runTime, $code = 200)
     {
         if ($this->debug) {
             $clientInfo = $server->getClientInfo($request->fd);
@@ -76,13 +78,18 @@ class Logger
 //        [GIN] 2022/08/31 - 17:59:38 | 200 |     17.2792ms |   192.168.0.105 | GET      "/"
             $requestTm = date("Y/m/d-H:i:s", $lastTime);
 
-            $this->console("[http] | {$requestTm} | $remoteIp | 200 | {$runTime} | {$request->server['path_info']} | {$request->server['request_method']}");
+            $this->console("[http] | {$requestTm} | $remoteIp | $code | {$runTime} | {$request->server['path_info']} | {$request->server['request_method']}");
         }
     }
 
     public function console($msg)
     {
-        echo $msg . PHP_EOL;
+        if (isset($this->logConf['displayConsole']) && $this->logConf['displayConsole']) {
+            echo $msg . PHP_EOL;
+        }
+        if (isset($this->logConf['saveLog']) && $this->logConf['saveLog']) {
+            $this->info($msg);
+        }
     }
 
     public function log($msg, $logLevel)
@@ -90,8 +97,8 @@ class Logger
         $prefix = date('Ymd');
         $date = date('Y-m-d H:i:s');
         $levelStr = $this->levelMap($logLevel);
-        $filePath = $this->logFolder . "/{$prefix}.log";
-        $logData = "[swoole] | [{$date}] | {$levelStr} |  {$msg}\n";
+        $filePath = $this->logFolder . "/{$prefix}_{$levelStr}.log";
+        $logData = "[swoole] | [{$date}] | {$levelStr} |  {$msg}" . PHP_EOL;
         file_put_contents($filePath, "{$logData}", FILE_APPEND | LOCK_EX);
         return $logData;
     }

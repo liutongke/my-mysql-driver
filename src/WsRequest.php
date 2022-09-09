@@ -46,23 +46,22 @@ class WsRequest
         $ws = new WsResponse($server);
         $ws->setFd($frame->fd);
 
-//        DI()->Errors->fatalErrorHandler(function () use ($server, $frame, $ws) {
-//            $error = error_get_last();
-//
-//            if (!empty($error)) {
-//                DI()->logger->error($error['message']);
-//                $ws->setStatus(HttpCode::$StatusInternalServerError);
-//                $ws->setCode(HttpCode::$StatusInternalServerError);
-//                $ws->setMsg($error);
-//                $ws->output();
-//            }
-//        });
+        try {
+            $this->handlerWsData($server, $frame, $ws);
 
-        $this->handlerWsData($server, $frame, $ws);
+            DI()->logger->echoWsCmd($server, $frame->fd, DI()->runTm->end());
 
-        DI()->logger->echoWsCmd($server, $frame->fd, DI()->runTm->end());
+            $ws->output();
 
-        $ws->output();
+        } catch (\Error $e) {
+            DI()->Error->errorHandler($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
+
+            $ws->setStatus(HttpCode::$StatusInternalServerError);
+            $ws->setCode(HttpCode::$StatusInternalServerError);
+            $ws->setMsg($e->getMessage());
+            DI()->logger->echoWsCmd($server, $frame->fd, DI()->runTm->end(), $frame->data, HttpCode::$StatusInternalServerError);
+            $ws->output();
+        }
     }
 
     public function handlerWsData(\Swoole\WebSocket\Server $server, $frame, \Sapi\WsResponse $ws)
