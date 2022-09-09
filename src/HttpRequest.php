@@ -27,6 +27,7 @@
 
 namespace Sapi;
 
+use Sapi\Error\MyError;
 use Sapi\Router\HttpRouter;
 
 class HttpRequest
@@ -46,15 +47,13 @@ class HttpRequest
             return;
         }
 
+        DI()->runTm->start();
+
+        $rs = new HttpResponse($response);
         try {
-            DI()->runTm->start();
-
-            $rs = new HttpResponse($response);
-
             $pathUrl = strtolower($request->server['path_info']);//请求的地址
             $setUrlList = HttpRouter::GetHandlers();
             if (!isset($setUrlList[$pathUrl])) {
-//            DI()->logger->error($request);
                 $rs->setStatus(HttpCode::$StatusNotFound);
                 $rs->setCode(HttpCode::$StatusNotFound);
                 $rs->setData('url not find');
@@ -83,17 +82,15 @@ class HttpRequest
             DI()->logger->echoHttpCmd($request, $response, $server, DI()->runTm->end());
             $rs->output();
         } catch (\Error $e) {
-//            $e->getMessage();
-//            $e->getFile();
-//            $e->getCode();
-//            $e->getFile();
-//            var_dump($e);
+            DI()->Error->errorHandler($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
 
             $rs->setStatus(HttpCode::$StatusInternalServerError);
             $rs->setCode(HttpCode::$StatusInternalServerError);
             $rs->setData($e->getMessage());
+
+            DI()->logger->echoHttpCmd($request, $response, $server, DI()->runTm->end(), HttpCode::$StatusInternalServerError);
+
             $rs->output();
-            throw new \Exception($e);
         }
     }
 }

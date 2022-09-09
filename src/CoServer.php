@@ -38,16 +38,32 @@ class CoServer
         $this->initialize();
         $this->mainServer();
         $this->addProcess();
-        $this->tcpServer();
-        $this->udpServer();
+        $a = ["udp", "tcp"];
+        foreach ($a as $key => $value) {
+            $this->streamServers($key, $value);
+        }
+    }
+
+    public function streamServers($k, $v)
+    {
+        $stream_config = DI()->config->get("conf.{$v}");
+        if (!empty($stream_config)) {
+            $tcp_server = $this->server->listen($stream_config['host'], $stream_config['port'], $stream_config['sockType']);
+
+            $tcp_server->set($stream_config['settings']);
+
+            foreach ($stream_config['events'] as $eventsInfo) {
+                $tcp_server->on($eventsInfo['0'], [new $eventsInfo['1']($this->server), $eventsInfo['2']]);
+            }
+        }
     }
 
     public function addProcess()
     {
-        $this->process_config = DI()->config->get('conf.process');
+        $process_config = DI()->config->get('conf.process');
 
-        if (!empty($this->process_config) && is_array($this->process_config)) {
-            foreach ($this->process_config as $processData) {
+        if (!empty($process_config) && is_array($process_config)) {
+            foreach ($process_config as $processData) {
                 if (isset($processData['0']) && $processData['1']) {
                     $this->server->addProcess(call_user_func([new $processData['0'], $processData['1']], $this->server));
                 }
@@ -57,44 +73,16 @@ class CoServer
 
     public function mainServer()
     {
-        $this->ws_config = DI()->config->get('conf.ws');
+        $ws_config = DI()->config->get('conf.ws');
 
-        $this->initSwooleServer($this->ws_config['host'], $this->ws_config['port']);
+        $this->initSwooleServer($ws_config['host'], $ws_config['port']);
 
-        if (isset($this->ws_config['settings']) && !empty($this->ws_config['settings'])) {
-            $this->server->set($this->ws_config['settings']);
+        if (isset($ws_config['settings']) && !empty($ws_config['settings'])) {
+            $this->server->set($ws_config['settings']);
         }
 
-        foreach ($this->ws_config['events'] as $eventsInfo) {
+        foreach ($ws_config['events'] as $eventsInfo) {
             $this->server->on($eventsInfo['0'], [new $eventsInfo['1']($this->server), $eventsInfo['2']]);
-        }
-    }
-
-    public function tcpServer()
-    {
-        $this->tcp_config = DI()->config->get('conf.tcp');
-        if (!empty($this->tcp_config)) {
-            $tcp_server = $this->server->listen($this->tcp_config['host'], $this->tcp_config['port'], $this->tcp_config['sockType']);
-
-            $tcp_server->set($this->tcp_config['settings']);
-
-            foreach ($this->tcp_config['events'] as $eventsInfo) {
-                $tcp_server->on($eventsInfo['0'], [new $eventsInfo['1']($this->server), $eventsInfo['2']]);
-            }
-        }
-    }
-
-    public function udpServer()
-    {
-        $this->udp_config = DI()->config->get('conf.udp');
-        if (!empty($this->udp_config)) {
-            $tcp_server = $this->server->listen($this->udp_config['host'], $this->udp_config['port'], $this->udp_config['sockType']);
-
-            $tcp_server->set($this->udp_config['settings']);
-
-            foreach ($this->udp_config['events'] as $eventsInfo) {
-                $tcp_server->on($eventsInfo['0'], [new $eventsInfo['1']($this->server), $eventsInfo['2']]);
-            }
         }
     }
 
@@ -104,7 +92,7 @@ class CoServer
         DI()->config->get('websocket');
         DI()->logger = Logger::getInstance(ROOT_PATH, DI()->config->get('conf.debug'));//初始化日志
         DI()->runTm = Runtime::getInstance(DI()->config->get('conf.debug'));
-        DI()->Error = Errors::getInstance();
+        DI()->Error = ApiError::getInstance();
     }
 
     const webSocketServer = 1;
