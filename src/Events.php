@@ -107,12 +107,12 @@ EOL. "\n";
         Logger::echoSuccessCmd("Swoole websocket Server running：ws://{$server->host}:{$server->port}");
 
         $tcp_config = DI()->config->get('conf.tcp');
-        if (is_array($tcp_config) || !empty($tcp_config)) {
+        if (isset($tcp_config) && isset($tcp_config)) {
             Logger::echoSuccessCmd("Swoole tcp Server running：{$tcp_config['host']}:{$tcp_config['port']}");
         }
 
         $udp_config = DI()->config->get('conf.udp');
-        if (is_array($udp_config) || !empty($udp_config)) {
+        if (isset($udp_config) && isset($udp_config)) {
             Logger::echoSuccessCmd("Swoole udp Server running：{$udp_config['host']}:{$udp_config['port']}");
         }
     }

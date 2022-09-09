@@ -49,7 +49,7 @@ class WsRequest
         try {
             $this->handlerWsData($server, $frame, $ws);
 
-            DI()->logger->echoWsCmd($server, $frame->fd, DI()->runTm->end());
+            DI()->logger->echoWsCmd($server, $frame->fd, DI()->runTm->end(), $frame->data, HttpCode::$StatusOK);
 
             $ws->output();
 
