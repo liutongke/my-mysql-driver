@@ -1,8 +1,8 @@
 <?php
 /*
  * User: keke
- * Date: 2021/7/13
- * Time: 10:57
+ * Date: 2022/9/10
+ * Time: 12:55
  *——————————————————佛祖保佑 ——————————————————
  *                   _ooOoo_
  *                  o8888888o
@@ -27,39 +27,50 @@
 
 namespace Sapi;
 
-class Config
+class EventsRegister
 {
-    private $path = '';
-    private $confMap = [];
+    use Singleton;
 
-    public function __construct($confDirPath)
+    private array $container = [];
+
+    function __construct()
     {
-        $this->path = $confDirPath;
+        $this->register();
     }
 
-    public function get($key, $default = NULL)
+    private function register()
     {
-        $keyArr = explode('.', $key);
-        $fileName = $keyArr['0'];
-        if (!isset($this->confMap[$fileName])) {
-            $this->loadConfig($fileName);
-        }
-        $confData = $this->confMap[$fileName];
-        if (count($keyArr) == 1) {
-            return $confData;
-        }
-        foreach ($keyArr as $idx) {
-            if (isset($confData[$idx])) {
-                $data = $confData[$idx];
-                break;
+        $events = DI()->config->get('events');
+
+        if (is_array($events) && !empty($events)) {
+            foreach ($events as $workName => $eventItem) {
+                $this->add($workName, $eventItem);
             }
         }
-        return $data ?? $default;
     }
 
-    private function loadConfig($fileName)
+    public function run(...$args)
     {
-        $filePath = $this->path . DIRECTORY_SEPARATOR . $fileName . ".php";
-        $this->confMap[$fileName] = include_once($filePath);
+        $workName = $args['0'];
+        $events = $this->get($workName);
+        foreach ($events as $item) {
+            call_user_func_array([new $item['0'], $item['1']], $args);
+        }
+    }
+
+    private function add($key, $item): EventsRegister
+    {
+        $this->container[$key] = $item;
+        return $this;
+    }
+
+    private function get(string $key): ?array
+    {
+        return $this->container[$key] ?? [];
+    }
+
+    public function all(): array
+    {
+        return $this->container;
     }
 }

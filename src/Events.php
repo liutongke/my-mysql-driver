@@ -29,7 +29,6 @@ namespace Sapi;
 
 class Events
 {
-    private $server;
 
     public function __construct($server)
     {
@@ -41,13 +40,15 @@ class Events
         if (DI()->config->get('conf.debug')) {
             echo "server: handshake success with fd{$request->fd}\n";
         }
+        DI()->EventsRegister->run(EventsName::$onOpen, $server, $request);;
     }
 
-    public function onClose($ser, $fd)
+    public function onClose($server, $fd)
     {
         if (DI()->config->get('conf.debug')) {
             echo "client {$fd} closed\n";
         }
+        DI()->EventsRegister->run(EventsName::$onClose, $server, $fd);;
     }
 
     public function onMessage(\Swoole\WebSocket\Server $server, $frame)
@@ -63,6 +64,7 @@ class Events
 
     public function onWorkerStart(\Swoole\Server $server, int $workerId)
     {
+        DI()->EventsRegister->run(EventsName::$onWorkerStart, $server, $workerId);//https://wiki.swoole.com/#/question/use?id=%e6%98%af%e5%90%a6%e5%8f%af%e4%bb%a5%e5%85%b1%e7%94%a81%e4%b8%aaredis%e6%88%96mysql%e8%bf%9e%e6%8e%a5
         if ($server->taskworker) {
             self::setProcessName("swoole server task:{$workerId}");
         } else {
@@ -78,12 +80,12 @@ class Events
     //使用 task 必须为 Server 设置 onTask 和 onFinish 回调，否则 Server->start 会失败
     public function onTask(\Swoole\Server $server, int $task_id, int $src_worker_id, array $data)
     {
-        echo "Tasker进程接收到数据,task_id:{$task_id}";
+        DI()->EventsRegister->run(EventsName::$onTask, $server, $task_id, $src_worker_id, $data);
     }
 
     public function onFinish(\Swoole\Server $server, int $task_id, int $src_worker_id, array $data)
     {
-
+        DI()->EventsRegister->run(EventsName::$onFinish, $server, $task_id, $src_worker_id, $data);;
     }
 
     public function onStart(\Swoole\Server $server)
