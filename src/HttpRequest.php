@@ -76,7 +76,11 @@ class HttpRequest
                 $rs->setData($rule['data']);
             } else {
                 $rs->setCode(HttpCode::$StatusOK);
-                $rs->setData(call_user_func_array($routeInfo, [$request, $response, $server]));
+                try {
+                    $rs->setData(call_user_func_array($routeInfo, [$request, $response, $server]));
+                } catch (\Exception $e) {
+                    DI()->Error->errorHandler($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
+                }
             }
 
             DI()->logger->echoHttpCmd($request, $response, $server, DI()->runTm->end());

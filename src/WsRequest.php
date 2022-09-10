@@ -47,7 +47,11 @@ class WsRequest
         $ws->setFd($frame->fd);
 
         try {
-            $this->handlerWsData($server, $frame, $ws);
+            try {
+                $this->handlerWsData($server, $frame, $ws);
+            } catch (\Exception $e) {
+                DI()->Error->errorHandler($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
+            }
 
             DI()->logger->echoWsCmd($server, $frame->fd, DI()->runTm->end(), $frame->data, HttpCode::$StatusOK);
 
