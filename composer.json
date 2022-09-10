@@ -21,7 +21,8 @@
       "Sapi\\": "src/"
     },
     "files": [
-      "src/function.php"
+      "src/function.php",
+      "src/bootstrap.php"
     ]
   }
 }

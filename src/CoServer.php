@@ -88,8 +88,7 @@ class CoServer
 
     public function initialize()
     {
-        DI()->config->get('http');
-        DI()->config->get('websocket');
+        DI()->router = router();
         DI()->logger = Logger::getInstance(ROOT_PATH, DI()->config->get('conf.debug'));//初始化日志
         DI()->runTm = Runtime::getInstance(DI()->config->get('conf.debug'));
         DI()->Error = ApiError::getInstance();
