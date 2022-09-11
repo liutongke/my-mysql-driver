@@ -38,6 +38,13 @@ class HttpResponse
     public function __construct(\Swoole\Http\Response $response)
     {
         $this->response = $response;
+        $this->header();
+    }
+
+    private function header()
+    {
+        $this->response->header('content-type', 'application/json', true);
+        return $this;
     }
 
     public function setStatus($ret)
