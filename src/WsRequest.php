@@ -51,6 +51,8 @@ class WsRequest
                 $this->handlerWsData($server, $frame, $ws);
             } catch (\Exception $e) {
                 DI()->Error->errorHandler($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
+                $ws->setCode(HttpCode::$StatusInternalServerError);
+                $ws->setMsg($e->getMessage());
             }
 
             DI()->logger->echoWsCmd($server, $frame->fd, DI()->runTm->end(), $frame->data, HttpCode::$StatusOK);
