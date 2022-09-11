@@ -54,7 +54,7 @@ class EventsRegister
         $workName = $args['0'];
         $events = $this->get($workName);
         foreach ($events as $item) {
-            call_user_func_array([new $item['0'], $item['1']], $args);
+            $item['0']::getInstance()->{$item['1']}($args);
         }
     }
 
