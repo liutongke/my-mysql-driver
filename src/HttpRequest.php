@@ -75,10 +75,12 @@ class HttpRequest
                 $rs->setCode(HttpCode::$StatusBadRequest);
                 $rs->setData($rule['data']);
             } else {
-                $rs->setCode(HttpCode::$StatusOK);
                 try {
+                    $rs->setCode(HttpCode::$StatusOK);
                     $rs->setData(call_user_func_array($routeInfo, [$request, $response, $server]));
                 } catch (\Exception $e) {
+                    $rs->setCode(HttpCode::$StatusInternalServerError);
+                    $rs->setData($e->getMessage());
                     DI()->Error->errorHandler($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
                 }
             }
