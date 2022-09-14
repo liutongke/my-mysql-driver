@@ -10,6 +10,11 @@ function getLocalIp(): array
     return swoole_get_local_ip();
 }
 
+function getSalt(): string
+{
+    return "api-swoole";
+}
+
 //websocket路由设置
 function WsRouter($url, $callable)
 {
