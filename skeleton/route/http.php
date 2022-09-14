@@ -14,4 +14,5 @@ return [
     \HttpRouter("/mysql/save", "App\Controller\MysqlDemo@save"),
     \HttpRouter("/mysql/del", "App\Controller\MysqlDemo@del"),
     \HttpRouter("/mysql/update", "App\Controller\MysqlDemo@update"),
+    \HttpRouter("/chat/login", "App\Controller\ChatAuth@login"),
 ];

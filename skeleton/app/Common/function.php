@@ -5,6 +5,11 @@ function DI()
     return \Sapi\Di::one();
 }
 
+function getLocalIp(): array
+{
+    return swoole_get_local_ip();
+}
+
 //websocket路由设置
 function WsRouter($url, $callable)
 {

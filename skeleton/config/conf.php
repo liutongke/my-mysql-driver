@@ -27,7 +27,8 @@ return [
         'host' => '0.0.0.0',
         'port' => 9500,
         'events' => [
-            ['open', \Sapi\Events::class, 'onOpen'],
+//            ['open', \Sapi\Events::class, 'onOpen'],
+            ['handshake', \App\Controller\ChatEvents::class, 'onHandshake'],
             ['message', \Sapi\Events::class, 'onMessage'],
             ['close', \Sapi\Events::class, 'onClose'],
             ['request', \Sapi\Events::class, 'onRequest'],
