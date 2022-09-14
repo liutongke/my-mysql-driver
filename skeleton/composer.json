@@ -1,0 +1,29 @@
+{
+  "name": "api-swoole/skeleton",
+  "description": "基于swoole实现的一个轻量级框架，支持http、websocket、tcp、udp。",
+  "type": "project",
+  "keywords": [
+    "php",
+    "swoole",
+    "api-swoole",
+    "coroutine",
+    "tcp",
+    "udp",
+    "websocket"
+  ],
+  "require": {
+    "php": ">=7.4",
+    "ext-swoole": ">=4.5",
+    "simple-swoole/db": "^1.0",
+    "api-swoole/sapi": "v1.0.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    },
+    "files": [
+      "app/Common/function.php"
+    ]
+  },
+  "minimum-stability": "stable"
+}
