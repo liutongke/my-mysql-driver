@@ -1,7 +1,7 @@
 <?php
 return [
     'redis' => [
-        'host' => '192.168.0.107',//Redis服务器地址
+        'host' => '192.168.0.105',//Redis服务器地址
         'port' => 6379,//指定 Redis 监听端口
         'auth' => '',//登录密码
         'db_index' => 2,//指定数据库
