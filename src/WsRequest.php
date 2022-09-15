@@ -84,7 +84,7 @@ class WsRequest
         $action = $c['1'];
 
         if (method_exists($api, 'getRules')) {//先处理必须携带的参数
-            $rule = $api->getRules($res['data'], $action);
+            $rule = $api->getRules($res['data'], $action, $frame);
         }
 
         if (isset($rule['res']) && $rule['res']) {//验证未通过

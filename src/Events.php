@@ -64,6 +64,7 @@ class Events
 
     public function onWorkerStart(\Swoole\Server $server, int $workerId)
     {
+//        var_dump(get_included_files());
         DI()->EventsRegister->run(EventsName::$onWorkerStart, $server, $workerId);//https://wiki.swoole.com/#/question/use?id=%e6%98%af%e5%90%a6%e5%8f%af%e4%bb%a5%e5%85%b1%e7%94%a81%e4%b8%aaredis%e6%88%96mysql%e8%bf%9e%e6%8e%a5
         if ($server->taskworker) {
             self::setProcessName("swoole server task:{$workerId}");
