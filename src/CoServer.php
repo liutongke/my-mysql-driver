@@ -109,4 +109,10 @@ class CoServer
         Events::setProcessName("swoole server Master");
         $this->server->start();
     }
+
+    //获取服务
+    public function getServer()
+    {
+        return $this->server;
+    }
 }

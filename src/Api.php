@@ -1,32 +1,6 @@
 <?php
-/*
- * User: keke
- * Date: 2022/9/6
- * Time: 13:31
- *——————————————————佛祖保佑 ——————————————————
- *                   _ooOoo_
- *                  o8888888o
- *                  88" . "88
- *                  (| -_- |)
- *                  O\  =  /O
- *               ____/`---'\____
- *             .'  \|     |//  `.
- *            /  \|||  :  |||//  \
- *           /  _||||| -:- |||||-  \
- *           |   | \\  -  /// |   |
- *           | \_|  ''\---/''  |   |
- *           \  .-\__  `-`  ___/-. /
- *         ___`. .'  /--.--\  `. . __
- *      ."" '<  `.___\_<|>_/___.'  >'"".
- *     | | :  ` - `.;`\ _ /`;.`/ - ` : | |
- *     \  \ `-.   \_ __\ /__ _/   .-` /  /
- *======`-.____`-.___\_____/___.-`____.-'======
- *                   `=---='
- *——————————————————代码永无BUG —————————————————
- */
 
 namespace Sapi;
-
 
 class Api
 {
@@ -42,13 +16,13 @@ class Api
     }
 
     //定义规则,用户自定义规则
-    protected function userCheck()
+    protected function userCheck($request)
     {
     }
 
-    public function getRules($data, string $action): array
+    public function getRules($data, string $action, $request): array
     {
-        $check = $this->userCheck();
+        $check = $this->userCheck($request);
 
         if (!empty($check)) {
             return ["res" => true, "data" => $check];
