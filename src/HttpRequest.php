@@ -80,7 +80,7 @@ class HttpRequest
                     $rs->setData(call_user_func_array($routeInfo, [$request, $response, $server]));
                 } catch (\Exception $e) {
                     $rs->setCode(HttpCode::$StatusInternalServerError);
-                    $rs->setData($e->getMessage());
+                    $rs->setDebug($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
                     DI()->Error->errorHandler($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
                 }
             }
@@ -92,8 +92,7 @@ class HttpRequest
 
             $rs->setStatus(HttpCode::$StatusInternalServerError);
             $rs->setCode(HttpCode::$StatusInternalServerError);
-            $rs->setData($e->getMessage());
-
+            $rs->setDebug($e->getCode(), $e->getMessage(), $e->getFile(), $e->getLine());
             DI()->logger->echoHttpCmd($request, $response, $server, DI()->runTm->end(), HttpCode::$StatusInternalServerError);
 
             $rs->output();

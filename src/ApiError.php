@@ -45,7 +45,7 @@ class ApiError
         }
     }
 
-    public function errorHandler($errno, $errstr, $errfile, $line)
+    public function errorHandler(int $errno, string $errstr, string $errfile, int $line)
     {
         $err = [
             'err_code' => $errno,
