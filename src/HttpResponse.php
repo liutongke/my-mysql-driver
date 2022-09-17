@@ -31,9 +31,10 @@ namespace Sapi;
 class HttpResponse
 {
     private $response;
-    private $data;
-    private $code;
-    private $msg;
+    private array $data = [];
+    private int $code;
+    private string $msg;
+    private $debug;
 
     public function __construct(\Swoole\Http\Response $response)
     {
@@ -71,12 +72,30 @@ class HttpResponse
         return $this;
     }
 
+    public function setDebug(int $errno, string $errstr, string $errfile, int $line)
+    {
+        $debug = [
+            'err_code' => $errno,
+            'msg' => $errstr,
+            'file' => $errfile,
+            'line' => $line,
+        ];
+        $this->debug = $debug;
+        return $this;
+    }
+
     public function output()
     {
-        $this->response->end(json_encode([
+        $res = [
             'code' => $this->code,
             'msg' => $this->msg ?? 'success',
             'data' => $this->data,
-        ]));
+        ];
+
+        if (DI()->config->get('conf.debug')) {
+            $res['debug'] = $this->debug;
+        }
+
+        $this->response->end(json_encode($res));
     }
 }
