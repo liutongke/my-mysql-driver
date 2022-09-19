@@ -56,7 +56,7 @@ class HttpRequest
             if (!isset($setUrlList[$pathUrl])) {
                 $rs->setStatus(HttpCode::$StatusNotFound);
                 $rs->setCode(HttpCode::$StatusNotFound);
-                $rs->setData('url not find');
+                $rs->setData(['url not find']);
                 $rs->output();
                 return;
             }
@@ -73,7 +73,7 @@ class HttpRequest
 
             if (isset($rule['res']) && $rule['res']) {//验证未通过
                 $rs->setCode(HttpCode::$StatusBadRequest);
-                $rs->setData($rule['data']);
+                $rs->setData([$rule['data']]);
             } else {
                 try {
                     $rs->setCode(HttpCode::$StatusOK);
