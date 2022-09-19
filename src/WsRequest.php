@@ -94,7 +94,7 @@ class WsRequest
             $ws->setPath($res['path']);
             $ws->setData($res['data']);
         } else {
-            $data = $api->{$action}($server, $res['data']);
+            $data = $api->{$action}($server, $res['data'], $frame->fd);
             $ws->setId($res['id']);
             $ws->setCode(HttpCode::$StatusOK);
             $ws->setPath($res['path']);
