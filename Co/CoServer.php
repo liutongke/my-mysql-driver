@@ -28,7 +28,7 @@ class CoServer
 
         $this->pool = new Process\Pool($cpuNum);//多进程管理模块
 
-        $this->pool->set(['enable_coroutine' => true]);
+        $this->pool->set($this->set());
 
         foreach (self::$events as $event) {
             $this->pool->on($event['0'], array(new $event['1'], $event['2']));;
@@ -44,5 +44,10 @@ class CoServer
     public function getServer()
     {
         return $this->pool;
+    }
+
+    private function set(): array
+    {
+        return ['enable_coroutine' => true];
     }
 }
