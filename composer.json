@@ -18,11 +18,13 @@
   },
   "autoload": {
     "psr-4": {
-      "Sapi\\": "src/"
+      "Sapi\\": "src/",
+      "Co\\": "Co/"
     },
     "files": [
       "src/function.php",
-      "src/bootstrap.php"
+      "src/bootstrap.php",
+      "Co/function.php"
     ]
   }
 }
