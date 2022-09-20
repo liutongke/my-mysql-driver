@@ -2,6 +2,7 @@
 
 namespace Co;
 
+use Sapi\HttpRequest;
 use Swoole\Process;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Server\Connection;
@@ -31,35 +32,45 @@ class Events
         $this->server->start();
     }
 
+    private static string $ws = 'Upgrade';
+
     private function handler()
     {
-//        call_user_func_array($routeInfo, [$request, $response, $server]);
-        $this->server->handle('/', function ($request, $response) {
-            var_dump($request->server['request_uri']);
-            $response->end("<h1>Index1111Index1111Index1111</h1>");
-        });
-
-        $this->server->handle('/websocket', function (\Swoole\Http\Request $request, \Swoole\Http\Response $ws) {
-            $ws->upgrade();
-            while (true) {
-                $frame = $ws->recv();
-                if ($frame === '') {
-                    $ws->close();
-                    break;
-                } else if ($frame === false) {
-                    echo 'errorCode: ' . swoole_last_error() . "\n";
-                    $ws->close();
-                    break;
-                } else {
-                    if ($frame->data == 'close' || get_class($frame) === CloseFrame::class) {
-                        $ws->close();
-                        break;
-                    }
-                    $ws->push("Hello {$frame->data}!");
-                    $ws->push("How are you, {$frame->data}?");
-                }
+        $this->server->handle('/', function (\Swoole\Http\Request $request, \Swoole\Http\Response $ws) {
+            if ($request->header['connection'] != self::$ws) {
+                $this->http($request, $ws);
+            } else {
+                $this->websocket($request, $ws);
             }
         });
+    }
+
+    private function http(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
+    {
+        $response->end("<h1>Index1111Index1111Index1111</h1>");
+    }
+
+    private function websocket(\Swoole\Http\Request $request, \Swoole\Http\Response $ws)
+    {
+        $ws->upgrade();
+        while (true) {
+            $frame = $ws->recv();
+            if ($frame === '') {
+                $ws->close();
+                break;
+            } else if ($frame === false) {
+                echo 'errorCode: ' . swoole_last_error() . "\n";
+                $ws->close();
+                break;
+            } else {
+                if ($frame->data == 'close' || get_class($frame) === CloseFrame::class) {
+                    $ws->close();
+                    break;
+                }
+                $ws->push("Hello {$frame->data}!");
+                $ws->push("How are you, {$frame->data}?");
+            }
+        }
     }
 
     public function onWorkerStop(\Swoole\Process\Pool $pool, int $workerId)
