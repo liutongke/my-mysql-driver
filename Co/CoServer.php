@@ -33,6 +33,25 @@ class CoServer
         foreach (self::$events as $event) {
             $this->pool->on($event['0'], array(new $event['1'], $event['2']));;
         }
+        $this->oneProcess();
+    }
+
+    private function oneProcess()
+    {
+        $process = new Process(function ($process) {
+            echo 'start oneProcess' . PHP_EOL;
+            while (true) {
+                run(function () use ($process) {
+                    $socket = $process->exportSocket();
+                    echo $socket->recv();
+                    $socket->send("hello master\n");
+                    echo "proc1 stop\n";
+                });
+            }
+        });
+        $process->start();
+//        $status = Process::wait(true);
+//        var_dump($status);
     }
 
     public function start()
