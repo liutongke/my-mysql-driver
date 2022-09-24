@@ -19,35 +19,35 @@ class Events
         Utils::setProcessName("onWorkerStart workerId:{$workerId}");
         $this->server = new Server('0.0.0.0', 9502, false, true);
         $s = $this->server;
-        //收到15信号关闭服务
-        Process::signal(SIGUSR1, function () use ($s) {
-            $s->shutdown();
-            while ($ret = Swoole\Process::wait(false)) {
-                echo "PID={$ret['pid']}\n";
-            }
+
+        Process::signal(SIGTERM, function () {
+            echo "TERM\n";
         });
 
-        $this->handler();
+        $this->handler($pool);
 
         $this->server->start();
     }
 
-    private static string $ws = 'Upgrade';
+    private static string $ws = 'upgrade';
 
-    private function handler()
+    private function handler(\Swoole\Process\Pool $pool)
     {
-        $this->server->handle('/', function (\Swoole\Http\Request $request, \Swoole\Http\Response $ws) {
-            if ($request->header['connection'] != self::$ws) {
-                $this->http($request, $ws);
-            } else {
+        $this->server->handle('/', function (\Swoole\Http\Request $request, \Swoole\Http\Response $ws) use ($pool) {
+            if (isset($request->header['connection']) && strtolower($request->header['connection']) == self::$ws) {
                 $this->websocket($request, $ws);
+            } else {
+                $this->http($request, $ws, $pool);
             }
         });
     }
 
-    private function http(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
+    private function http(\Swoole\Http\Request $request, \Swoole\Http\Response $response, \Swoole\Process\Pool $pool)
     {
-        $response->end("<h1>Index1111Index1111Index1111</h1>");
+        $socket = $pool->exportSocket();
+        $socket->send("hello pro1\n");
+//        var_dump($socket->recv());
+        $response->end("<h1>IIIIIIIIIIIIIIIIIIII</h1>");
     }
 
     private function websocket(\Swoole\Http\Request $request, \Swoole\Http\Response $ws)
