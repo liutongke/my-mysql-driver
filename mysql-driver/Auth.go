@@ -7,27 +7,9 @@ import (
 	"fmt"
 )
 
-func test() {
-	//password := "secret"
-	//AllowNativePasswords = false
-	//
-	//authData := []byte{70, 114, 92, 94, 1, 38, 11, 116, 63, 114, 23, 101, 126,
-	//	103, 26, 95, 81, 17, 24, 21}
-	//plugin := "mysql_native_password"
+var sequenceId uint8 = 1 //包序列id
 
-	//unused()
-	//encodePass("root")
-	//bytes, _ := hex.DecodeString("4b9d5c36cafbf59426ffd1180364a69927539695")
-	//fmt.Println(bytes)
-	////两个盐值相加
-	//decodeString1, _ := hex.DecodeString("4b79225e1f0a2915")
-	//fmt.Println(decodeString1, len(decodeString1))
-	//decodeString2, _ := hex.DecodeString("2a657679524b0d5e6c254b54")
-	//fmt.Println(decodeString2, len(decodeString2))
-	//
-	//arr3 := append(decodeString1, decodeString2...)
-	//fmt.Println(scramblePassword(arr3, "root"))
-}
+// GetAuthPacket 获取返回的包信息
 func GetAuthPacket(scramble []byte) []byte {
 	arr := append(clientCapabilities(), extendedClientCapabilities()...)
 	arr1 := append(arr, MAXPacket()...)
@@ -45,7 +27,7 @@ func GetAuthPacket(scramble []byte) []byte {
 
 	var testBytes = make([]byte, 4)
 	binary.LittleEndian.PutUint16(testBytes, uint16(len(decodeString)))
-	testBytes[3] = 1
+	testBytes[3] = sequenceId //包序列id
 
 	return append(testBytes, decodeString...)
 }
