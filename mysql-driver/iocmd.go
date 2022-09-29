@@ -34,3 +34,20 @@ func InputCmd() string {
 	}
 	return str
 }
+
+type sql struct {
+	Sql  string
+	head uint8
+}
+
+func UserInput(packetData []byte) *sql {
+	NewPacket().Handler(packetData)
+
+	str := InputCmd()
+	list := strings.Split(str, " ")
+	head := GetOrder(list[0])
+	return &sql{
+		Sql:  str,
+		head: head,
+	}
+}
