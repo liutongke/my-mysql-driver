@@ -2,7 +2,6 @@ package main
 
 import (
 	"crypto/sha1"
-	"encoding/binary"
 	"encoding/hex"
 	"fmt"
 )
@@ -17,12 +16,12 @@ func GetAuthPacket(scramble []byte, username, pwd string) []byte {
 	if err != nil {
 		return nil
 	}
-
-	var testBytes = []byte{0x00, 0x00, 0x00, 0x00}
-	binary.LittleEndian.PutUint16(testBytes, uint16(len(decodeString)))
-	testBytes[3] = sequenceId //包序列id
-
-	return append(testBytes, decodeString...)
+	return decodeString
+	//var testBytes = []byte{0x00, 0x00, 0x00, 0x00}
+	//binary.LittleEndian.PutUint16(testBytes, uint16(len(decodeString)))
+	//testBytes[3] = sequenceId //包序列id
+	//
+	//return append(testBytes, decodeString...)
 }
 
 // 0xa685 协议协商
