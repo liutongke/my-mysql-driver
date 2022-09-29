@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/binary"
-	"fmt"
 	"net"
 )
 
@@ -38,7 +37,7 @@ func main() {
 
 		//mysql.SetChart()
 
-		fmt.Println(packetData)
+		//fmt.Println(packetData)
 
 		typeSql := UserInput(packetData)
 		mysql.Query(typeSql)

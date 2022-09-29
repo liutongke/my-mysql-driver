@@ -19,7 +19,6 @@ func (p *Packet) Handler(data []byte) {
 
 	if packetType == "00" { //成功报文
 		sucMsg := p.success(data[1:])
-		fmt.Println(sucMsg)
 		fmt.Printf("[Success] 受影响的行:%d - 自增id:%d\n", sucMsg.Row, sucMsg.LastInsertId)
 	}
 
