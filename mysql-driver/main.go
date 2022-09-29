@@ -8,6 +8,17 @@ import (
 )
 
 func main() {
+	//decodeString, err := hex.DecodeString("4a000000")
+	//if err != nil {
+	//	return
+	//}
+	//fmt.Println(decodeString, string(decodeString))
+	//payloadLength := decodeString[:3]
+	//sequenceId := decodeString[3:]
+	//fmt.Printf("payload_length:%d\n", binary.LittleEndian.Uint32(append(payloadLength, 0x00)))
+	//fmt.Printf("sequence_id:%d\n", binary.LittleEndian.Uint16(append(sequenceId, 0x00)))
+	//
+	//return
 	conn, err := net.Dial("tcp", "192.168.0.107:3306")
 	if err != nil {
 		fmt.Printf("dial failed, err:%v\n", err)
@@ -22,19 +33,19 @@ func main() {
 			return
 		}
 		byteData := buf[:n]
-		fmt.Println(byteData)
+		//fmt.Println(byteData)
 		packetLen := binary.LittleEndian.Uint32(byteData)
-		fmt.Printf("包长度：%d", packetLen)
+		//fmt.Printf("包长度：%d", packetLen)
 		packetData := make([]byte, packetLen)
 		n, err = conn.Read(packetData[:])
 		if err != nil {
 			fmt.Println("recv failed, err:", err)
 			return
 		}
-		fmt.Println(packetData)
+		//fmt.Println(packetData)
 		hexStringData = hex.EncodeToString(packetData)
 		fmt.Println(hexStringData)
-
+		//Handshakes(hexStringData)
 		_, err = conn.Write(Handshakes(hexStringData)) //发送请求包
 		if err != nil {
 			return

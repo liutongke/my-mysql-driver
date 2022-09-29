@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
@@ -26,22 +27,14 @@ func Handshakes(hexStringData string) []byte {
 	HandshakePacket := &HandshakePacket{}
 	packet, _ := hex.DecodeString(hexStringData)
 
-	protocolPacket := []byte{00, 00}
+	protocolPacket := []byte{0x00, 0x00}
 	copy(protocolPacket, packet[0:1])
 	fmt.Printf("protocolVersion:%d\n", binary.LittleEndian.Uint16(protocolPacket))
 	HandshakePacket.Protocol = binary.LittleEndian.Uint16(protocolPacket)
 
-	var dbVer []byte
-	var idx int
-	for k, item := range packet[1:] {
-		dbVer = append(dbVer, item)
-		if item == 0 {
-			idx = k
-			goto next
-		}
-	}
+	idx := bytes.IndexByte(packet[1:], 0x00)
+	dbVer := packet[1:idx]
 
-next:
 	fmt.Printf("serverVersion:%s\n", string(dbVer))
 	HandshakePacket.Version = string(dbVer)
 	idx = idx + 2
@@ -56,10 +49,10 @@ next:
 	fmt.Printf("serverCapabilities:%d\n", binary.LittleEndian.Uint16(packet[idx+4+8+1:idx+4+8+1+2]))
 	HandshakePacket.ServerCapabilities = binary.LittleEndian.Uint16(packet[idx+4+8+1 : idx+4+8+1+2])
 
-	languagePacket := []byte{00, 00}
+	languagePacket := []byte{0x00, 0x00}
 	copy(languagePacket, packet[idx+4+8+1+2:idx+4+8+1+2+1])
-	fmt.Printf("server Language:%d\n", binary.LittleEndian.Uint16(append(languagePacket, 00)))
-	HandshakePacket.ServerLanguage = binary.LittleEndian.Uint16(append(languagePacket, 00))
+	fmt.Printf("server Language:%d\n", binary.LittleEndian.Uint16(append(languagePacket, 0x00)))
+	HandshakePacket.ServerLanguage = binary.LittleEndian.Uint16(append(languagePacket, 0x00))
 
 	fmt.Printf("server Status:%d\n", binary.LittleEndian.Uint16(packet[idx+4+8+1+2+1:idx+4+8+1+2+1+2]))
 	HandshakePacket.ServerStatus = binary.LittleEndian.Uint16(packet[idx+4+8+1+2+1 : idx+4+8+1+2+1+2])
@@ -67,22 +60,17 @@ next:
 	fmt.Printf("Extended Server Capabilities:%d\n", binary.LittleEndian.Uint16(packet[idx+4+8+1+2+1+2:idx+4+8+1+2+1+2+2]))
 	HandshakePacket.ExtendedServerCapabilities = binary.LittleEndian.Uint16(packet[idx+4+8+1+2+1+2 : idx+4+8+1+2+1+2+2])
 
-	pluginLengthPacket := []byte{00, 00}
+	pluginLengthPacket := []byte{0x00, 0x00}
 	copy(pluginLengthPacket, packet[idx+4+8+1+2+1+2+2:idx+4+8+1+2+1+2+2+1])
 	fmt.Printf("plugin Length:%d\n", binary.LittleEndian.Uint16(pluginLengthPacket))
 	HandshakePacket.AuthPluginLength = binary.LittleEndian.Uint16(pluginLengthPacket)
 
 	fmt.Printf("Unused:%s\n", string(packet[idx+4+8+1+2+1+2+2+1:idx+4+8+1+2+1+2+2+1+10]))
 	HandshakePacket.Unused = string(packet[idx+4+8+1+2+1+2+2+1 : idx+4+8+1+2+1+2+2+1+10])
-	var salt2 []byte
-	for _, saltIem := range packet[idx+4+8+1+2+1+2+2+1+10:] {
-		if saltIem == 0 {
-			goto salt2jump
-		}
-		salt2 = append(salt2, saltIem)
-	}
 
-salt2jump:
+	salt2Idx := bytes.IndexByte(packet[idx+4+8+1+2+1+2+2+1+10:], 0x00)
+
+	salt2 := packet[idx+4+8+1+2+1+2+2+1+10 : idx+4+8+1+2+1+2+2+1+10+salt2Idx]
 	HandshakePacket.Salt2 = salt2
 	fmt.Printf("salt2:%s\n", string(salt2))
 	fmt.Printf("Authentication Plugin:%s\n", string(packet[idx+4+8+1+2+1+2+2+1+10+len(salt2):]))
