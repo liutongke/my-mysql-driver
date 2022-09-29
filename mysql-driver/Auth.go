@@ -19,7 +19,7 @@ func GetAuthPacket(scramble []byte) []byte {
 	userName := string(encodeUserName())
 	pwd := hex.EncodeToString(encodePass(scramble, "root"))
 	sprintf := fmt.Sprintf("%s%s%s", str1, userName, pwd)
-	fmt.Println(sprintf, len(sprintf))
+	//fmt.Println(sprintf, len(sprintf))
 	decodeString, err := hex.DecodeString(sprintf)
 	if err != nil {
 		return nil
