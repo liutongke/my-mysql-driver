@@ -7,25 +7,18 @@ import (
 	"fmt"
 )
 
-var sequenceId uint8 = 1 //包序列id
-
 // GetAuthPacket 获取返回的包信息
-func GetAuthPacket(scramble []byte) []byte {
-	arr := append(clientCapabilities(), extendedClientCapabilities()...)
-	arr1 := append(arr, MAXPacket()...)
-	arr2 := append(arr1, CharsetSet()...)
-	arr3 := append(arr2, unused()...)
-	str1 := hex.EncodeToString(arr3)
-	userName := string(encodeUserName())
-	pwd := hex.EncodeToString(encodePass(scramble, "root"))
-	sprintf := fmt.Sprintf("%s%s%s", str1, userName, pwd)
-	//fmt.Println(sprintf, len(sprintf))
+func GetAuthPacket(scramble []byte, username, pwd string) []byte {
+	str := hex.EncodeToString(append(append(append(append(clientCapabilities(), extendedClientCapabilities()...), mAXPacket()...), charsetSet()...), unused()...))
+	userName := string(encodeUserName(username))
+	sprintf := fmt.Sprintf("%s%s%s", str, userName, encodePass(scramble, pwd))
+
 	decodeString, err := hex.DecodeString(sprintf)
 	if err != nil {
 		return nil
 	}
 
-	var testBytes = make([]byte, 4)
+	var testBytes = []byte{0x00, 0x00, 0x00, 0x00}
 	binary.LittleEndian.PutUint16(testBytes, uint16(len(decodeString)))
 	testBytes[3] = sequenceId //包序列id
 
@@ -36,7 +29,7 @@ func GetAuthPacket(scramble []byte) []byte {
 func clientCapabilities() []byte {
 	decodeString, err := hex.DecodeString("85a6")
 	if err != nil {
-		return nil
+		panic("auth err:" + err.Error())
 	}
 	return decodeString
 }
@@ -45,54 +38,46 @@ func clientCapabilities() []byte {
 func extendedClientCapabilities() []byte {
 	decodeString, err := hex.DecodeString("0300")
 	if err != nil {
-		return nil
+		panic("auth err:" + err.Error())
 	}
 	return decodeString
 }
 
 // 1073741824 消息最长长度
-func MAXPacket() []byte {
+func mAXPacket() []byte {
 	decodeString, err := hex.DecodeString("00000040")
 	if err != nil {
-		return nil
+		panic("auth err:" + err.Error())
 	}
 	return decodeString
 }
 
 // 字符编码
-func CharsetSet() []byte {
+func charsetSet() []byte {
 	decodeString, err := hex.DecodeString("21")
 	if err != nil {
-		return nil
+		panic("auth err:" + err.Error())
 	}
 	return decodeString
 }
 
 // 保留字节，长度23
 func unused() []byte {
-	data, _ := hex.DecodeString("0000000000000000000000000000000000000000000000")
-	return data
+	decodeString, err := hex.DecodeString("0000000000000000000000000000000000000000000000")
+	if err != nil {
+		panic("auth err:" + err.Error())
+	}
+	return decodeString
 }
-func encodeUserName() []byte {
-	username := []byte("root")
-	username = append(username, 00)
-	hexUsername := hex.EncodeToString(username)
+
+func encodeUserName(username string) []byte {
+	hexUsername := hex.EncodeToString(append([]byte(username), 0x00))
 	return []byte(hexUsername + "14")
 }
 
-func encodePass(scramble []byte, pwd string) []byte {
-	//bytes, _ := hex.DecodeString("4b9d5c36cafbf59426ffd1180364a69927539695")
-	//fmt.Println(bytes)
-	//两个盐值相加
-	//decodeString1, _ := hex.DecodeString("4b79225e1f0a2915")
-	//fmt.Println(decodeString1, len(decodeString1))
-	//decodeString2, _ := hex.DecodeString("2a657679524b0d5e6c254b54")
-	//fmt.Println(decodeString2, len(decodeString2))
-
-	//arr3 := append(decodeString1, decodeString2...)
-	pass := scramblePassword(scramble, pwd)
-	//fmt.Println(pass, hex.EncodeToString(pass))
-	return pass
+func encodePass(scramble []byte, pwd string) (pass string) {
+	pass = hex.EncodeToString(scramblePassword(scramble, pwd))
+	return
 }
 
 // Hash password using 4.1+ method (SHA1)

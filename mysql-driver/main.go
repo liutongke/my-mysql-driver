@@ -1,67 +1,49 @@
 package main
 
 import (
-	"encoding/binary"
-	"encoding/hex"
 	"fmt"
 	"net"
 )
 
-func main() {
-	//decodeString, err := hex.DecodeString("4a000000")
-	//if err != nil {
-	//	return
-	//}
-	//fmt.Println(decodeString, string(decodeString))
-	//payloadLength := decodeString[:3]
-	//sequenceId := decodeString[3:]
-	//fmt.Printf("payload_length:%d\n", binary.LittleEndian.Uint32(append(payloadLength, 0x00)))
-	//fmt.Printf("sequence_id:%d\n", binary.LittleEndian.Uint16(append(sequenceId, 0x00)))
-	//
-	//return
+var sequenceId uint8 = 1 //包序列id
+
+type Mysql struct {
+	TcpConn  net.Conn
+	Username string
+	Password string
+}
+
+func NewMysql(username, password string) *Mysql {
 	conn, err := net.Dial("tcp", "192.168.0.107:3306")
 	if err != nil {
-		fmt.Printf("dial failed, err:%v\n", err)
-		return
+		panic("dial failed, err:" + err.Error())
 	}
-	var hexStringData string
+
+	return &Mysql{TcpConn: conn, Username: username, Password: password}
+}
+
+func main() {
+	mysql := NewMysql("root", "root")
+	authPacket := mysql.ReadAuthResult()
+	mysql.write(authPacket) //发送auth Packet
+
 	for {
-		buf := []byte{00, 00, 00, 00}
-		n, err := conn.Read(buf[:])
-		if err != nil {
-			fmt.Println("recv failed, err:", err)
-			return
-		}
-		byteData := buf[:n]
-		//fmt.Println(byteData)
-		packetLen := binary.LittleEndian.Uint32(byteData)
-		//fmt.Printf("包长度：%d", packetLen)
+		packetLen := mysql.PayloadLen()
+
 		packetData := make([]byte, packetLen)
-		n, err = conn.Read(packetData[:])
+		_, err := mysql.TcpConn.Read(packetData[:])
 		if err != nil {
-			fmt.Println("recv failed, err:", err)
-			return
+			panic("recv failed, err:" + err.Error())
 		}
-		//fmt.Println(packetData)
-		hexStringData = hex.EncodeToString(packetData)
-		fmt.Println(hexStringData)
-		//Handshakes(hexStringData)
-		_, err = conn.Write(Handshakes(hexStringData)) //发送请求包
-		if err != nil {
-			return
-		}
-		//return
+		fmt.Println(packetData)
+		return
 	}
 }
 
-//func main() {
-//	decodeString, err := hex.DecodeString("3a000001")
-//	if err != nil {
-//		return
-//	}
-//	fmt.Println(decodeString)
-//	var testBytes = make([]byte, 4)
-//	binary.LittleEndian.PutUint16(testBytes, uint16(58))
-//	testBytes[3] = 1
-//	fmt.Println("int32 to bytes:", testBytes)
-//}
+func (conn *Mysql) write(data []byte) {
+	_, err := conn.TcpConn.Write(data) //发送请求包
+	if err != nil {
+		panic("write err:" + err.Error())
+	}
+	return
+}
