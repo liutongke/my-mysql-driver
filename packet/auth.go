@@ -1,10 +1,12 @@
-package main
+package packet
 
 import (
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
 )
+
+// Auth Packet
 
 // GetAuthPacket 获取返回的包信息
 func GetAuthPacket(scramble []byte, username, pwd string) []byte {

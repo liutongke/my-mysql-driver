@@ -1,10 +1,13 @@
-package main
+package packet
 
 import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"go-mysql/binlog/server"
 )
+
+//Handshake Packet
 
 type HandshakePacket struct {
 	Protocol                   uint16 //版本协议
@@ -22,31 +25,7 @@ type HandshakePacket struct {
 	AuthenticationPlugin string //身份验证方法
 }
 
-func (conn *Mysql) Payload() []byte {
-	packetLen := conn.PayloadLen()
-
-	packetData := make([]byte, packetLen)
-	_, err := conn.TcpConn.Read(packetData[:])
-	if err != nil {
-		panic("recv failed, err:" + err.Error())
-	}
-	return packetData
-}
-
-func (conn *Mysql) PayloadLen() uint32 {
-	buf := []byte{0x00, 0x00, 0x00, 0x00}
-	n, err := conn.TcpConn.Read(buf[:])
-	if err != nil {
-		panic("recv failed, err:" + err.Error())
-	}
-	byteData := buf[:n]
-
-	packetLen := binary.LittleEndian.Uint32(append(byteData[:3], 0x00))
-	//fmt.Printf("包长度：%d", packetLen)
-	return packetLen
-}
-
-func (conn *Mysql) ReadAuthResult() []byte {
+func (HandshakePacket *HandshakePacket) ReadAuthResult(conn *server.Mysql) []byte {
 	packetLen := conn.PayloadLen()
 	packetData := make([]byte, packetLen)
 	_, err := conn.TcpConn.Read(packetData[:])
@@ -54,7 +33,7 @@ func (conn *Mysql) ReadAuthResult() []byte {
 		panic("recv failed, err:" + err.Error())
 	}
 
-	return NewHandshake().Handshake(packetData, conn.Username, conn.Password)
+	return HandshakePacket.Handshake(packetData, conn.Username, conn.Password)
 }
 
 func NewHandshake() *HandshakePacket {
@@ -116,4 +95,5 @@ func (HandshakePacket *HandshakePacket) echo() {
 	fmt.Printf("Unused:%s\n", HandshakePacket.Unused)
 	fmt.Printf("salt2:%s\n", string(HandshakePacket.Salt2))
 	fmt.Printf("Authentication Plugin:%s\n", HandshakePacket.AuthenticationPlugin)
+	fmt.Printf("--------------------------------------------\n\n")
 }
