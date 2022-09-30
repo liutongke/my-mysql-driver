@@ -25,14 +25,77 @@ func (p *Packet) Handler(data []byte, mysql *Mysql) {
 	} else {
 		//fmt.Printf("field Num:%d\n", binary.LittleEndian.Uint16(append(data, 00)))
 		//本次查询总共总共多少字段
-		//fieldNum := binary.LittleEndian.Uint16(append(data, 00))
-		for i := 0; i < 2; i++ {
+		fieldNum := binary.LittleEndian.Uint16(append(data, 00))
+
+		//读取字段
+		for i := uint16(0); i < fieldNum; i++ {
 			obj := NewSelectInfo()
 			packetData := mysql.Payload()
 			obj.ResultSetField(packetData)
 		}
+
+		NewEof().Eof(mysql.Payload())
+
+		//读取字段的值
+		rowObj := NewRowPacket()
+		rowObj.RowPacket(mysql)
+		//fmt.Println("rowObj----->\n", rowObj)
 	}
 }
+func NewRowPacket() *Row {
+	return &Row{}
+}
+
+type Row struct {
+	RowList []interface{}
+}
+
+func (r *Row) RowPacket(mysql *Mysql) {
+	packetData := mysql.Payload()
+	rowIdx = 0 //初始化一下
+	row(packetData)
+	//for {
+	//packetData := mysql.Payload()
+	//fmt.Println("+++++++", packetData)
+	//packetType := hex.EncodeToString(packetData[:1])
+	//if packetType == "fe" { //需要做一个eof判断是否结束
+	//	return
+	//}
+	//
+	//lengthBytes := make([]byte, 2)
+	//copy(lengthBytes, packetData[:1])
+	//length := binary.LittleEndian.Uint16(lengthBytes)
+	//
+	//text := packetData[1 : 1+length]
+	//fmt.Printf("%s", text)
+	//fmt.Println(text, length)
+	//r.RowList = append(r.RowList, text)
+	//}
+}
+
+var rowIdx uint16
+
+func row(packetData []byte) {
+
+	if int(rowIdx) >= len(packetData) {
+		return
+	}
+
+	lengthBytes := make([]byte, 2)
+	copy(lengthBytes, packetData[rowIdx:rowIdx+1])
+	length := binary.LittleEndian.Uint16(lengthBytes)
+
+	if int(rowIdx+1+length) > len(packetData) {
+		return
+	}
+
+	text := packetData[rowIdx+1 : rowIdx+1+length]
+
+	rowIdx = rowIdx + 1 + length
+	fmt.Println(fmt.Sprintf("text content:%s", text))
+	row(packetData)
+}
+
 func NewSelectInfo() *SelectInfo {
 	return &SelectInfo{
 		ResultHeader: &ResultHeader{},
@@ -125,7 +188,7 @@ func (s *SelectInfo) ResultSetField(data []byte) {
 	idx++
 	s.ResultField.OrgFieldName = string(data[idx : idx+s.ResultField.OrgFieldLen])
 
-	fmt.Println(s.ResultField)
+	fmt.Println(s.ResultField.OrgFieldName)
 }
 
 type Success struct {
@@ -174,4 +237,27 @@ func (p *Packet) error(packet []byte) *Error {
 
 	errorPacket.ErrorMessage = string(packet[8:])
 	return errorPacket
+}
+
+type Eof struct {
+	ResponseCode []byte
+	EofMarker    uint16
+	ServerStatus uint16
+	Payload      uint16
+}
+
+func NewEof() *Eof {
+	return &Eof{}
+}
+func (e *Eof) Eof(packet []byte) {
+	e.ResponseCode = packet[0:1]
+
+	eofMarker := make([]byte, 2)
+	copy(eofMarker, e.ResponseCode)
+	e.EofMarker = binary.LittleEndian.Uint16(eofMarker)
+
+	e.ServerStatus = binary.LittleEndian.Uint16(packet[1:3])
+
+	e.Payload = binary.LittleEndian.Uint16(packet[3:5])
+	//fmt.Println(e)
 }

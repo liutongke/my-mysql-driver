@@ -40,8 +40,7 @@ type sql struct {
 	head uint8
 }
 
-func UserInput(packetData []byte) *sql {
-	//NewPacket().Handler(packetData)
+func UserInput() *sql {
 	str := InputCmd()
 	list := strings.Split(str, " ")
 	head := GetOrder(list[0])
