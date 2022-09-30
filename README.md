@@ -1,3 +1,14 @@
+- [x] select
+- [x] update
+- [x] insert
+- [x] delete
+- [x] use
+- [x] show
+- [ ] create db
+- [ ] create tables
+- [ ] 事务
+- [ ] dump
+
 [（一）Go-编写MySQL数据库驱动之Client/Server协议分析](https://ltkblog.cn/mysql_protocol/)
 
 [（二）Go-编写MySQL数据库驱动之MySQL协议解析Handshake Packet](https://ltkblog.cn/mysql_handshake/)

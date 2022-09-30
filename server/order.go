@@ -1,5 +1,7 @@
 package server
 
+import "strings"
+
 func GetOrder(idx string) uint8 {
 	m := map[string]uint8{
 		"exit":            01,
@@ -13,7 +15,8 @@ func GetOrder(idx string) uint8 {
 		"create database": 05,
 		"create table":    99,
 	}
-	return m[idx]
+
+	return m[strings.ToLower(idx)]
 }
 
 func (conn *Mysql) SetChart() []byte {
