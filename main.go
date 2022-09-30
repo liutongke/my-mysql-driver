@@ -24,15 +24,14 @@ func NewMysql(username, password string) *Mysql {
 }
 
 func main() {
-	//decodeString, err := hex.DecodeString("03646566046b656b6509626975626975626975096269756269756269750269640269640c3f000b000000030342000000")
+	//decodeString, err := hex.DecodeString("0231380ce4bda0e5a5bde59180616263")
 	//if err != nil {
 	//	return
 	//}
 	//fmt.Println(decodeString)
 	//
-	//obj := NewSelectInfo()
-	//obj.ResultSetField(decodeString)
-	//
+	//rowObj := NewRowPacket()
+	//rowObj.RowPacket(decodeString)
 	//return
 	mysql := NewMysql("root", "root")
 	authPacket := mysql.ReadAuthResult()
@@ -42,7 +41,7 @@ func main() {
 		//mysql.SetChart()
 		fmt.Println(packetData)
 		NewPacket().Handler(packetData, mysql)
-		typeSql := UserInput(packetData)
+		typeSql := UserInput()
 
 		mysql.Query(typeSql)
 	}
