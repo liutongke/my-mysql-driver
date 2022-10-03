@@ -42,7 +42,7 @@ func (p *Packet) Handler(data []byte, mysql *server.Mysql) {
 		}
 
 		NewEof().Eof(mysql.Payload())
-
+		//fmt.Println(fieldInfo.FieldMap)
 		//读取字段的值
 		rowObj := NewRowPacket()
 		rowObj.RowPacket(mysql)
@@ -50,7 +50,8 @@ func (p *Packet) Handler(data []byte, mysql *server.Mysql) {
 		var list []map[string]string
 		for k, v := range rowObj.RowList {
 			fields := make(map[string]string)
-			n := uint16(k+1) % fieldNum
+
+			n := uint16(k) % fieldNum
 
 			fields[fieldInfo.FieldMap[n]] = v
 			list = append(list, fields)
@@ -210,7 +211,7 @@ func (s *SelectInfo) ResultSetField(data []byte, fieldsInfo *FieldsInfo) {
 	idx++
 	s.ResultField.OrgFieldName = string(data[idx : idx+s.ResultField.OrgFieldLen])
 
-	fieldsInfo.FieldMap = append(fieldsInfo.FieldMap, s.ResultField.OrgFieldName)
+	fieldsInfo.FieldMap = append(fieldsInfo.FieldMap, s.ResultField.FieldName)
 	//fmt.Println(s.ResultField.OrgFieldName)
 }
 
