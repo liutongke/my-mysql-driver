@@ -1,13 +1,12 @@
 package server
 
 import (
-	"fmt"
 	"time"
 )
 
-type fun func(interface{}) // 声明了一个函数类型
+type fun func(mysql *Mysql) // 声明了一个函数类型
 // 启动定时器进行心跳检测
-func PingTimer(f fun, param interface{}, d time.Duration) {
+func PingTimer(f fun, param *Mysql, d time.Duration) {
 	go func() {
 		ticker := time.NewTicker(d)
 		defer ticker.Stop()
@@ -20,6 +19,6 @@ func PingTimer(f fun, param interface{}, d time.Duration) {
 	}()
 }
 
-func Ping(param interface{}) {
-	fmt.Println(time.Now().Format("2006-01-02 15:04:05"))
-}
+//func Ping(param interface{}) {
+//	fmt.Println(time.Now().Format("2006-01-02 15:04:05"))
+//}

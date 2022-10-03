@@ -12,6 +12,7 @@ require (
 
 require (
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/pingcap/errors v0.11.0 // indirect
