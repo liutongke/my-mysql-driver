@@ -1,4 +1,4 @@
-module go-mysql/binlog
+module go-mysql/driver
 
 go 1.19
 

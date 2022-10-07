@@ -7,7 +7,7 @@
 - [ ] create db
 - [ ] create tables
 - [ ] 事务
-- [ ] dump
+- [x] dump
 
 [（一）Go-编写MySQL数据库驱动之Client/Server协议分析](https://ltkblog.cn/mysql_protocol/)
 

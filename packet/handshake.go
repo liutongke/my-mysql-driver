@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"go-mysql/binlog/server"
+	"go-mysql/driver/server"
 )
 
 //Handshake Packet
