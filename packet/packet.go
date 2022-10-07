@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
-	"go-mysql/binlog/server"
+	"go-mysql/driver/server"
 )
 
 type Packet struct {
