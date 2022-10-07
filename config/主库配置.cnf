@@ -1,0 +1,9 @@
+[mysqld]
+skip_ssl
+skip-host-cache
+skip-name-resolve
+#第二种方式:
+#此一行等同于上面log_bin三行
+log-bin=/var/lib/mysql/mysql-bin
+#配置serverid
+server-id=1
