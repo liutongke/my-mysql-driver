@@ -1,10 +1,10 @@
-package packet
+package CommandPhase
 
 import (
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
-	"go-mysql/driver/server"
+	"go-mysql/driver/MySQLPackets"
 )
 
 type Packet struct {
@@ -14,7 +14,7 @@ func NewPacket() *Packet {
 	return &Packet{}
 }
 
-func (p *Packet) Handler(data []byte, mysql *server.Mysql) {
+func (p *Packet) Handler(data []byte, mysql *MySQLPackets.MySQLConnection) {
 	packetType := hex.EncodeToString(data[:1])
 
 	if packetType == "00" { //成功报文
@@ -37,11 +37,13 @@ func (p *Packet) Handler(data []byte, mysql *server.Mysql) {
 		//读取字段
 		for i := uint16(0); i < fieldNum; i++ {
 			obj := NewSelectInfo()
-			packetData := mysql.Payload()
+			//packetData := mysql.Payload()
+			_, _, packetData, _ := MySQLPackets.DecodePacket(mysql.TCPConnection)
 			obj.ResultSetField(packetData, fieldInfo)
 		}
-
-		NewEof().Eof(mysql.Payload())
+		_, _, payload, _ := MySQLPackets.DecodePacket(mysql.TCPConnection)
+		NewEof().Eof(payload)
+		//NewEof().Eof(mysql.Payload())
 		//fmt.Println(fieldInfo.FieldMap)
 		//读取字段的值
 		rowObj := NewRowPacket()
@@ -81,9 +83,10 @@ type Row struct {
 	RowList []string
 }
 
-func (r *Row) RowPacket(mysql *server.Mysql) {
+func (r *Row) RowPacket(mysql *MySQLPackets.MySQLConnection) {
 	for {
-		packetData := mysql.Payload()
+		_, _, packetData, _ := MySQLPackets.DecodePacket(mysql.TCPConnection)
+		//packetData := mysql.Payload()
 
 		packetType := hex.EncodeToString(packetData[:1])
 		if packetType == "fe" { //需要做一个eof判断是否结束
