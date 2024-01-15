@@ -1,5 +1,6 @@
-package packet
+package ConnPhase
 
+//https://dev.mysql.com/doc/dev/mysql-server/latest/page_protocol_connection_phase_packets_protocol_handshake_response.html
 import (
 	"crypto/sha1"
 	"encoding/hex"
@@ -8,22 +9,21 @@ import (
 
 // Auth Packet
 
-// GetAuthPacket 获取返回的包信息
-func GetAuthPacket(scramble []byte, username, pwd string) []byte {
-	str := hex.EncodeToString(append(append(append(append(clientCapabilities(), extendedClientCapabilities()...), mAXPacket()...), charsetSet()...), unused()...))
+// GenerateHandshakeResponse 生成HandshakeResponse41响应
+func GenerateHandshakeResponse(h *HandshakePacket, username, password string) []byte {
+
+	scramble := append(h.Salt1, h.Salt2...)
 	userName := string(encodeUserName(username))
-	sprintf := fmt.Sprintf("%s%s%s", str, userName, encodePass(scramble, pwd))
+
+	str := hex.EncodeToString(append(append(append(append(clientCapabilities(), extendedClientCapabilities()...), mAXPacket()...), charsetSet()...), unused()...))
+
+	sprintf := fmt.Sprintf("%s%s%s", str, userName, encodePass(scramble, password))
 
 	decodeString, err := hex.DecodeString(sprintf)
 	if err != nil {
 		return nil
 	}
 	return decodeString
-	//var testBytes = []byte{0x00, 0x00, 0x00, 0x00}
-	//binary.LittleEndian.PutUint16(testBytes, uint16(len(decodeString)))
-	//testBytes[3] = sequenceId //包序列id
-	//
-	//return append(testBytes, decodeString...)
 }
 
 // 0xa685 协议协商

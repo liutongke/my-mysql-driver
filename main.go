@@ -3,8 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"go-mysql/driver/packet"
-	"go-mysql/driver/server"
+	"go-mysql/driver/CommandPhase"
+	"go-mysql/driver/ConnPhase"
+	"go-mysql/driver/MySQLPackets"
 )
 
 var (
@@ -25,8 +26,6 @@ func init() {
 	flag.Parse()
 }
 
-//var sequenceId uint8 = 1 //包序列id
-
 func main() {
 	if host == "" || password == "" || user == "" {
 		fmt.Printf("示例: go run main.go -u root -p root -P 3306 -h 192.168.0.105\n")
@@ -40,19 +39,31 @@ func main() {
 	//binlog.Binlog()
 	//return
 	//mysql := server.NewMysql("root", "root", "192.168.0.107", "3306")
-	mysql := server.NewMysql(user, password, host, port)
+	mysql, _ := MySQLPackets.NewMySQLConnection(user, password, host, port)
+	defer mysql.Close()
 	//mysql := server.NewMysql("root", "xCl5QUb9ES2YfkvX", "192.168.0.105", "3304")
 	//go PingTimer(Ping, mysql, 10*time.Second)
-
-	authPacket := packet.NewHandshake().ReadAuthResult(mysql)
-	mysql.Write(authPacket, 1) //发送auth Packet
+	handshake := ConnPhase.NewHandshake()
+	decodeHandshake, err := handshake.DecodeHandshake(mysql)
+	if err != nil {
+		fmt.Println("DecodeHandshake错误：", err)
+		return
+	}
+	handshakeResponse41 := ConnPhase.GenerateHandshakeResponse(decodeHandshake, user, password)
+	MySQLPackets.SendMsg(mysql, handshakeResponse41, 1)
+	//authPacket := packet.NewHandshake().ReadAuthResult(mysql)
+	//mysql.Write(authPacket, 1) //发送auth Packet
 	//server.InitBinlog(mysql)   //从服务器注册
 	//go server.PingTimer(server.Ping, mysql, 30*time.Second)
 	for {
-		packetData := mysql.Payload()
+		_, _, packetData, _ := MySQLPackets.DecodePacket(mysql.TCPConnection)
+
+		//packetData := mysql.Payload()
 		//fmt.Println(packetData)
-		packet.NewPacket().Handler(packetData, mysql)
-		typeSql := server.UserInput()
+		CommandPhase.NewPacket().Handler(packetData, mysql)
+		//packet.NewPacket().Handler(packetData, mysql)
+		//typeSql := server.UserInput()
+		typeSql := MySQLPackets.GetUserInput()
 
 		mysql.Query(typeSql)
 	}
